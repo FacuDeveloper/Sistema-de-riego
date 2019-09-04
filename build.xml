@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="example" default="deploy">
+
+    <property file="./config/common.properties"/>
+    <import file="./config/common.xml" />
+
+    <target name="start" depends="start_app_server,start_db_server" />
+    <target name="stop"  depends="stop_db_server,stop_app_server"   />
+
+</project>
