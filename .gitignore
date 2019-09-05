@@ -1,3 +1,2 @@
-app/*/build
-app/*/dist
-/bin/
+app/build/
+app/dist/
