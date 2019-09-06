@@ -19,6 +19,17 @@
 		    </div>
 		  </div>
 
+			<!-- Esto permite hacer la busqueda (en este caso de tipos de suelo) mediante el ingreso de caracteres -->
+			<div class="form-group">
+				<label for="grond_type_ground" class="col-md-2 control-label">Tipo de suelo</label>
+				<div class="col-md-3">
+					<input name="typeGround" type="text" ng-model="data.typeGround" placeholder="Tipo de suelo"
+					uib-typeahead="typeGround as typeGround.texture for typeGround in findTypeGround($viewValue)" typeahead-loading="loadingLocations"
+					class="form-control" typeahead-editable="false" typeahead-min-lenght="3" ng-disabled="action == 'view'">
+					<i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+				</div>
+			</div>
+
 		  <div class="form-group">
 		    <div class="col-md-offset-2 col-md-3">
 		      <button type="submit" class="btn btn-primary" ng-click="save()" ng-show="action == 'new'">Create</button>

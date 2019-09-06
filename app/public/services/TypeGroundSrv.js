@@ -1,10 +1,10 @@
 app.service(
-  "GroundSrv",
+  "TypeGroundSrv",
   [ "$http",
     function($http){
 
 	    this.findAll = function(callback){
-		    $http.get("rest/ground/findAllGrounds").then(
+		    $http.get("rest/typeGround").then(
 			    function(result){
 				    callback(false,result.data);
 			    },
@@ -13,17 +13,8 @@ app.service(
     			});
 	    }
 
-      this.searchByPage = function(search, page, cant, callback) {
-				$http.get('rest/ground?page=' + page + '&cant=' + cant+ "&search="+JSON.stringify(search))
-						.then(function(res) {
-							return callback(false, res.data)
-						}, function(err) {
-							return callback(err.data)
-						})
-			}
-
       this.find = function(id, callback){
-		    $http.get("rest/ground/" + id).then(
+		    $http.get("rest/typeGround/" + id).then(
 			    function(result){
 				    callback(false,result.data);
 			    },
@@ -34,7 +25,7 @@ app.service(
 
 
       this.save = function(data, callback){
-        $http.post("rest/ground", data)
+        $http.post("rest/typeGround", data)
         .then(
 			    function(result){
 				    callback(false,result.data);
@@ -46,7 +37,7 @@ app.service(
 
       this.update = function(data, callback){
         console.log("Update");
-        $http.put("rest/ground/" + data.id, data)
+        $http.put("rest/typeGround/" + data.id, data)
         .then(
 			    function(result){
 				    callback(false,result.data);
@@ -55,24 +46,9 @@ app.service(
     				callback(error);
     			});
 	    }
-
-      // this.update = function(id, dni, name, lastName, docketCode, callback){
-      //   console.log("Actualizando: "+id+" - "+name);
-      //   $http({
-      //     method:"PUT",
-      //     url:"rest/ground/"+id,
-      //     params:{"dni": dni, "name": name, "lastName": lastName, "docketCode":docketCode} })
-      //   .then(
-			//     function(result){
-			// 	    callback(false,result.data);
-			//     },
-    	// 		function(error){
-    	// 			callback(error);
-    	// 		});
-	    // }
 
       this.delete = function(id, callback){
-        $http.delete("rest/ground/" + id)
+        $http.delete("rest/typeGround/" + id)
         .then(
 			    function(result){
 				    callback(false,result.data);
@@ -82,7 +58,10 @@ app.service(
     			});
 	    }
 
-
+      // Esto es necesario para la busqueda que se hace cuando se ingresan caracteres
+      this.findByTextureName = function(name) {
+				return $http.get("rest/typeGround/?textureName="+name);
+			}
 
 
     }

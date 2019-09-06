@@ -7,7 +7,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-// import javax.ws.rs.QueryParam;
+import javax.ws.rs.QueryParam;
 // import javax.ws.rs.FormParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
@@ -67,6 +67,13 @@ public class TypeGroundRestServlet {
   public String modify(@PathParam("id") int id, String json) throws IOException {
     TypeGround modifiedTypeGround = mapper.readValue(json, TypeGround.class);
     return mapper.writeValueAsString(service.modify(id, modifiedTypeGround));
+  }
+
+  // Esto es necesario para la busqueda que se hace cuando se ingresan caracteres
+  @GET
+  public String findByTextureName(@QueryParam("textureName") String textureName) throws IOException {
+    Collection<TypeGround> types = service.findByTextureName(textureName);
+    return mapper.writeValueAsString(types);
   }
 
 }

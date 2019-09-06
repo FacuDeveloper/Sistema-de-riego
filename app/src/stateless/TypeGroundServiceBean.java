@@ -77,4 +77,29 @@ public  class TypeGroundServiceBean {
     return (Collection<TypeGround>) query.getResultList();
   }
 
+  /**
+   * Busca los tipos de suelo que coincidan con el nombre dado
+   *
+   * Esto es necesario para la busqueda que se hace cuando se ingresan caracteres
+   *
+   * @param  textureName
+   * @return coleccion de tipos de suelo que coinciden con el nombre dado
+   */
+  public Collection<TypeGround> findByTextureName(String textureName) {
+    StringBuffer queryStr = new StringBuffer("SELECT t FROM TypeGround t");
+
+    if (textureName != null) {
+      queryStr.append(" WHERE UPPER(t.texture) LIKE :texture ");
+    }
+
+    Query query = entityManager.createQuery(queryStr.toString());
+
+    if (textureName != null) {
+      query.setParameter("texture", "%" + textureName.toUpperCase() + "%");
+    }
+
+    Collection<TypeGround> types = (Collection<TypeGround>) query.getResultList();
+    return types;
+  }
+
 }

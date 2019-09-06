@@ -1,0 +1,20 @@
+<span class="badge badge-info" data-ng-show="$ctrl.pagination.count"> {{$ctrl.pagination.getStart()}} a {{$ctrl.pagination.getEnd()}} de un total de {{$ctrl.pagination.getCount()}} elementos encontrados </span>
+<div class="text-center" data-ng-show="$ctrl.pagination.count">
+	<ul class="pagination justify-content-center" style="margin:20px 0"">
+		<li class="page-item">
+			<a class="page-link" data-ng-click="$ctrl.pagination.showPage(-2)">&laquo;</a>
+		</li>
+		<li class="page-item">
+			<a class="page-link" data-ng-click="$ctrl.pagination.showPage(-1)">&lsaquo;</a>
+		</li>
+		<li class="page-item" data-ng-class="{true: 'active'}[$ctrl.isCurrent($index)]" data-ng-repeat="t in $ctrl.pagination.range track by $index">
+			<a class="page-link" data-ng-click="$ctrl.pagination.showPage($index + 1)"> {{t}} </a>
+		</li>
+		<li class="page-item">
+			<a class="page-link" data-ng-click="$ctrl.pagination.showPage(-3)">&rsaquo;</a>
+		</li>
+		<li class="page-item">
+			<a class="page-link" data-ng-click="$ctrl.pagination.showPage(-4)">&raquo;</a>
+		</li>
+	</ul>
+</div>

@@ -1,7 +1,7 @@
 app.controller(
   "GroundCtrl",
-  ["$scope", "$location", "$routeParams", "GroundSrv",
-  function($scope, $location, $params, servicio) {
+  ["$scope", "$location", "$routeParams", "GroundSrv", "TypeGroundSrv",
+  function($scope, $location, $params, service, typeGroundSrv) {
 
     console.log("GroundCtrl loaded with action: "+$params.action)
 
@@ -11,7 +11,7 @@ app.controller(
     }
 
     function find(id){
-      servicio.find(id, function(error, data){
+      service.find(id, function(error, data){
         if(error){
           console.log(error);
           return;
@@ -21,7 +21,7 @@ app.controller(
     }
 
     $scope.save = function(){
-      servicio.save($scope.data, function(error, data){
+      service.save($scope.data, function(error, data){
         if(error){
           console.log(error);
           return;
@@ -33,7 +33,7 @@ app.controller(
 
     $scope.update = function(data){
       console.log("UPDATE");
-      servicio.update($scope.data, function(error, data){
+      service.update($scope.data, function(error, data){
         if(error){
           console.log(error);
           return;
@@ -43,6 +43,18 @@ app.controller(
         $scope.data.stony = data.stony; // pedregosidad
         $location.path("/ground")
       });
+    }
+
+    // Esto es necesario para la busqueda que se hace cuando se ingresan caracteres
+    $scope.findTypeGround = function(textureName){
+      return typeGroundSrv.findByTextureName(textureName).
+      then(function (response) {
+        var typesGround = [];
+        for (var i = 0; i < response.data.length; i++) {
+          typesGround.push(response.data[i]);
+        }
+        return typesGround;
+      });;
     }
 
       $scope.cancel = function(){

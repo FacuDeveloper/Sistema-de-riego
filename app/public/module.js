@@ -1,6 +1,7 @@
-var app = angular.module('app',['ngRoute', 'ui.bootstrap']);
+var app = angular.module('app',['ngRoute', 'Pagination', 'ui.bootstrap']);
 
 // ui.bootstrap es necesario para la busqueda que se hace cuando se ingresan caracteres
+// Pagination es para la paginacion
 
 app.config(['$routeProvider', function(routeprovider) {
 
