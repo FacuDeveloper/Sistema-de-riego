@@ -4,8 +4,9 @@ var app = angular.module('app',['ngRoute', 'Pagination', 'ui.bootstrap', 'leafle
 // Pagination es necesario para la paginacion
 
 app.config(['$routeProvider', function(routeprovider) {
-
 	routeprovider
+
+	/* Ground */
 	.when('/ground',{
 		templateUrl:'partials/ground/ground-list.html',
 		controller: 'GroundsCtrl'
@@ -21,6 +22,7 @@ app.config(['$routeProvider', function(routeprovider) {
 		controller: 'GroundCtrl'
 	})
 
+	/* Field */
 	.when('/field',{
 		templateUrl:'partials/field/field-list.html',
 		controller: 'FieldsCtrl'
@@ -36,6 +38,17 @@ app.config(['$routeProvider', function(routeprovider) {
 		controller: 'FieldCtrl'
 	})
 
+	.when('/field/:fieldId/parcel/:action',{
+		templateUrl:'partials/field/parcel-form.html',
+		controller: 'ParcelCtrl'
+	})
+
+	.when('/field/:fieldId/parcel/:action/:id',{
+		templateUrl:'partials/field/parcel-form.html',
+		controller: 'ParcelCtrl'
+	})
+
+	/* De otra manera */
 	.otherwise({
 		templateUrl: 'partials/404.html'
 	})

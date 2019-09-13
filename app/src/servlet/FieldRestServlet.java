@@ -16,9 +16,16 @@ import javax.ws.rs.core.MediaType;
 import model.Field;
 
 import stateless.FieldServiceBean;
+import stateless.Page;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Collection;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.io.IOException;
 
 @Path("/field")
@@ -31,9 +38,21 @@ public class FieldRestServlet {
   ObjectMapper mapper = new ObjectMapper();
 
   @GET
+  @Path("/findAllFields")
   @Produces(MediaType.APPLICATION_JSON)
-  public String findAll() throws IOException {
+  public String findAllFields() throws IOException {
     Collection<Field> fields = service.findAll();
+    return mapper.writeValueAsString(fields);
+  }
+
+  @GET
+  public String findAll(@QueryParam("page") Integer page, @QueryParam("cant") Integer cant, @QueryParam("search") String search) throws IOException {
+    Map<String, String> map = new HashMap<String, String>();
+
+    // convert JSON string to Map
+    map = mapper.readValue(search, new TypeReference<Map<String, String>>(){});
+
+    Page<Field> fields = service.findByPage(page, cant, map);
     return mapper.writeValueAsString(fields);
   }
 

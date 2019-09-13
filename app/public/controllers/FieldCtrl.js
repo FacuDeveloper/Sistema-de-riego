@@ -29,7 +29,7 @@ app.controller(
         $scope.markers.pop();
 
         /*
-        Agrega un nuevo marcado al arreglo con las coordendas geograficas del dato
+        Agrega un nuevo marcador al arreglo con las coordendas geograficas del dato
         (en este caso es un campo en particular) recuperado, logrando de esta forma
         ver el marcador cuando el usuario selecciona la opcion de visualizacion del
         campo que ha elegido
@@ -133,9 +133,21 @@ app.controller(
 
       });
 
+      // Evento de click para la ubicacion geografica del campo en el mapa
       $scope.$on("leafletDirectiveMap.click", function(event, args){
         var leafEvent = args.leafletEvent;
+
+        /*
+        Elimina el marcador existente en el arreglo.
+
+        Se realiza esta eliminacion porque de lo contrario
+        se agregaria el arreglo mas de un marcador y por ende
+        se veria en el mapa mas de un marcador, lo cual no es
+        necesario en nuestro caso.
+         */
         $scope.markers.pop();
+
+        // Agrega nuevo marcador, en el arreglo, con las nuevas coordendas geograficas elegidas por el usuario para marcar su campo en el mapa
         $scope.markers.push({
           lat: leafEvent.latlng.lat,
           lng: leafEvent.latlng.lng,

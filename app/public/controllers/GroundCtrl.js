@@ -57,14 +57,14 @@ app.controller(
       });;
     }
 
-      $scope.cancel = function(){
-        $location.path("/ground");
-      }
+    $scope.cancel = function(){
+      $location.path("/ground");
+    }
 
-      $scope.action = $params.action;
+    $scope.action = $params.action;
 
-      if ($scope.action == 'edit' || $scope.action == 'view') {
-        find($params.id);
-      }
+    if ($scope.action == 'edit' || $scope.action == 'view') {
+      find($params.id);
+    }
 
-    }]);
+  }]);

@@ -5,8 +5,11 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import java.util.Collection;
 
 @Entity
 public class Field {
@@ -36,6 +39,14 @@ public class Field {
 
   // @Column(name="PROVINCE", nullable=false)
   // private String province;
+
+  // @OneToMany(mappedBy="field") // La entidad propietaria es Parcel
+  // private Collection<Parcel> parcels;
+
+  @OneToMany
+  @JoinTable(name="FIELD_PARCEL", joinColumns=@JoinColumn(name="FIELD_ID"),
+  inverseJoinColumns=@JoinColumn(name="PARCEL_ID"))
+  private Collection<Parcel> parcels;
 
   // Constructor method
   public Field() {
@@ -146,6 +157,21 @@ public class Field {
 	// public void setProvince(String province) {
 	// 	this.province = province;
 	// }
+
+  // TODO: Documentar todo esto
+  public Collection<Parcel> getParcels() {
+    return parcels;
+  }
+
+  public void addParcel(Parcel parcel) {
+    if (!parcels.contains(parcel)) {
+      parcels.add(parcel);
+    }
+  }
+
+  public void removeParcel(Parcel parcel) {
+    parcels.remove(parcel);
+  }
 
   @Override
   public String toString() {

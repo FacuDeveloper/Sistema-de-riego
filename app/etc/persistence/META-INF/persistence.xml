@@ -1,7 +1,9 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
   <persistence-unit name="irrigation">
     <jta-data-source>jdbc/irrigation</jta-data-source>
+    <class>model.Field</class>
     <class>model.Ground</class>
+    <class>model.Parcel</class>
     <class>model.TypeGround</class>
     <properties>
       <property name="eclipselink.target-database" value="DERBY"/>

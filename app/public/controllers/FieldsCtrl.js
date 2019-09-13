@@ -14,6 +14,14 @@ app.controller(
   		})
   	}
 
+    /* Esto ess necesario para la paginacion */
+    var $ctrl = this;
+
+    $scope.service = service;
+    $scope.listElement = []
+    $scope.cantPerPage = 20
+    /* Esto ess necesario para la paginacion */
+    
     $scope.delete = function(id){
       console.log("Deleting: " + id)
 
