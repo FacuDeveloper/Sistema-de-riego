@@ -15,7 +15,7 @@ public  class TypeGroundServiceBean {
   /*
    * Instance variables
    */
-  @PersistenceContext(unitName="irrigation")
+  @PersistenceContext(unitName="SisRiegoDB")
   private EntityManager entityManager;
 
   public void setEntityManager(EntityManager localEntityManager){

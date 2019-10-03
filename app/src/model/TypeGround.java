@@ -19,10 +19,10 @@ public class TypeGround {
   @Column(name="TYP_GRO_ID")
   private int id;
 
-  @Column(name="TEXTURE", unique=true, length=90, nullable=false)
+  @Column(name="TEXTURE", unique=true, length=30, nullable=false)
   private String texture;
 
-  @Column(name="DESCRIPTION", unique=true, length=90, nullable=false)
+  @Column(name="DESCRIPTION", unique=true, length=180, nullable=false)
   private String description;
 
   // Constructor method

@@ -19,15 +19,22 @@ public class Parcel {
   @Column(name="PARCEL_ID")
   private int id;
 
+  // TODO: Establecer clave compuesta con este atributo y el identificador del usuario
   @Column(name="IDENTIFICATION_NUMBER", unique=true)
   private int identificationNumber;
 
   @Column(name="AREA", nullable=false)
   private int area; // superficie
 
+  @Column(name="LONGITUDE", nullable=false)
+  private double longitude;
+
+  @Column(name="LATITUDE", nullable=false)
+  private double latitude;
+
   // @ManyToOne
-  // @JoinColumn(name="FIELD_ID")
-  // private Field field;
+  // @JoinColumn(name="FK_USER")
+  // private Usuario user;
 
   // Constructor method
   public Parcel() {
@@ -41,14 +48,6 @@ public class Parcel {
 	*/
 	public int getId() {
 		return id;
-	}
-
-	/**
-	* Sets new value of id
-	* @param
-	*/
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	/**
@@ -84,20 +83,52 @@ public class Parcel {
 	}
 
   /**
-   * Returns field
+   * Returns value of longitude
    * @return
    */
-  // public Field getField() {
-  //   return field;
+  public double getLongitude() {
+    return longitude;
+  }
+
+  /**
+   * Sets new value of longitude
+   * @param
+   */
+  public void setLongitude(double longitude) {
+    this.longitude = longitude;
+  }
+
+  /**
+   * Returns value of latitude
+   * @return
+   */
+  public double getLatitude() {
+    return latitude;
+  }
+
+  /**
+   * Sets new value of latitude
+   * @param
+   */
+  public void setLatitude(double latitude) {
+    this.latitude = latitude;
+  }
+
+  /**
+   * Returns value of user
+   * @return
+   */
+  // public Usuario getUser() {
+    // return user;
   // }
 
   /**
-	 * Sets new value of field
-	 * @param
-	 */
-	// public void setField(Field field) {
-	// 	this.field = field;
-	// }
+   * Sets new value of user
+   * @param
+   */
+  // public void setUser(Usuario user) {
+    // this.user = user;
+  // }
 
   @Override
   public String toString() {
@@ -131,20 +162,20 @@ public class Parcel {
    * del metodo equals, de la clase Object, en la clase de los
    * objetos que se desean comparar.
    */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Parcel other = (Parcel) obj;
-		if (id != other.id)
-			return false;
-		if (identificationNumber != other.identificationNumber)
-			return false;
-		return true;
-	}
+	// @Override
+	// public boolean equals(Object obj) {
+	// 	if (this == obj)
+	// 		return true;
+	// 	if (obj == null)
+	// 		return false;
+	// 	if (getClass() != obj.getClass())
+	// 		return false;
+	// 	Parcel other = (Parcel) obj;
+	// 	if (id != other.id)
+	// 		return false;
+	// 	if (identificationNumber != other.identificationNumber)
+	// 		return false;
+	// 	return true;
+	// }
 
 }

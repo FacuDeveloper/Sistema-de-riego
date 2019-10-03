@@ -11,14 +11,16 @@
 				<th>Id</th>
 				<th>Profundidad (cm)</th>
 				<th>Pedregosidad (%)</th>
+				<th>Tipo de suelo</th>
 				<th class="text-right"></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr ng-repeat="e in data">
-				<td>{{e.id}}</td>
-				<td>{{e.depth}}</td>
-				<td>{{e.stony}}</td>
+				<td>{{e.id}}</td> <!-- Identificador -->
+				<td>{{e.depth}}</td> <!-- Profundidad en centimetros -->
+				<td>{{e.stony}}</td> <!-- Pedregosidad -->
+				<td>{{e.typeGround.texture}}</td>
 				<!-- <td class="text-right">$ {{e.salary}}</td> -->
 				<td class="text-right">
 					<div class="btn-group" role="group" aria-label="...">

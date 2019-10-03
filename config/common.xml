@@ -39,6 +39,10 @@
     <javac destdir="build/model" debug="on">
       <src path="src/model" />
       <src path="src/stateless" />
+
+      <!-- Observar que paquetes del estilo servlet no son referenciados aca -->
+      <!-- Los nuevos paquetes de la carpeta src tienen que ser referenciados aca -->
+      <src path="src/weatherApiClasses" />
       <classpath>
         <pathelement path="${CLIENT_CLASSPATH}" />
         <pathelement path="build/model" />
@@ -204,90 +208,12 @@ Comandos para detener el server y la base de datos.
 </target>
 
 <!-- data loading dependencies -->
-<target name="run_horary_sql">
+<target name="run_typeGround_sql">
   <sql driver="org.apache.derby.jdbc.ClientDriver"
     url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
     userid="${DERBY_USER}"
     password="${DERBY_PWD}"
-    src="etc/sql/horary.sql"
-    onerror="continue">
-    <classpath>
-      <pathelement path="${DERBY_CLASSPATH}"/>
-    </classpath>
-  </sql>
-</target>
-
-<target name="run_turns_sql">
-  <sql driver="org.apache.derby.jdbc.ClientDriver"
-    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
-    userid="${DERBY_USER}"
-    password="${DERBY_PWD}"
-    src="etc/sql/turns.sql"
-    onerror="continue">
-    <classpath>
-      <pathelement path="${DERBY_CLASSPATH}"/>
-    </classpath>
-  </sql>
-</target>
-
-<target name="run_overlap_sql">
-  <sql driver="org.apache.derby.jdbc.ClientDriver"
-    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
-    userid="${DERBY_USER}"
-    password="${DERBY_PWD}"
-    src="etc/sql/overlap.sql"
-    onerror="continue">
-    <classpath>
-      <pathelement path="${DERBY_CLASSPATH}"/>
-    </classpath>
-  </sql>
-</target>
-
-<target name="run_empty_sql">
-  <sql driver="org.apache.derby.jdbc.ClientDriver"
-    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
-    userid="${DERBY_USER}"
-    password="${DERBY_PWD}"
-    src="etc/sql/emptySpace.sql"
-    onerror="continue">
-    <classpath>
-      <pathelement path="${DERBY_CLASSPATH}"/>
-    </classpath>
-  </sql>
-</target>
-
-<target name="run_all_sql">
-  <sql driver="org.apache.derby.jdbc.ClientDriver"
-    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
-    userid="${DERBY_USER}"
-    password="${DERBY_PWD}"
-    src="etc/sql/all.sql"
-    onerror="continue">
-    <classpath>
-      <pathelement path="${DERBY_CLASSPATH}"/>
-    </classpath>
-  </sql>
-</target>
-
-<target name="run_fifth_sql">
-  <sql driver="org.apache.derby.jdbc.ClientDriver"
-    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
-    userid="${DERBY_USER}"
-    password="${DERBY_PWD}"
-    src="etc/sql/fifthFortnight.sql"
-    onerror="continue">
-    <classpath>
-      <pathelement path="${DERBY_CLASSPATH}"/>
-    </classpath>
-  </sql>
-</target>
-
-<target name="run_forLogs_sql">
-  <sql driver="org.apache.derby.jdbc.ClientDriver"
-    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
-    userid="${DERBY_USER}"
-    password="${DERBY_PWD}"
-    src="etc/sql/forLogs.sql"
+    src="etc/sql/typeGroundInserts.sql"
     onerror="continue">
     <classpath>
       <pathelement path="${DERBY_CLASSPATH}"/>

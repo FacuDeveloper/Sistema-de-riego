@@ -3,8 +3,8 @@ app.service(
   [ "$http",
     function($http){
 
-      this.find = function(fieldId, parcelId, callback){
-		    $http.get("rest/field/" + fieldId + "/parcels/" + parcelId).then(
+	    this.findAll = function(callback){
+		    $http.get("rest/parcel/findAllParcels").then(
 			    function(result){
 				    callback(false,result.data);
 			    },
@@ -13,8 +13,27 @@ app.service(
     			});
 	    }
 
-      this.addParcelField = function(fieldId, data, callback){
-		    $http.post("rest/field/" + fieldId + "/parcels", data)
+      this.searchByPage = function(search, page, cant, callback) {
+				$http.get('rest/parcel?page=' + page + '&cant=' + cant+ "&search="+JSON.stringify(search))
+						.then(function(res) {
+							return callback(false, res.data)
+						}, function(err) {
+							return callback(err.data)
+						})
+			}
+
+      this.find = function(id, callback){
+		    $http.get("rest/parcel/" + id).then(
+			    function(result){
+				    callback(false,result.data);
+			    },
+    			function(error){
+    				callback(error);
+    			});
+	    }
+
+      this.save = function(data, callback){
+        $http.post("rest/parcel", data)
         .then(
 			    function(result){
 				    callback(false,result.data);
@@ -24,8 +43,12 @@ app.service(
     			});
 	    }
 
-      this.removeParcelField = function(fieldId, parcelId, callback){
-        $http.delete("rest/field/" + fieldId + "/parcels/" + parcelId)
+      this.update = function(id, identificationNumber, area, latitude, longitude, callback){
+        console.log("Actualizando: " + id + " - " + identificationNumber);
+        $http({
+          method:"PUT",
+          url:"rest/parcel/"+id,
+          params:{"identificationNumber": identificationNumber, "area": area, "latitude": latitude, "longitude": longitude} })
         .then(
 			    function(result){
 				    callback(false,result.data);
@@ -35,17 +58,8 @@ app.service(
     			});
 	    }
 
-      // TODO: Ver si eliminar o no, en caso de buscar por numero de identificacion
-      /*
-       * Este invoca a la clase de servicio REST
-       * llamada FindTaskRestServlet
-       */
-      // this.findByName = function(name) {
-      //   return $http.get("rest/parcels/?taskName=" + name);
-      // }
-
-      this.modifyParcelField = function(fieldId, data, callback){
-        $http.put("rest/field/" + fieldId + "/parcels", data)
+      this.delete = function(id, callback){
+        $http.delete("rest/parcel/" + id)
         .then(
 			    function(result){
 				    callback(false,result.data);

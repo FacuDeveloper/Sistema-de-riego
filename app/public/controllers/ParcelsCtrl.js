@@ -1,8 +1,8 @@
 app.controller(
-  "FieldsCtrl",
-  ["$scope","$location","$route","FieldSrv",
+  "ParcelsCtrl",
+  ["$scope","$location","$route","ParcelSrv",
   function($scope, $location, $route, service) {
-    console.log("FieldsCtrl loaded...")
+    console.log("ParcelsCtrl loaded...")
 
     function findAll(){
   		service.findAll( function(error, data){
@@ -21,7 +21,7 @@ app.controller(
     $scope.listElement = []
     $scope.cantPerPage = 20
     /* Esto ess necesario para la paginacion */
-    
+
     $scope.delete = function(id){
       console.log("Deleting: " + id)
 
@@ -30,7 +30,7 @@ app.controller(
           console.log(error);
   				return;
   			}
-  			$location.path("/field");
+  			$location.path("/parcel");
         $route.reload()
   		});
   	}

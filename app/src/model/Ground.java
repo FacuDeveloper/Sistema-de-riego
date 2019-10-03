@@ -16,7 +16,7 @@ public class Ground {
    */
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
-  @Column(name="GRO_ID")
+  @Column(name="GROUND_ID")
   private int id;
 
   @Column(name="DEPTH", nullable=false)

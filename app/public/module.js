@@ -22,29 +22,19 @@ app.config(['$routeProvider', function(routeprovider) {
 		controller: 'GroundCtrl'
 	})
 
-	/* Field */
-	.when('/field',{
-		templateUrl:'partials/field/field-list.html',
-		controller: 'FieldsCtrl'
+	/* Parcel */
+	.when('/parcel',{
+		templateUrl:'partials/parcel/parcel-list.html',
+		controller: 'ParcelsCtrl'
 	})
 
-	.when('/field/:action',{
-		templateUrl:'partials/field/field-form.html',
-		controller: 'FieldCtrl'
-	})
-
-	.when('/field/:action/:id',{
-		templateUrl:'partials/field/field-form.html',
-		controller: 'FieldCtrl'
-	})
-
-	.when('/field/:fieldId/parcel/:action',{
-		templateUrl:'partials/field/parcel-form.html',
+	.when('/parcel/:action',{
+		templateUrl:'partials/parcel/parcel-form.html',
 		controller: 'ParcelCtrl'
 	})
 
-	.when('/field/:fieldId/parcel/:action/:id',{
-		templateUrl:'partials/field/parcel-form.html',
+	.when('/parcel/:action/:id',{
+		templateUrl:'partials/parcel/parcel-form.html',
 		controller: 'ParcelCtrl'
 	})
 

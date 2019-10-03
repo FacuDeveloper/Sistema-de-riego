@@ -21,33 +21,14 @@
 
     <!-- data loading commands -->
 
-    <!-- Conjunto de datos para probar el codigo fuente de validacion del cumplimiento de horas de trabajo de los operarios en sus PMOs -->
-    <target name="horary" depends="init,run_horary_sql" />
-
-    <!-- Conjunto de datos para probar el codigo fuente de validacion de operarios trabajando fuera de su turno -->
-    <target name="turn" depends="init,run_turns_sql" />
-
-    <!-- Conjunto de datos para probar el codigo fuente de validacion de superposicion de horas de trabajo de los operarios en sus PMOs -->
-    <target name="overlap" depends="init,run_overlap_sql" />
-
-    <!-- Conjunto de datos para probar el codigo fuente de validacion de espacios vacios en las horas de trabajo figuradas en los PMOs de los operarios -->
-    <target name="empty" depends="init,run_empty_sql" />
-
-    <!-- Conjunto de datos que contiene varios casos de prueba para los cuatro codigos fuente de validacion de PMOs (los cuatro validadores) -->
-    <target name="all" depends="init,run_all_sql" />
-
-    <!-- Conjunto de datos que contiene los casos de prueba de la quinta quincena para los codigos fuente de validacion de PMOs (los cuatro validadores) -->
-    <target name="fifth" depends="init,run_fifth_sql" />
-
-    <!--  Conjunto de datos pequeño para la prueba del sistema -->
-    <target name="forlogs" depends="init,run_forLogs_sql" />
+    <!-- Conjunto de datos paral a carga de tipos de suelo -->
+    <target name="suelo" depends="init, run_typeGround_sql" />
 
     <target name="delete-domain" depends="init,stop,delete_domain" />
     <target name="create-domain" depends="init,create_domain,start,createdb" />
 
-
     <target name="init">
-      <property name="example_name" value="irrigation" />
-      <property name="DB_NAME" value="irrigation" />
+      <property name="example_name" value="SisRiego" />
+      <property name="DB_NAME" value="SisRiegoDB" />
     </target>
 </project>
