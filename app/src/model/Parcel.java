@@ -135,14 +135,14 @@ public class Parcel {
     return "Parcel id: " + id + " identificacion number: " + identificationNumber + " area: " + area;
   }
 
-  @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		result = prime * result + identificationNumber;
-		return result;
-	}
+  // @Override
+	// public int hashCode() {
+	// 	final int prime = 31;
+	// 	int result = 1;
+	// 	result = prime * result + id;
+	// 	result = prime * result + identificationNumber;
+	// 	return result;
+	// }
 
   /*
    * Este metodo es necesario para la eliminacion de

@@ -65,12 +65,6 @@ app.controller(
     }
 
     $scope.update = function(){
-      // console.log("Antes de la modificacion");
-      // console.log("Latitud: " + $scope.data.latitude);
-      // console.log("Longitud: " + $scope.data.longitude);
-
-      // console.log("");
-
       /*
       Las coordendas geograficas del marcador desplazado por el usuario son cargadas
       en los atributos latitud y longitud del campo a modificar, el cual es seleccionado
@@ -79,13 +73,9 @@ app.controller(
       $scope.data.latitude = $scope.markers[0].lat;
       $scope.data.longitude = $scope.markers[0].lng;
 
-      // console.log("Despues de la modificacion");
-      // console.log("Latitud: " + $scope.data.latitude);
-      // console.log("Longitud: " + $scope.data.longitude);
-
       service.update(
         $scope.data.id,
-        $scope.data.name,
+        $scope.data.identificationNumber,
         $scope.data.area,
         $scope.data.latitude,
         $scope.data.longitude,
@@ -151,7 +141,7 @@ app.controller(
         $scope.markers.push({
           lat: leafEvent.latlng.lat,
           lng: leafEvent.latlng.lng,
-          message: "¡Soy un marcador y tu campo está acá!",
+          message: "¡Soy un marcador!",
           icon: icondata
         });
 

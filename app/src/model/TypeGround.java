@@ -1,6 +1,7 @@
 package model;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import java.util.Collection;
 
 @Entity
+@Table(name="TYPE_GROUND")
 public class TypeGround {
 
   /*
@@ -16,7 +18,7 @@ public class TypeGround {
    */
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
-  @Column(name="TYP_GRO_ID")
+  @Column(name="TYPE_GROUND_ID")
   private int id;
 
   @Column(name="TEXTURE", unique=true, length=30, nullable=false)

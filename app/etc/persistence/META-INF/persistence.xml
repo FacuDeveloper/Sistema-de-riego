@@ -1,10 +1,15 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
   <persistence-unit name="SisRiegoDB">
     <jta-data-source>jdbc/SisRiegoDB</jta-data-source>
-    <class>model.Ground</class>
-    <class>model.Parcel</class>
-    <class>model.TypeGround</class>
+    <class>model.DayFifteenMonth</class>
     <class>model.Forecast</class>
+    <class>model.Ground</class>
+    <class>model.Latitude</class>
+    <class>model.MaximumInsolation</class>
+    <class>model.Month</class>
+    <class>model.Parcel</class>
+    <class>model.SolarRadiation</class>
+    <class>model.TypeGround</class>
     <properties>
       <property name="eclipselink.target-database" value="DERBY"/>
       <property name="eclipselink.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>

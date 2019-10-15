@@ -70,10 +70,6 @@ public  class ParcelServiceBean {
       choosenParcel.setArea(modifiedParcel.getArea());
       choosenParcel.setLongitude(modifiedParcel.getLongitude());
       choosenParcel.setLatitude(modifiedParcel.getLatitude());
-
-      // TODO: Esto queda en revision
-      // choosenParcel.setCountry(modifiedParcel.getCountry());
-      // choosenParcel.setProvince(modifiedParcel.getProvince());
       return choosenParcel;
     }
 

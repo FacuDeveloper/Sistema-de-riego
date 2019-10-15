@@ -24,6 +24,19 @@
     <!-- Conjunto de datos paral a carga de tipos de suelo -->
     <target name="suelo" depends="init, run_typeGround_sql" />
 
+    <!-- Conjunto de datos para la carga de radiaciones solares extraterrestres -->
+    <target name="rad" depends="init, run_solarRadiations_sql" />
+
+    <!-- Conjunto de datos para la carga de duracion maxima de insolacion diaria -->
+    <!-- Para que este comando funcione sin la presencia de excepciones SQL
+    se tiene que ejecutar primero el comando que carga las radiaciones solares porque
+    este carga la tabla de los numeros del año del dia 15 de cada mes y la tabla
+    de las latitudes -->
+    <target name="ins" depends="init, run_maximumInsolations_sql" />
+
+    <!-- Comando para borrar el contenido de las tablas de la base de datos subyacente -->
+    <target name="del" depends="init, run_deleteAll_sql" />
+
     <target name="delete-domain" depends="init,stop,delete_domain" />
     <target name="create-domain" depends="init,create_domain,start,createdb" />
 

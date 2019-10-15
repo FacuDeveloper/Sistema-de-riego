@@ -4,7 +4,7 @@ import java.util.Collection;
 
 /*
  * Esta clase esta hecha para probar con un servicio
- * web la funcion de obtenciond de datos climaticos
+ * web la funcion de obtencion de datos climaticos
  */
 
 public class CoordTime {

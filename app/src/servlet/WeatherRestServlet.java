@@ -63,7 +63,7 @@ public class WeatherRestServlet {
     return mapper.writeValueAsString(forecast);
   }
 
-  // TODO: Quizas vengas un Calendar en lugar de time para convertirlo en UNIX timestamp
+  // TODO: Quizas venga un Calendar en lugar de time para convertirlo en UNIX timestamp
 
   /**
    * Los datos necesarios del pronostico provisto por la API del clima
