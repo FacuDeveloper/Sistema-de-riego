@@ -43,12 +43,12 @@ app.service(
     			});
 	    }
 
-      this.update = function(id, identificationNumber, area, latitude, longitude, callback){
-        console.log("Actualizando: " + id + " - " + identificationNumber);
+      this.update = function(id, parcelName, area, latitude, longitude, callback){
+        console.log("Actualizando: " + id + " - " + parcelName);
         $http({
           method:"PUT",
           url:"rest/parcel/"+id,
-          params:{"identificationNumber": identificationNumber, "area": area, "latitude": latitude, "longitude": longitude} })
+          params:{"parcelName": parcelName, "area": area, "latitude": latitude, "longitude": longitude} })
         .then(
 			    function(result){
 				    callback(false,result.data);

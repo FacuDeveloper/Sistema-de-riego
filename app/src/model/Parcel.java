@@ -20,8 +20,8 @@ public class Parcel {
   private int id;
 
   // TODO: Establecer clave compuesta con este atributo y el identificador del usuario
-  @Column(name="IDENTIFICATION_NUMBER", unique=true)
-  private int identificationNumber;
+  @Column(name="PARCEL_NAME", unique=true)
+  private String parcelName;
 
   @Column(name="AREA", nullable=false)
   private int area; // superficie
@@ -51,19 +51,19 @@ public class Parcel {
 	}
 
 	/**
-	* Returns value of identificationNumber
-	* @return identificationNumber
+	* Returns value of parcelName
+	* @return parcelName
 	*/
-	public int getIdentificationNumber() {
-		return identificationNumber;
+	public String getParcelName() {
+		return parcelName;
 	}
 
 	/**
-	* Sets new value of identificationNumber
-	* @param identificationNumber
+	* Sets new value of parcelName
+	* @param parcelName
 	*/
-	public void setIdentificationNumber(int identificationNumber) {
-		this.identificationNumber = identificationNumber;
+	public void setParcelName(String parcelName) {
+		this.parcelName = parcelName;
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class Parcel {
 
   @Override
   public String toString() {
-    return "Parcel id: " + id + " identificacion number: " + identificationNumber + " area: " + area;
+    return "Parcel id: " + id + " identificacion number: " + parcelName + " area: " + area;
   }
 
   // @Override

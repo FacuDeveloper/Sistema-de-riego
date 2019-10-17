@@ -2,7 +2,7 @@
  * Esta clase permite extraer de la base de datos la insolacion
  * maxima diaria (N) haciendo uso del numero del dia en el año
  * del dia 15 de cada mes y de una latitud en el hemisferio
- * sur desde 0 a -70 grados
+ * sur desde 0 a -70 grados decimales
  */
 
 package model;
@@ -36,10 +36,6 @@ public class MaximumInsolation {
   private Latitude decimalLatitude;
 
   @ManyToOne
-  @JoinColumn(name="FK_DAY_FIFTEEN_MONTH")
-  private DayFifteenMonth dayFifteenMonth;
-
-  @ManyToOne
   @JoinColumn(name="FK_MONTH")
   private Month month;
 
@@ -64,14 +60,6 @@ public class MaximumInsolation {
 	public Latitude getLatitude() {
 		return decimalLatitude;
 	}
-
-  /**
-   * Returns value of dayFifteenMonth
-   * @return
-   */
-  public DayFifteenMonth getDay() {
-    return dayFifteenMonth;
-  }
 
   /**
    * Returns value of maximumInsolationValue

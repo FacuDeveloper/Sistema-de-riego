@@ -28,6 +28,19 @@ public  class MaximumInsolationServiceBean {
     return entityManager;
   }
 
+  /**
+   * Recupera de la base de datos subyacente la maxima
+   * insolacion diaria (N) correspondiente al mes y la
+   * latitud dados
+   *
+   * La latitud va de 0 a -70 grados decimales porque
+   * en la base de datos estan cargadas las insolaciones
+   * maximas diarias del hemisferio sur
+   *
+   * @param  month [1 .. 12]
+   * @param  latitude [0 .. -70]
+   * @return insolacion maxima diaria [MJ / metro cuadrado * dia]
+   */
   public MaximumInsolation findMaximumInsolation(Month month, Latitude latitude) {
     Query query = entityManager.createQuery("SELECT m FROM MaximumInsolation m WHERE m.month = :month AND m.decimalLatitude = :latitude");
     query.setParameter("month", month);

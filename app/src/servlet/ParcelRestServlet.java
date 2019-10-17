@@ -87,11 +87,11 @@ public class ParcelRestServlet {
   @PUT
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public String modify(@PathParam("id") int id, @QueryParam("identificationNumber") int identificationNumber, @QueryParam("area") int area, @QueryParam("latitude") double latitude,
+  public String modify(@PathParam("id") int id, @QueryParam("parcelName") String parcelName, @QueryParam("area") int area, @QueryParam("latitude") double latitude,
   @QueryParam("longitude") double longitude) throws IOException {
 
     Parcel modifiedParcel = new Parcel();
-    modifiedParcel.setIdentificationNumber(identificationNumber);
+    modifiedParcel.setParcelName(parcelName);
     modifiedParcel.setArea(area);
     modifiedParcel.setLatitude(latitude);
     modifiedParcel.setLongitude(longitude);
