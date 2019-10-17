@@ -1,9 +1,9 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
   <persistence-unit name="SisRiegoDB">
     <jta-data-source>jdbc/SisRiegoDB</jta-data-source>
-    <class>model.DayFifteenMonth</class>
     <class>model.Forecast</class>
     <class>model.Ground</class>
+    <class>model.IrrigationLog</class>
     <class>model.Latitude</class>
     <class>model.MaximumInsolation</class>
     <class>model.Month</class>
