@@ -34,11 +34,6 @@ public class Month {
 		return id;
 	}
 
-  // NOTE: Despues de la dmostracion este metodo tiene quer ser eliminado
-  public void setId(int id) {
-    this.id = id;
-  }
-
   /**
    * Returns value of nameMonth
    * @return nameMonth

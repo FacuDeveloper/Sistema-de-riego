@@ -31,8 +31,8 @@ public class SolarRadiationServiceBeanTest {
   private static List<Latitude> latitudes;
   private static List<Month> months;
 
-  @BeforeClass
-  // @Ignore
+  // @BeforeClass
+  @Ignore
   public static void preTest(){
     entityMangerFactory = Persistence.createEntityManagerFactory("SisRiegoDB");
     entityManager = entityMangerFactory.createEntityManager();
@@ -50,7 +50,7 @@ public class SolarRadiationServiceBeanTest {
     months = new ArrayList<>();
   }
 
-  @Test
+  @Ignore
   public void testPositiveFind() {
     int numberLatitude = -70;
     int numberMonth = 5;
@@ -100,7 +100,7 @@ public class SolarRadiationServiceBeanTest {
      * El identificador del mes tambien funciona
      * como el numero del mes
      */
-    month.setId(numberMonth);
+    // month.setId(numberMonth);
 
     entityManager.getTransaction().begin();
     latitude = latitudeService.create(latitude);
@@ -211,8 +211,8 @@ public class SolarRadiationServiceBeanTest {
 
   }
 
-  @AfterClass
-  // @Ignore
+  // @AfterClass
+  @Ignore
   public static void postTest() {
     /*
      * Elimina todos los datos de la base de datos

@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import java.util.Calendar;
 
@@ -29,11 +31,12 @@ public class IrrigationLog {
   @Column(name="IRRIGATION_LOG_ID")
   private int id;
 
-  @Column(name="DATE")
+  @Column(name="DATE", nullable=false)
+  @Temporal(TemporalType.DATE)
   private Calendar wateringDate; // fecha de riego
 
   /*
-   * Riego realizado
+   * Riego sugerido
    *
    * Esta variable contiene el resultado de aplicar la
    * formula de la evapotranspiracion del cultivo bajo
@@ -59,11 +62,15 @@ public class IrrigationLog {
   private float suggestedIrrigation;
 
   /*
-   * Riego sugerido
+   * Riego realizado
    *
-   * Este valor tiene que estar en milimetros porque
-   * la formula FAO Penman-Monteith utiliza la unidad
-   * de medida milimetro
+   * Este valor sera establecido por el usuario
+   * y tiene que estar en milimetros porque el
+   * riego para los cultivos se mide en milimetros
+   * y esto lo podemos ver en la formula FAO
+   * Penman-Monteith, la cual utiliza la unidad
+   * de medida milimetros para indicar la cantidad
+   * de agua  que se va a evaporar
    */
   @Column(name="IRRIGATION_DONE", nullable=false)
   private float irrigationDone;

@@ -10,7 +10,6 @@ import model.Month;
 
 import stateless.MaximumInsolationServiceBean;
 import stateless.LatitudeServiceBean;
-// import stateless.DayFifteenMonthServiceBean;
 import stateless.MonthServiceBean;
 
 import java.util.List;
@@ -30,8 +29,8 @@ public class MaximumInsolationServiceBeanTest {
   private static List<Latitude> latitudes;
   private static List<Month> months;
 
-  @BeforeClass
-  // @Ignore
+  // @BeforeClass
+  @Ignore
   public static void preTest(){
     entityMangerFactory = Persistence.createEntityManagerFactory("SisRiegoDB");
     entityManager = entityMangerFactory.createEntityManager();
@@ -49,7 +48,7 @@ public class MaximumInsolationServiceBeanTest {
     months = new ArrayList<>();
   }
 
-  @Test
+  @Ignore
   public void testPositiveFind() {
     int numberLatitude = -70;
     int numberMonth = 1;
@@ -75,7 +74,6 @@ public class MaximumInsolationServiceBeanTest {
 
     System.out.println("Máxima insolación");
     System.out.println("Latitud: " + maximumInsolation.getLatitude().getLatitude());
-    // System.out.println("Número del dia del año: " + maximumInsolation.getDay().getDayNumber());
     System.out.println("Número del mes del año: " + month.getId());
     System.out.println("Valor de la máxima insolación (N): " + maximumInsolation.getMaximumInsolation());
     System.out.println("*********************************************");
@@ -95,7 +93,12 @@ public class MaximumInsolationServiceBeanTest {
     latitude.setLatitude(numberLatitude);
 
     Month month = new Month();
-    month.setId(numberMonth);
+
+    /*
+     * El identificador del mes tambien funciona
+     * como el numero del mes
+     */
+    // month.setId(numberMonth);
 
     entityManager.getTransaction().begin();
     latitude = latitudeService.create(latitude);
@@ -202,8 +205,8 @@ public class MaximumInsolationServiceBeanTest {
 
   }
 
-  @AfterClass
-  // @Ignore
+  // @AfterClass
+  @Ignore
   public static void postTest() {
     /*
      * Elimina todos los datos de la base de datos

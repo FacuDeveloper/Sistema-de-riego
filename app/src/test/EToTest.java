@@ -26,7 +26,7 @@ public class EToTest {
    * El bloque de codigo fuente a ser probado tiene como
    * parametro la temperatura media del aire en °C
    */
-  @Test
+  @Ignore
   public void testSlopeVaporSaturationPressureCurve() {
     System.out.println("Prueba unitaria de pendiente de la curva de presión de saturacion de vapor");
     System.out.println();
@@ -84,7 +84,7 @@ public class EToTest {
    * El bloque de codigo fuente a ser probado tiene como
    * parametro la presion atmosferica en milibares
    */
-  @Test
+  @Ignore
   public void testPsychometricConstant() {
     System.out.println("Prueba unitaria de la constante psicrometrica");
     System.out.println();
@@ -116,7 +116,7 @@ public class EToTest {
    * El bloque de codigo fuente a ser probado tiene
    * como parametro la altura en metros
    */
-  @Test
+  @Ignore
   public void testConversionFactorToTwoMetersHigh() {
     System.out.println("Prueba unitaria del factor de conversion");
     System.out.println();
@@ -153,7 +153,7 @@ public class EToTest {
    * El bloque de codigo fuente a ser probado tiene como parametro la
    * temperatura del aire en °C
    */
-  @Test
+  @Ignore
   public void testSteamSaturationPressure() {
     System.out.println("Prueba unitaria de la presion de saturacion de vapor");
     System.out.println();

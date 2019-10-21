@@ -37,9 +37,9 @@ public class ParcelRestServlet {
   ObjectMapper mapper = new ObjectMapper();
 
   /*
-   * Los metodos findAllParcels() y findAll() son
-   * necesarios para la paginacion
-   */
+  * Los metodos findAllParcels() y findAll() son
+  * necesarios para la paginacion
+  */
 
   @GET
   @Path("/findAllParcels")

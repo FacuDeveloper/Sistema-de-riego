@@ -273,6 +273,19 @@ Comandos para detener el server y la base de datos.
   </sql>
 </target>
 
+<target name="run_irrigationLogs_sql">
+  <sql driver="org.apache.derby.jdbc.ClientDriver"
+    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
+    userid="${DERBY_USER}"
+    password="${DERBY_PWD}"
+    src="etc/sql/irrigationLog.sql"
+    onerror="continue">
+    <classpath>
+      <pathelement path="${DERBY_CLASSPATH}"/>
+    </classpath>
+  </sql>
+</target>
+
 <!-- Other commands -->
 <target name="deploy_war">
   <echo message=" --user ${ADMIN_USER} ${PASSWORD_PREFIX} ${PASSWORD_FILE} deploy dist/${example_name}.war"/>

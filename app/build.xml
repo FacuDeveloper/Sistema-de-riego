@@ -40,6 +40,9 @@
     <!-- Conjunto de datos para la carga de usuarios -->
     <target name="usuario" depends="init, run_users_sql" />
 
+    <!-- Conjunto de datos para hacer la prueba en Postman del modelo de datos Registro historico de riego -->
+    <target name="logriego" depends="init, run_irrigationLogs_sql" />
+
     <target name="delete-domain" depends="init,stop,delete_domain" />
     <target name="create-domain" depends="init,create_domain,start,createdb" />
 
