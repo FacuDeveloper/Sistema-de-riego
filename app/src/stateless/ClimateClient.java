@@ -1,7 +1,14 @@
 /*
-* Esta clase representa al cliente que hace una llamada a
-* la API Dark Sky para obtener los datos climaticos de
-* una ubicacion dada en una fecha dada
+* Esta clase es una clase cliente que tiene como simple responsabilidad
+* brindar el código fuente necesario para realizar llamadas a
+* la API REST (servicios web) del clima llamada Dark Sky y estas
+* llamadas son necesarias para obtener el pronostico de una ubicacion
+* geografica en una fecha dada, y es necesario obtener el
+* pronostico porque contiene los datos necesarios para
+* el calculo de la evapotranspiracion, la cual nos indica
+* la cantidad de agua que va a evaporar un cultivo dado y
+* al saber este dato sabremos la cantidad de agua
+* que tendremos que reponer al cultivo mediante el riego
 */
 
 package stateless;
@@ -16,8 +23,6 @@ import com.google.gson.Gson;
 
 import weatherApiClasses.ForecastResponse;
 
-import model.Forecast;
-
 public class ClimateClient {
 
   /*
@@ -31,7 +36,6 @@ public class ClimateClient {
   private final String INCOMPLETE_WEATHER_URL;
   private final String QUERY_STRING;
   private Gson gson;
-  private Forecast forecast;
 
   /**
    * Metodo constructor privado para implementar
@@ -62,14 +66,6 @@ public class ClimateClient {
      * formato JSON a Java y viceversa
      */
     gson = new Gson();
-
-    /*
-     * Variable utilizada para crear con los datos
-     * climaticos que necesitamos el pronostico que
-     * necesitamos, el cual va a ser almacenado en la
-     * base de datos subyacente
-     */
-    forecast = new Forecast();
   }
 
   /**
@@ -92,15 +88,16 @@ public class ClimateClient {
   }
 
   /**
-   * Obtiene el pronostico en base a una fecha y coordenadas geograficas
+   * Obtiene el pronostico para una fecha y unas coordenadas geograficas
+   * dadas
    *
-   * @param  latitude en grados decimales
-   * @param  longitude en grados decimales
-   * @param  time en formato UNIX TIMESTAMP
-   * @return el pronostico solicitado en la fecha y en las coordenadas geograficas
+   * @param  latitude  [grados decimales]
+   * @param  longitude [grados decimales]
+   * @param  time      [UNIX TIMESTAMP]
+   * @return pronostico obtenido en la fecha y en las coordenadas geograficas
    * dadas
    */
-  public Forecast getForecast(double latitude, double longitude, long time) {
+  public ForecastResponse getForecast(double latitude, double longitude, long time) {
     /*
      * Contendra el resultado de la llamada
      * a la API del clima utilizada (en este caso
@@ -143,17 +140,12 @@ public class ClimateClient {
       System.out.println("Exception in ClimateClient:- " + e);
     }
 
-    ForecastResponse forecastResponse = gson.fromJson(resultApiCall, ForecastResponse.class);
-
     /*
-     * Carga el objeto de tipo pronostico (Forecast en ingles),
-     * que esta siendo referenciado por la variable de tipo
-     * por referencia que contiene su referencia, con los
-     * datos climaticos obtenidos de la llamada a la API
-     * del clima Dark Sky
+     * Convierte de formato JSON a formato Java (en este case una clase
+     * POJO), el pronostico obtenido en la fecha dada para las
+     * coordenadas geograficas dadas
      */
-    forecast.load(forecastResponse);
-    return forecast;
+    return gson.fromJson(resultApiCall, ForecastResponse.class);
   }
 
   /**
@@ -161,9 +153,9 @@ public class ClimateClient {
    * con la latitud, la longitud y la fecha dada en formato UNIX TIMESTAMP
    * para invocar a la API del clima llamada Dark Sky
    *
-   * @param  latitude
-   * @param  longitude
-   * @param  time
+   * @param  latitude [grados decimales]
+   * @param  longitude [grados decimales]
+   * @param  time [UNIX TIMESTAMP]
    * @return URL completo para la invocacion de la API del clima utilizada (Dark Sky)
    */
   private String getCompleteWeatherUrl(double latitude, double longitude, long time) {

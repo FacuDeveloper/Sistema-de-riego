@@ -10,9 +10,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import model.Forecast;
+import model.ClimateLog;
 
-import stateless.ForecastServiceBean;
+import stateless.ClimateLogServiceBean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,8 +39,8 @@ public class WeatherRestServlet {
   private Client client = ClientBuilder.newClient();
   private WebTarget target;
 
-  // inject a reference to the ForecastServiceBean slsb
-  @EJB ForecastServiceBean service;
+  // inject a reference to the ClimateLogServiceBean slsb
+  @EJB ClimateLogServiceBean service;
 
   // mapea lista de pojo a JSON
   ObjectMapper mapper = new ObjectMapper();
@@ -49,7 +49,7 @@ public class WeatherRestServlet {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String find(@PathParam("id") int id) throws IOException {
-    Forecast forecast = service.find(id);
+    ClimateLog forecast = service.find(id);
     return mapper.writeValueAsString(forecast);
   }
 
@@ -58,7 +58,7 @@ public class WeatherRestServlet {
   public String create(String json) throws IOException {
     CoordTime coordTime = mapper.readValue(json, CoordTime.class);
 
-    Forecast forecast = getForecast(coordTime.getLatitude(), coordTime.getLongitude(), coordTime.getTime());
+    ClimateLog forecast = getForecast(coordTime.getLatitude(), coordTime.getLongitude(), coordTime.getTime());
     forecast = service.create(forecast);
     return mapper.writeValueAsString(forecast);
   }
@@ -67,7 +67,7 @@ public class WeatherRestServlet {
 
   /**
    * Los datos necesarios del pronostico provisto por la API del clima
-   * Dark Sky son extraidos y almacenados en una variable de tipo Forecast
+   * Dark Sky son extraidos y almacenados en una variable de tipo ClimateLog
    *
    * Extraemos algunos datos del pronostico provisto por la API
    * del clima porque no los necesitamos a todos
@@ -79,10 +79,10 @@ public class WeatherRestServlet {
    * por la solicitud a la API del clima Dark Sky con la ubicacion geografica
    * dada en la fecha dada (time)
    */
-  public Forecast getForecast(double latitude, double longitude, long time) {
+  public ClimateLog getForecast(double latitude, double longitude, long time) {
       ForecastResponse forecastResponse = requestForecast(latitude, longitude, time);
 
-      Forecast forecast = new Forecast();
+      ClimateLog forecast = new ClimateLog();
 
       /*
        * Se extraen los datos necesarios del pronostico

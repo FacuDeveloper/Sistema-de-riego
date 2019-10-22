@@ -1,3 +1,9 @@
+/*
+ * Esta representa un registro que contendra los datos
+ * climaticos de los pronosticos recuperados en una
+ * fecha dada para unas coordenadas geograficas dadas
+ */
+
 package model;
 
 import javax.persistence.Entity;
@@ -13,11 +19,11 @@ import weatherApiClasses.ForecastResponse;
 import java.util.Calendar;
 
 @Entity
-public class Forecast {
+public class ClimateLog {
 
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
-  @Column(name="FORECAST_ID")
+  @Column(name="CLIMATE_LOG_ID")
   private int id;
 
   @Column(name="LATITUDE")
@@ -335,7 +341,10 @@ public class Forecast {
   }
 
   /**
-   * Carga el pronostico invocante con los datos del
+   * Carga el registro climatico (el cual contendra los
+   * datos provistos por el pronostico climatico
+   * recuperado, el cual es enviado como argumento
+   * en la invocacion de este metodo) invocante con los datos del
    * pronostico devuelto como respuesta de la llamada
    * a la API del clima Dark Sky
    *
