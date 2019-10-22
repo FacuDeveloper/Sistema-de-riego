@@ -57,6 +57,16 @@ public class ClimateLogServiceBeanTest {
     climateLogServiceBean.create(climateLogService.getClimateLog(latitude, longitude, dateUnixTimeStamp));
     entityManager.getTransaction().commit();
 
+    /*
+     * Si se recupera satisfactoriamente de la base
+     * de datos el registro del clima que tiene id = 1
+     * el metodo find() de la clase ClimateLogServiceBean
+     * tiene que retornar una referencia no nula con lo
+     * cual esta prueba tiene que ser existosa, en caso
+     * contrario fallara
+     */
+    assertNotNull(climateLogServiceBean.find(1));
+
     System.out.println(climateLogServiceBean.find(1));
   }
 

@@ -59,7 +59,7 @@ public class IrrigationLog {
    * cultivo (Kc)
    */
   @Column(name="SUGGESTED_IRRIGATION", nullable=false)
-  private float suggestedIrrigation;
+  private double suggestedIrrigation;
 
   /*
    * Riego realizado
@@ -73,7 +73,7 @@ public class IrrigationLog {
    * de agua  que se va a evaporar
    */
   @Column(name="IRRIGATION_DONE", nullable=false)
-  private float irrigationDone;
+  private double irrigationDone;
 
   // Constructor method
   public IrrigationLog() {
@@ -109,7 +109,7 @@ public class IrrigationLog {
 	 * Returns value of suggestedIrrigation
 	 * @return
 	 */
-	public float getSuggestedIrrigation() {
+	public double getSuggestedIrrigation() {
 		return suggestedIrrigation;
 	}
 
@@ -117,7 +117,7 @@ public class IrrigationLog {
 	 * Sets new value of suggestedIrrigation
 	 * @param
 	 */
-	public void setSuggestedIrrigation(float suggestedIrrigation) {
+	public void setSuggestedIrrigation(double suggestedIrrigation) {
 		this.suggestedIrrigation = suggestedIrrigation;
 	}
 
@@ -125,7 +125,7 @@ public class IrrigationLog {
    * Returns value of irrigationDone
    * @return
    */
-  public float getIrrigationDone() {
+  public double getIrrigationDone() {
     return irrigationDone;
   }
 
@@ -133,7 +133,7 @@ public class IrrigationLog {
    * Sets new value of irrigationDone
    * @param
    */
-  public void setIrrigationDone(float irrigationDone) {
+  public void setIrrigationDone(double irrigationDone) {
     this.irrigationDone = irrigationDone;
   }
 

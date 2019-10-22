@@ -13,12 +13,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Table;
 
 import weatherApiClasses.ForecastResponse;
 
 import java.util.Calendar;
 
 @Entity
+@Table(name="CLIMATE_LOG")
 public class ClimateLog {
 
   @Id
