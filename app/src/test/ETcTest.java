@@ -9,14 +9,14 @@ public class ETcTest {
 
   /*
    * Bloque de codigo fuente de prueba
-   * unitaria para el calculo de la ETo
+   * unitaria para el calculo de la ETc
    * de la localidad Puerto Madryn
    * con los datos climaticos del dia
    * 31/10/19
    */
-  @Ignore
-  public void testGetEto() {
-    System.out.println("Prueba unitaria de obtención de evapotranspiración del cultivo de referencia");
+  @Test
+  public void testGetEtc() {
+    System.out.println("Prueba unitaria de obtención de evapotranspiración de la papa");
     System.out.println();
 
     // [°C]
@@ -41,7 +41,7 @@ public class ETcTest {
     // Insolacion maxima diaria
     double maximumInsolation = 13.2;
 
-    // System.out.println("La ETo es: " + ETo.getEto(temperatureMin, temperatureMax, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover) + " (mm/día)");
+    System.out.println("La ETc de la papa es: " + ETc.getEtc(1.15, temperatureMin, temperatureMax, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover) + " (mm/día)");
   }
 
   @Test

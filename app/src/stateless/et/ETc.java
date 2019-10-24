@@ -23,7 +23,7 @@ public class ETc {
    * @param  cloudCover (n)                 [%]
    * @return cantidad de agua que va a evaporar un cultivo dado [mm/dia]
    */
-  public static double getETc(double cropCoefficient, double minTemperature, double maxTemperature, double pressure, double windSpeed, double dewPoint,
+  public static double getEtc(double cropCoefficient, double minTemperature, double maxTemperature, double pressure, double windSpeed, double dewPoint,
     double extraterrestrialSolarRadiation, double maximumInsolation, double cloudCover) {
     return (cropCoefficient * ETo.getEto(minTemperature, maxTemperature, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover));
   }
