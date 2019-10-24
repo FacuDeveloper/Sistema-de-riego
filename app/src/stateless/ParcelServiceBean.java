@@ -64,9 +64,14 @@ public  class ParcelServiceBean {
     Parcel choosenParcel = find(id);
 
     if (choosenParcel != null) {
-      // TODO: Se tiene que hacer una validacion del numero identificador
-      // No puede haber mas de dos parcelas con el mismo numero identificador
-      choosenParcel.setParcelName(modifiedParcel.getParcelName());
+      /*
+       * TODO: Leer
+       * Probablemente se tenga que hacer una validacion
+       * que impida que un mismo usuario cliente cargue
+       * para si mismo mas de una parcela con nombre
+       * repetido
+       */
+      choosenParcel.setName(modifiedParcel.getName());
       choosenParcel.setArea(modifiedParcel.getArea());
       choosenParcel.setLongitude(modifiedParcel.getLongitude());
       choosenParcel.setLatitude(modifiedParcel.getLatitude());

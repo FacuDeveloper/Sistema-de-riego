@@ -1,15 +1,88 @@
 /*
- * ETo: Evapotranspiracion del cultivo de referencia
+ * ETo: Evapotranspiracion del cultivo de referencia [milímetros/día]
  */
 
-package stateless;
+package stateless.et;
 
 import java.lang.Math;
 
 public class ETo {
 
-  public double getEto() {
-    return 0;
+  /**
+   * Calcula la evapotranspiracion del cultivo de referencia,
+   * la cual nos indica la cantidad de agua que va a evaporar
+   * el cultivo de referencia bajo unas condiciones climaticas
+   *
+   * La evapotranspiracion de referencia se presenta en un
+   * cultivo hipotetico, cuyas caracteristicas son conocidas
+   * y que corresponde a un cultivo de pasto de altura uniforme,
+   * bien regado y en óptimas condiciones de crecimiento
+   *
+   * @param  minTemperature                 [°C]
+   * @param  maxTemperature                 [°C]
+   * @param  pressure                       [kPa]
+   * @param  windSpeed                      [metros/segundo]
+   * @param  dewPoint                       [°C]
+   * @param  extraterrestrialSolarRadiation (Ra) [MJ/metro cuadrado * dia]
+   * @param  maximumInsolation (N)          [horas]
+   * @param  cloudCover (n)                 [%]
+   * @return cantidad de agua que va a evaporar el cultivo de referencia [mm/dia]
+   */
+  public static double getEto(double minTemperature, double maxTemperature, double pressure, double windSpeed, double dewPoint, double extraterrestrialSolarRadiation,
+    double maximumInsolation, double cloudCover) {
+
+    // Temperatura media del aire (T) [°C]
+    double averageAirTemperature = averageAirTemperature(minTemperature, maxTemperature);
+
+    // Pendiente de la curva de presion de saturacion de vapor (letra griega delta mayuscula) [kPa/°C]
+    double delta = slopeVaporSaturationPressureCurve(averageAirTemperature);
+
+    // System.out.println("El delta es: " + delta);
+
+    // Constante psicrometrica (letra griega gamma) [kPa/°C]
+    double gamma = psychometricConstant(pressureMiliBarToKiloPascals(pressure));
+
+    // System.out.println("El gamma es: " + gamma);
+
+    /*
+     * Velocidad del viento a dos metros de altura (u2) [metros/segundo]
+     *
+     * Asumimos que la altura de medicion sobre la superficie es
+     * de 10 metros
+     */
+    double u2 = windSpeedTwoMetersHigh(windSpeed, 10.0);
+
+    // System.out.println("El u2 es: " + u2);
+
+    // Presion media de vapor de saturacion (es) [kPa]
+    double es = averageSaturationVaporPressure(minTemperature, maxTemperature);
+
+    // System.out.println("La presion media de vapor de saturacion es: " + es);
+
+    // Presion real de vapor (ea) [kPa]
+    double ea = actualVaporPressure(dewPoint);
+
+    // System.out.println("La presion real de vapor es: " + ea);
+
+    // Deficit de presion de vapor [kPa]
+    double vaporPressureDeficit = es - ea;
+
+    // System.out.println("El deficit de presion de vapor es: " + vaporPressureDeficit);
+
+    // Radiacion neta (Rn) [MJ/metro cuadrado * dia]
+    double rn = netRadiation(extraterrestrialSolarRadiation, ea, minTemperature, maxTemperature, maximumInsolation, cloudCover);
+
+    // System.out.println("La radiacion neta es: " + rn);
+
+    double numerator = 0.408 * delta * rn + ((gamma * (900 / (averageAirTemperature + 273))) * u2 * (vaporPressureDeficit));
+
+    // System.out.println("El resultado del numerador es: " + numerator);
+
+    double denominator = delta + gamma * (1 + 0.34 * u2);
+
+    // System.out.println("El resultado del denominador es: " + denominator);
+
+    return (numerator / denominator);
   }
 
   /**
@@ -25,12 +98,18 @@ public class ETo {
    * FAO 56
    *
    * @param  averageAirTemperature [°C]
-   * @return pendiente de la cutva de presion de saturacion de vapor [kPa / °C]
+   * @return pendiente de la cutva de presion de saturacion de vapor [kPa/°C]
    */
-  public double slopeVaporSaturationPressureCurve(double averageAirTemperature) {
+  public static double slopeVaporSaturationPressureCurve(double averageAirTemperature) {
     double exp = (17.27 * averageAirTemperature) / (averageAirTemperature + 237.3);
     double numerator = 4098 * (0.6108 * Math.pow(Math.E, exp));
+
+    // System.out.println("Numerador delta: " + numerator);
+
     double denominator = Math.pow(averageAirTemperature + 237.3, 2);
+
+    // System.out.println("Denominador delta: " + denominator);
+
     return numerator / denominator;
   }
 
@@ -45,7 +124,7 @@ public class ETo {
    * @param  maxTemperature [°C]
    * @return temperatura media [°C]
    */
-  public double averageAirTemperature(double minTemperature, double maxTemperature) {
+  public static double averageAirTemperature(double minTemperature, double maxTemperature) {
     return (minTemperature + maxTemperature) / 2;
   }
 
@@ -60,18 +139,18 @@ public class ETo {
    * numero 8 de la pagina numero 31 del libro FAO 56
    *
    * @param  atmosphericPressure en kilo pascales
-   * @return constante psicrometrica [kPa / °C]
+   * @return constante psicrometrica [kPa/°C]
    */
-  public double psychometricConstant(double atmosphericPressure) {
+  public static double psychometricConstant(double atmosphericPressure) {
     /*
-     * Calor latente de vaporizacion [MJ / Kg], este
+     * Calor latente de vaporizacion [MJ/Kg], este
      * valor constante esta representado por la letra
      * griega lambda
      */
     double lambda = 2.45;
 
     /*
-     * Calor especifico a presion constante [MJ / Kg * °C], este
+     * Calor especifico a presion constante [MJ/Kg * °C], este
      * valor constante esta representado por la palabra cp
      */
     double cp = 0.001013;
@@ -99,12 +178,13 @@ public class ETo {
    * a dos metros de altura es la ecuacion numero 47
    * de la pagina numero 56 del libro FAO 56
    *
-   * @param  uz velocidad del viento medida a z metros sobre la superficie [m / s]
+   * @param  uz velocidad del viento medida a z metros sobre la superficie [metros/segundo]
    * @param  z altura en metros
-   * @return velocidad del viento a dos metros sobre la superficie [m / s]
+   * @return velocidad del viento a dos metros sobre la superficie [metros/segundo]
    */
-  public double windSpeedTwoMetersHigh(double uz, double z) {
-    return uz * (4.87 / conversionFactorToTwoMetersHigh(z));
+  public static double windSpeedTwoMetersHigh(double uz, double z) {
+    // System.out.println("u2: " + (uz * (4.87 / conversionFactorToTwoMetersHigh(z))));
+    return (uz * conversionFactorToTwoMetersHigh(z));
   }
 
   /**
@@ -122,7 +202,9 @@ public class ETo {
    * del viento medida a una altura dada a velocidad del viento
    * a la elevacion estandar de dos metros sobre la superficie del suelo
    */
-  public double conversionFactorToTwoMetersHigh(double z) {
+  public static double conversionFactorToTwoMetersHigh(double z) {
+    // System.out.println("Ln: " + Math.log(67.8 * z - 5.42));
+    // System.out.println("Dvisión: " + (4.87 / Math.log(67.8 * z - 5.42)));
     return (4.87 / Math.log(67.8 * z - 5.42));
   }
 
@@ -140,7 +222,7 @@ public class ETo {
    * @param  airTemperature [°C]
    * @return presion de saturacion de vapor a la temperatura del aire [kPa]
    */
-  public double steamSaturationPressure(double airTemperature) {
+  public static double steamSaturationPressure(double airTemperature) {
     double exp = (17.27 * airTemperature) / (airTemperature + 237.3);
     return (0.6108 * Math.pow(Math.E, exp));
   }
@@ -156,7 +238,9 @@ public class ETo {
    * @param  maxTemperature [°C]
    * @return presion media de vapor de saturacion [kPa]
    */
-  public double averageSaturationVaporPressure(double minTemperature, double maxTemperature) {
+  public static double averageSaturationVaporPressure(double minTemperature, double maxTemperature) {
+    // System.out.println("e°(tMin): " + steamSaturationPressure(minTemperature));
+    // System.out.println("e°(tMax): " + steamSaturationPressure(maxTemperature));
     return (steamSaturationPressure(minTemperature) + steamSaturationPressure(maxTemperature)) / 2;
   }
 
@@ -173,7 +257,7 @@ public class ETo {
    * @return presion real de vapor derivada de la temperatura
    * del punto de rocio [kPa]
    */
-  public double actualVaporPressure(double dewPoint) {
+  public static double actualVaporPressure(double dewPoint) {
     return steamSaturationPressure(dewPoint);
   }
 
@@ -192,12 +276,22 @@ public class ETo {
    * @param  maxTemperature temperatura maxima [°C]
    * @param  maximumInsolation duracion maxima de insolacion (N)
    * @param  cloudCover nubosidad (n)
-   * @return radiacion neta [MJ / m cuadrado * dia]
+   * @return radiacion neta [MJ/metros cuadrados * dia]
    */
-  public double netRadiation(double extraterrestrialSolarRadiation, double dewPoint, double minTemperature, double maxTemperature, double maximumInsolation, double cloudCover) {
+  public static double netRadiation(double extraterrestrialSolarRadiation, double actualVaporPressure, double minTemperature, double maxTemperature, double maximumInsolation, double cloudCover) {
     double solarRadiation = solarRadiation(extraterrestrialSolarRadiation, maximumInsolation, cloudCover);
+
+    // System.out.println("N: " + maximumInsolation);
+    // System.out.println("Radiacion solar extraterrestre: " + extraterrestrialSolarRadiation);
+    // System.out.println("La radiacion solar es: " + solarRadiation);
+
     double netShortWaveRadiation = netShortWaveRadiation(solarRadiation);
-    double netLongWaveRadiation = netLongWaveRadiation(extraterrestrialSolarRadiation, dewPoint, minTemperature, maxTemperature, solarRadiation);
+
+    // System.out.println("La radiacion solar de onda corta es: " + netShortWaveRadiation);
+
+    double netLongWaveRadiation = netLongWaveRadiation(extraterrestrialSolarRadiation, actualVaporPressure, minTemperature, maxTemperature, solarRadiation);
+
+    // System.out.println("La radiacion de onda larga es: " + netLongWaveRadiation);
 
     return (netShortWaveRadiation - netLongWaveRadiation);
   }
@@ -210,33 +304,34 @@ public class ETo {
    * FAO 56
    *
    * @param  extraterrestrialSolarRadiation radiacion solar extraterrestre (Ra)
-   * @param  dewPoint punto de rocio [°C]
+   * @param  actualVaporPressure presion real de vapor [kPa]
    * @param  minTemperature temperatura minima [°C]
    * @param  maxTemperature temperatura maxima [°C]
-   * @param  solarRadiation radiacion solar (Rs) [MJ / m cuadrado * dia]
-   * @return radiacion neta de onda larga [MJ / m cuadrado * dia]
+   * @param  solarRadiation radiacion solar (Rs) [MJ/metros cuadrados * dia]
+   * @return radiacion neta de onda larga [MJ/metros cuadrados * dia]
    */
-  public double netLongWaveRadiation(double extraterrestrialSolarRadiation, double dewPoint, double minTemperature, double maxTemperature, double solarRadiation) {
+  public static double netLongWaveRadiation(double extraterrestrialSolarRadiation, double actualVaporPressure, double minTemperature, double maxTemperature, double solarRadiation) {
     double firstTerm = getSigmaResult(minTemperature, maxTemperature);
 
-    /*
-     * NOTE: Quizas se puede reemplazar la funcion actualVaporPressure
-     * por el resultado del mismo
-     */
+    // System.out.println("Valor sigma: " + firstTerm);
 
-     /*
-      * Este segundo termino de la ecuacion 39 hace uso
-      * del valor de la presion real de vapor (ea) derivada
-      * del punto de rocio
-      */
-    double secondTerm = 0.34 - (0.14 * Math.sqrt(actualVaporPressure(dewPoint)));
+   /*
+    * Este segundo termino de la ecuacion 39 hace uso
+    * del valor de la presion real de vapor (ea) derivada
+    * del punto de rocio
+    */
+    double secondTerm = 0.34 - (0.14 * Math.sqrt(actualVaporPressure));
 
-    /*
-     * Este tercer termino de la ecuacion 39 hace uso de
-     * la radiacion solar (Rs) y de la radiacion solar en
-     * un dia despejado (Rso)
-     */
+    // System.out.println("El segundo termino es: " + secondTerm);
+
+   /*
+    * Este tercer termino de la ecuacion 39 hace uso de
+    * la radiacion solar (Rs) y de la radiacion solar en
+    * un dia despejado (Rso)
+    */
     double thirdTerm = ((1.35 * solarRadiation) / solarRadiationClearDay(extraterrestrialSolarRadiation)) - 0.35;
+
+    // System.out.println("El tercer termino es: " + thirdTerm);
 
     return (firstTerm * secondTerm * thirdTerm);
   }
@@ -248,10 +343,10 @@ public class ETo {
    * ecuacion numero 38 de la pagina 51 del libro
    * FAO 56
    *
-   * @param  solarRadiation radiacion solar (Rs) [MJ / m cuadrado * dia]
-   * @return radiacion neta solar o de onda corta [MJ / m cuadrado * dia]
+   * @param  solarRadiation radiacion solar (Rs) [MJ/metros cuadrados * dia]
+   * @return radiacion neta solar o de onda corta [MJ/metros cuadrados * dia]
    */
-  public double netShortWaveRadiation(double solarRadiation) {
+  public static double netShortWaveRadiation(double solarRadiation) {
     /*
      * Coeficiente de reflexion del cultivo, este
      * valor en la formula de la radiacion neta
@@ -270,21 +365,24 @@ public class ETo {
    * La ecuacion de Stefan Boltzmann se puede ver en la
    * ecuacion numero 39 de la pagina 52 del libro FAO 56
    *
-   * La constante de Stefan Boltzmann esta en MJ / m cuadrado * dia
+   * La constante de Stefan Boltzmann esta en MJ/metros cuadrados * dia
    *
    * @param  minTemperature temperatura minima [°C]
    * @param  maxTemperature temperatura maxima [°C]
-   * @return valor que surge (en MJ / m cuadrado * dia) del resultado del producto entre
+   * @return valor que surge (en MJ/metros cuadrados * dia) del resultado del producto entre
    * la constante de Stefan Boltzmann y el promedio de las
    * temperaturas maxima y minima en grados Kelvin
    */
-  public double getSigmaResult(double minTemperature, double maxTemperature) {
+  public static double getSigmaResult(double minTemperature, double maxTemperature) {
     /*
      * En ambos casos, convierte la temperatura dada en °C a
      * grados Kelvin y luego la eleva a la cuarta potencia
      */
     double minKelvinTemperature = Math.pow(toKelvin(minTemperature), 4);
     double maxKelvinTemperature = Math.pow(toKelvin(maxTemperature), 4);
+
+    // System.out.println("Tempratura minima a Kelvin: " + minKelvinTemperature);
+    // System.out.println("Temperatura maxima a Kelvin: " + maxKelvinTemperature);
 
     /*
      * Comunmente, en la ecuacion de Stefan Boltzmann se utiliza el
@@ -301,7 +399,7 @@ public class ETo {
    * @param  temperature temperatura [°C]
    * @return temperatura en grados Kelvin
    */
-  private double toKelvin(double temperature) {
+  private static double toKelvin(double temperature) {
     return (temperature + 273.16);
   }
 
@@ -313,9 +411,9 @@ public class ETo {
    * pagina 51 del libro FAO 56
    *
    * @param  extraterrestrialSolarRadiation radiacion solar extraterrestre (Ra)
-   * @return radiacion solar en un dia despejado [MJ / m cuadrado * dia]
+   * @return radiacion solar en un dia despejado [MJ/metros cuadrados * dia]
    */
-  public double solarRadiationClearDay(double extraterrestrialSolarRadiation) {
+  public static double solarRadiationClearDay(double extraterrestrialSolarRadiation) {
     /*
      * Elevacion de la estacion sobre el nivel del mar [m]
      *
@@ -336,9 +434,9 @@ public class ETo {
    * @param  extraterrestrialSolarRadiation radiacion solar extraterrestre (Ra)
    * @param  maximumInsolation duracion maxima de insolacion (N)
    * @param  cloudCover nubosidad (n)
-   * @return radiacion solar [MJ / m cuadrado * dia]
+   * @return radiacion solar [MJ/metros cuadrados * dia]
    */
-  public double solarRadiation(double extraterrestrialSolarRadiation, double maximumInsolation, double cloudCover) {
+  public static double solarRadiation(double extraterrestrialSolarRadiation, double maximumInsolation, double cloudCover) {
     /*
      * En la ecuacion de la radiacion solar, la nubosidad,
      * dada por la variable cloudCover, es la letra n,
@@ -348,7 +446,21 @@ public class ETo {
      * extraterrestrialSolarRadiation, es la palabra Ra
      */
     double relativeDurationInsolation = (cloudCover / maximumInsolation);
-    return (((0.25 + 0.50) * relativeDurationInsolation) * extraterrestrialSolarRadiation);
+
+    // System.out.println("Valor: " + (relativeDurationInsolation * 0.50));
+    // System.out.println("Valor: " + (0.25 + (0.50 * relativeDurationInsolation)));
+
+    return ((0.25 + (0.50 * relativeDurationInsolation)) * extraterrestrialSolarRadiation);
+  }
+
+  /**
+   * Convierte la presión atmosferica dada en milibares a kilopascales
+   *
+   * @param  miliBarPressure
+   * @return presion atmosferica [kPa]
+   */
+  private static double pressureMiliBarToKiloPascals(double miliBarPressure) {
+    return (miliBarPressure * 0.1);
   }
 
 }

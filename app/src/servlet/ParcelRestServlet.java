@@ -91,7 +91,7 @@ public class ParcelRestServlet {
   @QueryParam("longitude") double longitude) throws IOException {
 
     Parcel modifiedParcel = new Parcel();
-    modifiedParcel.setParcelName(parcelName);
+    modifiedParcel.setName(parcelName);
     modifiedParcel.setArea(area);
     modifiedParcel.setLatitude(latitude);
     modifiedParcel.setLongitude(longitude);

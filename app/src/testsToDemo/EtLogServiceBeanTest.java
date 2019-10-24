@@ -18,7 +18,6 @@ public class EtLogServiceBeanTest {
   private static EtLogServiceBean etLogService;
   private static EntityManager entityManager;
   private static EntityManagerFactory entityMangerFactory;
-  // private static List<EtLog> etLogs;
 
   @BeforeClass
   public static void preTest(){
@@ -81,7 +80,8 @@ public class EtLogServiceBeanTest {
      * satisfactoria, el metodo findAll() de la clase
      * EtLogServiceBean tiene que retornar la referencia
      * a una coleccion no vacia de referencias a objetos
-     * de tipo etLog
+     * de tipo etLog, con lo cual esta prueba tiene que
+     * ser exitosa, en caso contrario fallara
      */
     assertFalse(etLogService.findAll().isEmpty());
 
@@ -129,7 +129,8 @@ public class EtLogServiceBeanTest {
      * metodo find() de la clase EtLogServiceBean
      * tiene que retornar la referencia a un objeto
      * de tipo etLog, con lo cual no existe el valor
-     * nulo en este caso
+     * nulo y por lo tanto, la prueba tiene que ser
+     * exitosa, en caso contrario fallara
      */
     assertNotNull(etLogService.find(etLogBanana.getId()));
 

@@ -6,12 +6,10 @@ import org.junit.Ignore;
 
 import model.SolarRadiation;
 import model.Latitude;
-// import model.DayFifteenMonth;
 import model.Month;
 
 import stateless.SolarRadiationServiceBean;
 import stateless.LatitudeServiceBean;
-// import stateless.DayFifteenMonthServiceBean;
 import stateless.MonthServiceBean;
 
 import java.util.List;

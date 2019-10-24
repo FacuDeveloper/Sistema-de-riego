@@ -20,7 +20,7 @@ public class Parcel {
   private int id;
 
   // TODO: Establecer clave compuesta con este atributo y el identificador del usuario
-  @Column(name="PARCEL_NAME", unique=true)
+  @Column(name="PARCEL_NAME")
   private String parcelName;
 
   @Column(name="AREA", nullable=false)
@@ -54,7 +54,7 @@ public class Parcel {
 	* Returns value of parcelName
 	* @return parcelName
 	*/
-	public String getParcelName() {
+	public String getName() {
 		return parcelName;
 	}
 
@@ -62,7 +62,7 @@ public class Parcel {
 	* Sets new value of parcelName
 	* @param parcelName
 	*/
-	public void setParcelName(String parcelName) {
+	public void setName(String parcelName) {
 		this.parcelName = parcelName;
 	}
 
