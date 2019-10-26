@@ -25,7 +25,7 @@ public  class AutomaticDataExtractor {
    * @param hour="8"
    */
   // @Schedule(second="0", minute="0", hour="8")
-  @Schedule(second="*/2", minute="*", hour="*", persistent=false)
+  // @Schedule(second="*/2", minute="*", hour="*", persistent=false)
   public void execute() {
     Collection<Parcel> parcels = parcelService.findAll();
 

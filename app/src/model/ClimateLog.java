@@ -47,8 +47,8 @@ public class ClimateLog {
   @Column(name="PRECIP_PROBABILITY")
   private Double precipProbability;
 
-  @Column(name="PRECIP_ACCUMULATION")
-  private Double precipAccumulation;
+  // @Column(name="PRECIP_ACCUMULATION")
+  // private Double precipAccumulation;
 
   @Column(name="PRECIP_TYPE")
   private String precipType;
@@ -56,8 +56,8 @@ public class ClimateLog {
   @Column(name="DEW_POINT")
   private Double dewPoint;
 
-  @Column(name="HUMIDITY")
-  private Double humidity;
+  // @Column(name="HUMIDITY")
+  // private Double humidity;
 
   @Column(name="PRESSURE")
   private Double pressure;
@@ -186,17 +186,17 @@ public class ClimateLog {
 	* Returns value of precipAccumulation
 	* @return
 	*/
-	public Double getPrecipAccumulation() {
-		return precipAccumulation;
-	}
+	// public Double getPrecipAccumulation() {
+	// 	return precipAccumulation;
+	// }
 
 	/**
 	* Sets new value of precipAccumulation
 	* @param
 	*/
-	public void setPrecipAccumulation(Double precipAccumulation) {
-		this.precipAccumulation = precipAccumulation;
-	}
+	// public void setPrecipAccumulation(Double precipAccumulation) {
+	// 	this.precipAccumulation = precipAccumulation;
+	// }
 
 	/**
 	 * Returns value of precipType
@@ -234,17 +234,17 @@ public class ClimateLog {
 	 * Returns value of humidity
 	 * @return
 	 */
-	public Double getHumidity() {
-		return humidity;
-	}
+	// public Double getHumidity() {
+	// 	return humidity;
+	// }
 
 	/**
 	 * Sets new value of humidity
 	 * @param
 	 */
-	public void setHumidity(Double humidity) {
-		this.humidity = humidity;
-	}
+	// public void setHumidity(Double humidity) {
+	// 	this.humidity = humidity;
+	// }
 
 	/**
 	 * Returns value of pressure
@@ -421,16 +421,8 @@ public class ClimateLog {
       precipProbability = 0.0;
     }
 
-    /*
-     * La cantidad de acumulación de nieve que se espera que ocurra (durante la hora o el día, respectivamente),
-     * en pulgadas. (Si no se esperan nevadas, esta propiedad no se definirá).
-     *
-     * NOTE: Si esta no la utlizamos la podemos eliminar, esperando respuesta de Tomas
-     */
-    precipAccumulation = forecastResponse.getDaily().getData().get(0).getPrecipAccumulation();
     precipType = forecastResponse.getDaily().getData().get(0).getPrecipType();
     dewPoint = forecastResponse.getDaily().getData().get(0).getDewPoint();
-    humidity = forecastResponse.getDaily().getData().get(0).getHumidity();
 
     /*
      * Presion atmosferica convertida de milibares a kilopascales
@@ -477,8 +469,8 @@ public class ClimateLog {
      * porque los numeros de los meses van desde 0
      * (Enero) a 11 (Diciembre)
      */
-    return String.format("Latitud: %f (grados decimales) Longitud: %f (grados decimales)\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nHumedad: %f (entre 0 y 1)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)",
-    latitude, longitude, (date.get(Calendar.DAY_OF_MONTH) + "-" + (date.get(Calendar.MONTH) + 1) + "-" + date.get(Calendar.YEAR)), precipIntensity, precipProbability, dewPoint, humidity, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, totalRainWater);
+    return String.format("Latitud: %f (grados decimales) Longitud: %f (grados decimales)\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)",
+    latitude, longitude, (date.get(Calendar.DAY_OF_MONTH) + "-" + (date.get(Calendar.MONTH) + 1) + "-" + date.get(Calendar.YEAR)), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, totalRainWater);
   }
 
 }

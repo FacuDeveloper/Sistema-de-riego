@@ -17,7 +17,7 @@ public class ETc {
    * @param  maxTemperature                 [°C]
    * @param  pressure                       [kPa]
    * @param  windSpeed                      [metros/segundo]
-   * @param  dewPoint                       [°C]
+   * @param  dewPoint (punto de rocío)      [°C]
    * @param  extraterrestrialSolarRadiation (Ra) [MJ/metro cuadrado * dia]
    * @param  maximumInsolation (N)          [horas]
    * @param  cloudCover (n)                 [%]

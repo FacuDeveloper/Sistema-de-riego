@@ -21,7 +21,10 @@
 
     <!-- data loading commands -->
 
-    <!-- Conjunto de datos paral a carga de tipos de suelo -->
+    <!-- Conjunto de datos para la carga de cultivos -->
+    <target name="cul" depends="init, run_cultivo_sql" />
+
+    <!-- Conjunto de datos para la carga de tipos de suelo -->
     <target name="suelo" depends="init, run_typeGround_sql" />
 
     <!-- Conjunto de datos para la carga de radiaciones solares extraterrestres -->

@@ -2,6 +2,7 @@
   <persistence-unit name="SisRiegoDB">
     <jta-data-source>jdbc/SisRiegoDB</jta-data-source>
     <class>model.ClimateLog</class>
+    <class>model.Cultivo</class>
     <class>model.EtLog</class>
     <class>model.Ground</class>
     <class>model.IrrigationLog</class>

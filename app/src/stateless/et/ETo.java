@@ -271,25 +271,31 @@ public class ETo {
    * neta de onda corta (Rns) y la radiacion neta de onda larga (Rnl)
    *
    * @param  extraterrestrialSolarRadiation radiacion solar extraterrestre (Ra)
-   * @param  dewPoint punto de rocio [°C]
+   * @param  ea presion real de vapor [kPa]
    * @param  minTemperature temperatura minima [°C]
    * @param  maxTemperature temperatura maxima [°C]
    * @param  maximumInsolation duracion maxima de insolacion (N)
    * @param  cloudCover nubosidad (n)
    * @return radiacion neta [MJ/metros cuadrados * dia]
    */
-  public static double netRadiation(double extraterrestrialSolarRadiation, double actualVaporPressure, double minTemperature, double maxTemperature, double maximumInsolation, double cloudCover) {
+  public static double netRadiation(double extraterrestrialSolarRadiation, double ea, double minTemperature, double maxTemperature, double maximumInsolation, double cloudCover) {
     double solarRadiation = solarRadiation(extraterrestrialSolarRadiation, maximumInsolation, cloudCover);
 
     // System.out.println("N: " + maximumInsolation);
     // System.out.println("Radiacion solar extraterrestre: " + extraterrestrialSolarRadiation);
     // System.out.println("La radiacion solar es: " + solarRadiation);
 
+    /*
+     * Radiacion solar de onda corta (Rns)
+     */
     double netShortWaveRadiation = netShortWaveRadiation(solarRadiation);
 
     // System.out.println("La radiacion solar de onda corta es: " + netShortWaveRadiation);
 
-    double netLongWaveRadiation = netLongWaveRadiation(extraterrestrialSolarRadiation, actualVaporPressure, minTemperature, maxTemperature, solarRadiation);
+    /*
+     * Radiacion solar de onda larga (Rnl)
+     */
+    double netLongWaveRadiation = netLongWaveRadiation(extraterrestrialSolarRadiation, ea, minTemperature, maxTemperature, solarRadiation);
 
     // System.out.println("La radiacion de onda larga es: " + netLongWaveRadiation);
 
@@ -304,13 +310,13 @@ public class ETo {
    * FAO 56
    *
    * @param  extraterrestrialSolarRadiation radiacion solar extraterrestre (Ra)
-   * @param  actualVaporPressure presion real de vapor [kPa]
+   * @param  ea presion real de vapor [kPa]
    * @param  minTemperature temperatura minima [°C]
    * @param  maxTemperature temperatura maxima [°C]
    * @param  solarRadiation radiacion solar (Rs) [MJ/metros cuadrados * dia]
    * @return radiacion neta de onda larga [MJ/metros cuadrados * dia]
    */
-  public static double netLongWaveRadiation(double extraterrestrialSolarRadiation, double actualVaporPressure, double minTemperature, double maxTemperature, double solarRadiation) {
+  public static double netLongWaveRadiation(double extraterrestrialSolarRadiation, double ea, double minTemperature, double maxTemperature, double solarRadiation) {
     double firstTerm = getSigmaResult(minTemperature, maxTemperature);
 
     // System.out.println("Valor sigma: " + firstTerm);
@@ -320,7 +326,7 @@ public class ETo {
     * del valor de la presion real de vapor (ea) derivada
     * del punto de rocio
     */
-    double secondTerm = 0.34 - (0.14 * Math.sqrt(actualVaporPressure));
+    double secondTerm = 0.34 - (0.14 * Math.sqrt(ea));
 
     // System.out.println("El segundo termino es: " + secondTerm);
 
