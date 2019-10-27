@@ -77,6 +77,7 @@ public class IrrigationLog {
 
   // Constructor method
   public IrrigationLog() {
+    
   }
 
   /* Getters and setters */

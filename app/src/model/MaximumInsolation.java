@@ -41,6 +41,7 @@ public class MaximumInsolation {
 
   // Constructor method
   public MaximumInsolation() {
+    
   }
 
   /* Getters and setters */

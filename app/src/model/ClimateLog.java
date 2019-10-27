@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Table;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 
 import weatherApiClasses.ForecastResponse;
 
@@ -77,6 +79,15 @@ public class ClimateLog {
   // Cantidad total de agua de lluvia
   @Column(name="TOTAL_RAIN_WATER")
   private Double totalRainWater;
+
+  @ManyToOne
+  @JoinColumn(name="FK_PARCEL")
+  private Parcel parcel;
+
+  // Constructor method
+  public ClimateLog() {
+
+  }
 
 	/**
 	* Returns value of id
@@ -340,6 +351,22 @@ public class ClimateLog {
   */
   public void setTotalRainWater(Double totalRainWater) {
     this.totalRainWater = totalRainWater;
+  }
+
+  /**
+  * Returns value of parcel
+  * @return
+  */
+  public Parcel getParcel() {
+    return parcel;
+  }
+
+  /**
+  * Sets new value of parcel
+  * @param
+  */
+  public void setParcel(Parcel parcel) {
+    this.parcel = parcel;
   }
 
   /**

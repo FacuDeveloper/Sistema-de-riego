@@ -72,6 +72,7 @@ public class EtLog {
 
   // Constructor method
   public EtLog() {
+    
   }
 
   /* Getters and setters */

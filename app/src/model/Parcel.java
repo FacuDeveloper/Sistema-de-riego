@@ -38,6 +38,7 @@ public class Parcel {
 
   // Constructor method
   public Parcel() {
+    
   }
 
   /* Getters and setters */

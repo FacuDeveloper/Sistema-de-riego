@@ -22,6 +22,7 @@ public class Month {
 
   // Constructor method
   public Month() {
+    
   }
 
   /* Getters and setters */

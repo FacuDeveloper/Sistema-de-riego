@@ -29,6 +29,7 @@ public class TypeGround {
 
   // Constructor method
   public TypeGround() {
+    
   }
 
   /*

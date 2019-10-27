@@ -22,6 +22,7 @@ public class Latitude {
 
   // Constructor method
   public Latitude() {
+    
   }
 
   /* Getters and setters */

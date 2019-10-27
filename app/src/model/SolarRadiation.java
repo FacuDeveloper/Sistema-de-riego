@@ -40,6 +40,7 @@ public class SolarRadiation {
 
   // Constructor method
   public SolarRadiation() {
+    
   }
 
   /* Getters and setters */
