@@ -287,6 +287,12 @@ public class CultivoServiceBean implements CultivoService {
     return Character.toUpperCase(line.charAt(0)) + line.substring(1);
   }
 
+  public Cultivo findByName(String cropName) {
+    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c WHERE c.nombre = :cropName");
+    query.setParameter("cropName", cropName.toUpperCase());
+    return (Cultivo) query.getSingleResult();
+  }
+
   /*
    * NOTE: Despues de la demostracion los metodos que tiene
    * Calendar seedTime, Calendar currentDate tienen que ser borrados

@@ -19,4 +19,5 @@ public interface CultivoService {
   public Page<Cultivo> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters);
   public double getKc(Cultivo crop, Calendar seedTime, Calendar currentDate);
   public double getKc(Cultivo crop, Calendar seedTime);
+  public Cultivo findByName(String cropName);
 }
