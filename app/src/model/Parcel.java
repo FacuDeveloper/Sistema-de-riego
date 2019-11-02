@@ -7,6 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import java.util.Calendar;
 
 @Entity
 public class Parcel {
@@ -20,25 +24,28 @@ public class Parcel {
   private int id;
 
   // TODO: Establecer clave compuesta con este atributo y el identificador del usuario
-  @Column(name="PARCEL_NAME")
-  private String parcelName;
+  @Column(name="PARCEL_NAME", nullable=false)
+  private String name;
 
   @Column(name="AREA", nullable=false)
-  private int area; // superficie
-
-  @Column(name="LONGITUDE", nullable=false)
-  private double longitude;
+  private double area; // superficie
 
   @Column(name="LATITUDE", nullable=false)
-  private double latitude;
+  private double latitude; // en grados decimales
 
-  // @ManyToOne
-  // @JoinColumn(name="FK_USER")
-  // private Usuario user;
+  @Column(name="LONGITUDE", nullable=false)
+  private double longitude; // en grados decimales
+
+  @Column(name="ACTIVE", nullable=false)
+  private boolean active;
+
+  @ManyToOne
+  @JoinColumn(name="FK_USER")
+  private Usuario user;
 
   // Constructor method
   public Parcel() {
-    
+
   }
 
   /* Getters and setters */
@@ -52,26 +59,26 @@ public class Parcel {
 	}
 
 	/**
-	* Returns value of parcelName
-	* @return parcelName
+	* Returns value of name
+	* @return name
 	*/
 	public String getName() {
-		return parcelName;
+		return name;
 	}
 
 	/**
-	* Sets new value of parcelName
-	* @param parcelName
+	* Sets new value of name
+	* @param name
 	*/
-	public void setName(String parcelName) {
-		this.parcelName = parcelName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
 	 * Returns value of area
 	 * @return
 	 */
-	public int getArea() {
+	public double getArea() {
 		return area;
 	}
 
@@ -79,25 +86,9 @@ public class Parcel {
 	 * Sets new value of area
 	 * @param
 	 */
-	public void setArea(int area) {
+	public void setArea(double area) {
 		this.area = area;
 	}
-
-  /**
-   * Returns value of longitude
-   * @return
-   */
-  public double getLongitude() {
-    return longitude;
-  }
-
-  /**
-   * Sets new value of longitude
-   * @param
-   */
-  public void setLongitude(double longitude) {
-    this.longitude = longitude;
-  }
 
   /**
    * Returns value of latitude
@@ -116,27 +107,59 @@ public class Parcel {
   }
 
   /**
+   * Returns value of longitude
+   * @return
+   */
+  public double getLongitude() {
+    return longitude;
+  }
+
+  /**
+   * Sets new value of longitude
+   * @param
+   */
+  public void setLongitude(double longitude) {
+    this.longitude = longitude;
+  }
+
+  /**
+   * Returns value of active
+   * @return
+   */
+  public boolean getActive() {
+    return active;
+  }
+
+  /**
+   * Sets new value of active
+   * @param
+   */
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
+  /**
    * Returns value of user
    * @return
    */
-  // public Usuario getUser() {
-    // return user;
-  // }
+  public Usuario getUser() {
+    return user;
+  }
 
   /**
    * Sets new value of user
    * @param
    */
-  // public void setUser(Usuario user) {
-    // this.user = user;
-  // }
+  public void setUser(Usuario user) {
+    this.user = user;
+  }
 
   @Override
   public String toString() {
-    return "Parcel id: " + id + " identificacion number: " + parcelName + " area: " + area;
+    return String.format("ID: %d\nNombre: %s\nArea: %f\nLatitud: %f\nLongitud: %f\nActiva: %b\nUsuario ID: %d\n",
+    id, area, latitude, longitude, active, user.getId());
   }
 
-  // @Override
 	// public int hashCode() {
 	// 	final int prime = 31;
 	// 	int result = 1;
