@@ -2,6 +2,29 @@
  * Esta representa un registro que contendra los datos
  * climaticos de los pronosticos recuperados en una
  * fecha dada para unas coordenadas geograficas dadas
+ *
+ * Nota
+ * Las unidades de medida de los fenomenos climaticos
+ * dependen de las unidades de medida en la cual son
+ * pedidos en la llamada a la API del clima llamada
+ * Dark Sky
+ *
+ * En nuestro caso, en la llamada a la API especificamos
+ * que deseamos que los fenomenos climaticos utilicen
+ * la unidad SI, la cual establece lo siguiente:
+ *
+ * precipIntensity: Milimetros por hora.
+ * temperatureMin: Grados centigrados.
+ * temperatureMax: Grados centigrados.
+ * dewPoint: Grados centigrados.
+ * windSpeed: Metros por segundo.
+ * pressure: Hectopascales.
+ *
+ * La presion atmosferica la tenemos que convertir
+ * de hectopascales a kilopascales porque la formula
+ * de la ETo (evapotranspiracion del cultivo de
+ * referencia) utiliza la presion atmosferica en
+ * kilopascales
  */
 
 package model;
@@ -30,58 +53,168 @@ public class ClimateLog {
   @Column(name="CLIMATE_LOG_ID")
   private int id;
 
-  @Column(name="LATITUDE")
-  private Double latitude;
-
-  @Column(name="LONGITUDE")
-  private Double longitude;
-
-  @Column(name="TIME_ZONE")
-  private String timezone;
-
+  /*
+   * Fecha en la cual los datos climaticos
+   * en base a unas coordenadas geograficas
+   * han sido solicitados
+   */
   @Column(name="DATE")
   @Temporal(TemporalType.DATE)
   private Calendar date;
 
+  /*
+   * Zona horaria
+   *
+   * El nombre de la zona horaria de la
+   * IANA para la ubicacion solicitada
+   */
+  @Column(name="TIME_ZONE")
+  private String timezone;
+
+  /*
+   * Intensidad de precipitacion
+   *
+   * La intensidad (en milimetros de agua liquida por hora)
+   * de precipitacion que ocurre en el momento dado
+   *
+   * Este valor depende de la probabilidad (es decir,
+   * suponiendo que ocurre alguna precipitacion)
+   *
+   * En la cadena de consulta para la llamada a la API
+   * del clima esta establecida que la unidad de medida
+   * en la cual los fenomenos climaticos tienen que ser
+   * devueltos como respuesta a la llamada es la SI, la
+   * cual especifica que la intensidad de la precipitacion
+   */
   @Column(name="PRECIP_INTENSITY")
   private Double precipIntensity;
 
+  /*
+   * Probabilidad de la precipitacion
+   *
+   * La probabilidad de que ocurra una precipitacion,
+   * entre 0 y 1, inclusive
+   */
   @Column(name="PRECIP_PROBABILITY")
   private Double precipProbability;
 
-  // @Column(name="PRECIP_ACCUMULATION")
-  // private Double precipAccumulation;
-
+  /*
+   * Tipo de precipitacion
+   *
+   * El tipo de precipitacion que ocurre en el momento
+   * dado. Si se define, esta propiedad tendra uno de
+   * los siguientes valores: "rain", "snow"o "sleet"
+   * (que refiere a cada uno como lluvia helada, pellets
+   * de hielo y "mezcla invernal").
+   *
+   * (Si precipIntensityes cero, entonces esta propiedad
+   * no se definirá. Además, debido a la falta de datos
+   * en nuestras fuentes, la precipTypeinformación histórica
+   * generalmente se estima, en lugar de observarse).
+   */
   @Column(name="PRECIP_TYPE")
   private String precipType;
 
+  /*
+   * Punto de rocio
+   *
+   * Este valor es provisto por la API
+   * del servicio climatico en la unidad
+   * de medida [°C]
+   */
   @Column(name="DEW_POINT")
   private Double dewPoint;
 
-  // @Column(name="HUMIDITY")
-  // private Double humidity;
-
+  /*
+   * Presion atmosferica
+   *
+   * La presion del aire a nivel del mar
+   */
   @Column(name="PRESSURE")
   private Double pressure;
 
+  /*
+   * Velocidad del viento
+   *
+   * Con el uso de la unidad SI, este
+   * fenomeno es medido en metros por segundo
+   */
   @Column(name="WIND_SPEED")
   private Double windSpeed;
 
+  /*
+   * Nubosidad
+   *
+   * El porcentaje de cielo olcuido por nobres,
+   * entre 0 y 1, inclusive
+   */
   @Column(name="CLOUD_COVER")
   private Double cloudCover;
 
+  /*
+   * Temperatura minima
+   *
+   * Con el uso de la unidad SI, este
+   * fenomeno es medido en grados
+   * centigrados
+   */
   @Column(name="TEMP_MIN")
   private Double temperatureMin;
 
+  /*
+   * Temperatura maxima
+   *
+   * Con el uso de la unidad SI, este
+   * fenomeno es medido en grados
+   * centigrados
+   */
   @Column(name="TEMP_MAX")
   private Double temperatureMax;
 
-  // Cantidad total de agua de lluvia
-  @Column(name="TOTAL_RAIN_WATER")
-  private Double totalRainWater;
+  /*
+   * Agua restante
+   *
+   * El agua restante en el suelo en el
+   * cual esta plantado un cultivo es igual a
+   * el agua de lluvia (si la hubo) mas
+   * el agua de riego (si la hubo) menos
+   * la cantidad de agua que va a evaporar
+   * un cultivo dado bajo condiciones estandar
+   * (ETc)
+   */
+  @Column(name="WATER_REMAINING")
+  private Double waterRemaining;
+
+  /*
+   * Evapotranspiracion del cultivo de referencia (pasto)
+   *
+   * Este valor es calculado haciendo uso de los fenomenos
+   * climaticos en la formula de la ETo y su valor esta
+   * en [mm/dia]
+   *
+   * Para ver la formula de la ETo dirigase a la pagina
+   * numero 25 del libro FAO numero 56
+   */
+  @Column(name="ETO")
+  private double eto;
+
+  /*
+   * Evapotranspiracion del cultivo bajo condiciones estandar
+   *
+   * Este es calculado utilizando el coeficiente de un cultivo
+   * (kc) en particular en la siguiente multiplicacion ETc = kc * ETo
+   *
+   * El valor de la ETc [mm/dia] nos indica la cantidad de agua que
+   * se le tiene que reponer a un cultivo dado, mediante el riego
+   *
+   * Para ver la formula de la ETc dirigase a la pagina numero 6
+   * del libro FAO numero 56
+   */
+  @Column(name="ETC")
+  private double etc;
 
   @ManyToOne
-  @JoinColumn(name="FK_PARCEL")
+  @JoinColumn(name="FK_PARCEL", nullable=false)
   private Parcel parcel;
 
   // Constructor method
@@ -97,69 +230,37 @@ public class ClimateLog {
 		return id;
 	}
 
-	/**
-	* Returns value of latitude
-	* @return
-	*/
-	public Double getLatitude() {
-		return latitude;
-	}
-
-	/**
-	* Sets new value of latitude
-	* @param
-	*/
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	/**
-	* Returns value of longitude
-	* @return
-	*/
-	public Double getLongitude() {
-		return longitude;
-	}
-
-	/**
-	* Sets new value of longitude
-	* @param
-	*/
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
-
-	/**
-	* Returns value of timezone
-	* @return
-	*/
-	public String getTimezone() {
-		return timezone;
-	}
-
-	/**
-	* Sets new value of timezone
-	* @param
-	*/
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
-	}
+  /**
+  * Returns value of date
+  * @return
+  */
+  public Calendar getDate() {
+    return date;
+  }
 
   /**
-	* Returns value of date
-	* @return
-	*/
-	public Calendar getDate() {
-		return date;
-	}
+  * Sets new value of date
+  * @param
+  */
+  public void setDate(Calendar date) {
+    this.date = date;
+  }
 
-	/**
-	* Sets new value of date
-	* @param
-	*/
-	public void setDate(Calendar date) {
-		this.date = date;
-	}
+  /**
+  * Returns value of timezone
+  * @return
+  */
+  public String getTimezone() {
+    return timezone;
+  }
+
+  /**
+  * Sets new value of timezone
+  * @param
+  */
+  public void setTimezone(String timezone) {
+    this.timezone = timezone;
+  }
 
 	/**
 	* Returns value of precipIntensity
@@ -193,22 +294,6 @@ public class ClimateLog {
 		this.precipProbability = precipProbability;
 	}
 
-  /**
-	* Returns value of precipAccumulation
-	* @return
-	*/
-	// public Double getPrecipAccumulation() {
-	// 	return precipAccumulation;
-	// }
-
-	/**
-	* Sets new value of precipAccumulation
-	* @param
-	*/
-	// public void setPrecipAccumulation(Double precipAccumulation) {
-	// 	this.precipAccumulation = precipAccumulation;
-	// }
-
 	/**
 	 * Returns value of precipType
 	 * @return
@@ -240,22 +325,6 @@ public class ClimateLog {
 	public void setDewPoint(Double dewPoint) {
 		this.dewPoint = dewPoint;
 	}
-
-	/**
-	 * Returns value of humidity
-	 * @return
-	 */
-	// public Double getHumidity() {
-	// 	return humidity;
-	// }
-
-	/**
-	 * Sets new value of humidity
-	 * @param
-	 */
-	// public void setHumidity(Double humidity) {
-	// 	this.humidity = humidity;
-	// }
 
 	/**
 	 * Returns value of pressure
@@ -338,19 +407,51 @@ public class ClimateLog {
 	}
 
   /**
-  * Returns value of totalRainWater
+  * Returns value of waterRemaining
   * @return
   */
-  public Double getTotalRainWater() {
-    return totalRainWater;
+  public double getWaterRemaining() {
+    return waterRemaining;
   }
 
   /**
-  * Sets new value of totalRainWater
+  * Sets new value of waterRemaining
   * @param
   */
-  public void setTotalRainWater(Double totalRainWater) {
-    this.totalRainWater = totalRainWater;
+  public void setWaterRemaining(double waterRemaining) {
+    this.waterRemaining = waterRemaining;
+  }
+
+  /**
+	 * Returns value of eto
+	 * @return
+	 */
+	public double getEto() {
+		return eto;
+	}
+
+	/**
+	 * Sets new value of eto
+	 * @param
+	 */
+	public void setEto(Double eto) {
+		this.eto = eto;
+	}
+
+  /**
+   * Returns value of etc
+   * @return
+   */
+  public double getEtc() {
+    return etc;
+  }
+
+  /**
+   * Sets new value of etc
+   * @param
+   */
+  public void setEtc(Double etc) {
+    this.etc = etc;
   }
 
   /**
@@ -390,36 +491,13 @@ public class ClimateLog {
    * Temperatura maxima (temperatureMax) [°C]
    * Punto de rocio (dewPoint) [°C]
    * Velocidad del viento (windSpeed) [metros por segundo]
-   * Presion atmosferica (pressure) [milibares] convertida a [kPa]
-   *
-   * Los siguientes datos no tienen nada que ver
-   * con las unidades SI pero estan escritos con el
-   * formato en el que los devuelve la llamada a la
-   * API del clima Dark Sky:
-   * Latitud [grados decimales]
-   * Longitud [grados decimales]
-   * Tiempo (time) [UNIX TIMESTAMP]
-   * Humedad (humidity) [entre 0 y 1]
-   *
-   * Probabilidad de precipitacion (precipProbability) [entre 0 y 1]
-   * - Esta es la probabilidad de que la precipitacion ocurra
-   *
-   * Nubosidad (cloudCover) [entre 0 y 1]
+   * Presion atmosferica (pressure) [hectopascales] convertida a [kPa]
    *
    * @param forecastResponse este parametro (pronostico como
    * respuesta) contiene todos los datos climaticos devueltos
    * por la llamada a la API del clima Dark Sky
    */
   public void load(ForecastResponse forecastResponse) {
-    /*
-     * Coordenadas geograficas en grados decimales
-     * del lugar sobre el cual se quiere saber
-     * sus correspondientes datos climaticos
-     */
-    latitude = forecastResponse.getLatitude();
-    longitude = forecastResponse.getLongitude();
-    timezone = forecastResponse.getTimezone();
-
     /*
      * Fecha para la cual se obtuvieron los datos
      * climaticos en base a las coordenadas geograficas
@@ -442,6 +520,8 @@ public class ClimateLog {
      */
     date.setTimeInMillis(forecastResponse.getDaily().getData().get(0).getTime() * 1000L);
 
+    timezone = forecastResponse.getTimezone();
+
     if (forecastResponse.getDaily().getData().get(0).getPrecipProbability() != null) {
       precipProbability = forecastResponse.getDaily().getData().get(0).getPrecipProbability();
     } else {
@@ -452,12 +532,13 @@ public class ClimateLog {
     dewPoint = forecastResponse.getDaily().getData().get(0).getDewPoint();
 
     /*
-     * Presion atmosferica convertida de milibares a kilopascales
+     * Presion atmosferica convertida de hectopascales a kilopascales
      * por estar multiplicada por 0.1
      *
      * 1 milibar = 0.1 kilopascales
      */
     pressure = forecastResponse.getDaily().getData().get(0).getPressure() * 0.1;
+
     windSpeed = forecastResponse.getDaily().getData().get(0).getWindSpeed();
     cloudCover = forecastResponse.getDaily().getData().get(0).getCloudCover();
     temperatureMin = forecastResponse.getDaily().getData().get(0).getTemperatureMin();
@@ -481,10 +562,8 @@ public class ClimateLog {
      */
     if (forecastResponse.getDaily().getData().get(0).getPrecipIntensity() != null) {
       precipIntensity = forecastResponse.getDaily().getData().get(0).getPrecipIntensity();
-      totalRainWater = forecastResponse.getDaily().getData().get(0).getPrecipIntensity() * 24;
     } else {
       precipIntensity = 0.0;
-      totalRainWater = 0.0;
     }
 
   }
@@ -496,8 +575,8 @@ public class ClimateLog {
      * porque los numeros de los meses van desde 0
      * (Enero) a 11 (Diciembre)
      */
-    return String.format("Latitud: %f (grados decimales) Longitud: %f (grados decimales)\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)",
-    latitude, longitude, (date.get(Calendar.DAY_OF_MONTH) + "-" + (date.get(Calendar.MONTH) + 1) + "-" + date.get(Calendar.YEAR)), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, totalRainWater);
+    return String.format("ID: %d\nLatitud: %f (grados decimales) Longitud: %f (grados decimales)\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)\nCantidad de agua restante: %f\n",
+    id, parcel.getLatitude(), parcel.getLongitude(), (date.get(Calendar.DAY_OF_MONTH) + "-" + (date.get(Calendar.MONTH) + 1) + "-" + date.get(Calendar.YEAR)), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, (precipIntensity * 24), waterRemaining);
   }
 
 }
