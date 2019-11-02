@@ -42,6 +42,8 @@
 
       <!-- Observar que paquetes del estilo servlet no son referenciados aca -->
       <!-- Los nuevos paquetes de la carpeta src tienen que ser referenciados aca -->
+      <src path="src/climate" />
+      <src path="src/et" />
       <src path="src/weatherApiClasses" />
       <classpath>
         <pathelement path="${CLIENT_CLASSPATH}" />
