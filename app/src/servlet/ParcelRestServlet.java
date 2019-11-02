@@ -87,14 +87,15 @@ public class ParcelRestServlet {
   @PUT
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public String modify(@PathParam("id") int id, @QueryParam("parcelName") String parcelName, @QueryParam("area") int area, @QueryParam("latitude") double latitude,
-  @QueryParam("longitude") double longitude) throws IOException {
+  public String modify(@PathParam("id") int id, @QueryParam("name") String name, @QueryParam("area") int area, @QueryParam("latitude") double latitude,
+  @QueryParam("longitude") double longitude, @QueryParam("active") boolean active) throws IOException {
 
     Parcel modifiedParcel = new Parcel();
-    modifiedParcel.setName(parcelName);
+    modifiedParcel.setName(name);
     modifiedParcel.setArea(area);
     modifiedParcel.setLatitude(latitude);
     modifiedParcel.setLongitude(longitude);
+    modifiedParcel.setActive(active);
 
     return mapper.writeValueAsString(service.modify(id, modifiedParcel));
   }

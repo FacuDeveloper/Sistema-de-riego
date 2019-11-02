@@ -41,7 +41,7 @@ public  class MaximumInsolationServiceBean {
    * @param  latitude [0 .. -70]
    * @return insolacion maxima diaria [MJ / metro cuadrado * dia]
    */
-  public MaximumInsolation findMaximumInsolation(Month month, Latitude latitude) {
+  public MaximumInsolation find(Month month, Latitude latitude) {
     Query query = entityManager.createQuery("SELECT m FROM MaximumInsolation m WHERE m.month = :month AND m.decimalLatitude = :latitude");
     query.setParameter("month", month);
     query.setParameter("latitude", latitude);

@@ -41,7 +41,7 @@ public  class SolarRadiationServiceBean {
    * @param  latitude [0 .. -70]
    * @return radiacion solar extraterrestre [MJ / metro cuadrado * dia]
    */
-  public SolarRadiation findSolarRadiation(Month month, Latitude latitude) {
+  public SolarRadiation find(Month month, Latitude latitude) {
     Query query = entityManager.createQuery("SELECT s FROM SolarRadiation s WHERE s.month = :month AND s.decimalLatitude = :latitude");
     query.setParameter("month", month);
     query.setParameter("latitude", latitude);

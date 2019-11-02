@@ -57,7 +57,7 @@ public class MaximumInsolationServiceBeanTest {
     System.out.println("Recuperación de la máxima insolación solar de la latitud " + numberLatitude + " en el mes número " + numberMonth);
     System.out.println();
 
-    Latitude latitude = latitudeService.getLatitude(numberLatitude);
+    Latitude latitude = latitudeService.find(numberLatitude);
     assertNotNull(latitude);
 
     Month month = monthService.find(numberMonth);
@@ -66,7 +66,7 @@ public class MaximumInsolationServiceBeanTest {
     MaximumInsolation maximumInsolation = null;
 
     try {
-      maximumInsolation = insolationService.findMaximumInsolation(month, latitude);
+      maximumInsolation = insolationService.find(month, latitude);
     } catch(NoResultException ex) {
     }
 
@@ -75,7 +75,7 @@ public class MaximumInsolationServiceBeanTest {
     System.out.println("Máxima insolación");
     System.out.println("Latitud: " + maximumInsolation.getLatitude().getLatitude());
     System.out.println("Número del mes del año: " + month.getId());
-    System.out.println("Valor de la máxima insolación (N): " + maximumInsolation.getMaximumInsolation());
+    System.out.println("Valor de la máxima insolación (N): " + maximumInsolation.getInsolation());
     System.out.println("*********************************************");
     System.out.println();
   }
@@ -111,7 +111,7 @@ public class MaximumInsolationServiceBeanTest {
     MaximumInsolation maximumInsolation = null;
 
     try {
-      maximumInsolation = insolationService.findMaximumInsolation(month, latitude);
+      maximumInsolation = insolationService.find(month, latitude);
     } catch(NoResultException ex) {
       System.out.println("No existe un valor de máxima insolación para número del mes y la latitud solicitados");
     }
@@ -157,7 +157,7 @@ public class MaximumInsolationServiceBeanTest {
      * mes dado de la latitud 0
      */
     if (numberLatitude > 0) {
-      maximumInsolation = insolationService.findMaximumInsolation(month, latitudeService.getLatitude(0)).getMaximumInsolation();
+      maximumInsolation = insolationService.find(month, latitudeService.find(0)).getInsolation();
     }
 
     /*
@@ -166,7 +166,7 @@ public class MaximumInsolationServiceBeanTest {
      * insolación en el mes dado de la latitud -70 (Hemisferio sur)
      */
     if (numberLatitude < -70) {
-      maximumInsolation = insolationService.findMaximumInsolation(month, latitudeService.getLatitude(-70)).getMaximumInsolation();
+      maximumInsolation = insolationService.find(month, latitudeService.find(-70)).getInsolation();
     }
 
     /*
@@ -178,11 +178,11 @@ public class MaximumInsolationServiceBeanTest {
      * insolaciones
      */
     if ((numberLatitude >= -70) && (numberLatitude <= 0) && ((numberLatitude % 2) != 0) ) {
-      previousLatitude = latitudeService.getLatitude(numberLatitude - 1);
-      nextLatitude = latitudeService.getLatitude(numberLatitude + 1);
-      maximumInsolation = ((insolationService.findMaximumInsolation(month, previousLatitude).getMaximumInsolation() + insolationService.findMaximumInsolation(month, nextLatitude).getMaximumInsolation()) / 2.0);
-      System.out.println("La insolación máxima de la latitud " + previousLatitude.getLatitude() + " en el mes número " + numberMonth + " es " + insolationService.findMaximumInsolation(month, previousLatitude).getMaximumInsolation());
-      System.out.println("La insolación máxima de la latitud " + nextLatitude.getLatitude() + " en el mes número " + numberMonth + " es " + insolationService.findMaximumInsolation(month, nextLatitude).getMaximumInsolation());
+      previousLatitude = latitudeService.find(numberLatitude - 1);
+      nextLatitude = latitudeService.find(numberLatitude + 1);
+      maximumInsolation = ((insolationService.find(month, previousLatitude).getInsolation() + insolationService.find(month, nextLatitude).getInsolation()) / 2.0);
+      System.out.println("La insolación máxima de la latitud " + previousLatitude.getLatitude() + " en el mes número " + numberMonth + " es " + insolationService.find(month, previousLatitude).getInsolation());
+      System.out.println("La insolación máxima de la latitud " + nextLatitude.getLatitude() + " en el mes número " + numberMonth + " es " + insolationService.find(month, nextLatitude).getInsolation());
     }
 
     /*
@@ -192,7 +192,7 @@ public class MaximumInsolationServiceBeanTest {
      * latitud y el mes solicitados
      */
     if ((numberLatitude >= -70) && (numberLatitude <= 0) && ((numberLatitude % 2) == 0) ) {
-      maximumInsolation = insolationService.findMaximumInsolation(month, latitudeService.getLatitude(numberLatitude)).getMaximumInsolation();
+      maximumInsolation = insolationService.find(month, latitudeService.find(numberLatitude)).getInsolation();
     }
 
     System.out.println("La insolación máxima correspondiente a la latitud " + numberLatitude + " y al mes número " + numberMonth + " es: " + maximumInsolation);

@@ -32,24 +32,8 @@ public  class ClimateLogServiceBean {
     return newClimateLog;
   }
 
-  // public ClimateLog remove(int id) {
-  //   ClimateLog climateLog = find(id);
-  //
-  //   if (climateLog != null) {
-  //     getEntityManager().remove(climateLog);
-  //     return climateLog;
-  //   }
-  //
-  //   return null;
-  // }
-
   public ClimateLog find(int id) {
     return getEntityManager().find(ClimateLog.class, id);
-  }
-
-  public Collection<ClimateLog> findAll() {
-    Query query = getEntityManager().createQuery("SELECT c FROM ClimateLog c ORDER BY c.id");
-    return (Collection<ClimateLog>) query.getResultList();
   }
 
 }

@@ -17,9 +17,7 @@
 
 import static org.junit.Assert.*;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.AfterClass;
 import org.junit.Ignore;
 
 import java.util.Calendar;
@@ -31,42 +29,42 @@ import model.ClimateLog;
 public class ClimateClientTest {
 
   /*
-  * Bloque de codigo fuente para la
-  * prueba untaria del modulo de obtencion
-  * de datos climaticos utlizando las
-  * coordenadas geograficas de Puerto
-  * Madryn en la fecha 31/10/19
-  */
+   * Bloque de codigo fuente para la
+   * prueba untaria del modulo de obtencion
+   * de datos climaticos utlizando las
+   * coordenadas geograficas de Puerto
+   * Madryn en la fecha 31/10/19
+   */
   @Test
   public void testForecastPuertoMadryn() {
     double latitude = -42.7683337;
     double longitude = -65.060855;
 
     /*
-    * La API del clima utilizada brinda los
-    * datos climaticos de una locacion dada
-    * en una fecha anterior a la que se le pasa
-    * como parametro de consulta (QUERY_STRING,
-    * clase ClimateClient), con lo cual como se
-    * quiere recuperar los datos climaticos de
-    * la fecha 31/10/19 se le tiene que pasar
-    * como parametro la fecha 1/11/19 en formato
-    * UNIX TIMESTAMP, la cual en dicho formato
-    * es 1572566400
-    */
+     * La API del clima utilizada brinda los
+     * datos climaticos de una locacion dada
+     * en una fecha anterior a la que se le pasa
+     * como parametro de consulta (QUERY_STRING,
+     * clase ClimateClient), con lo cual como se
+     * quiere recuperar los datos climaticos de
+     * la fecha 31/10/19 se le tiene que pasar
+     * como parametro la fecha 1/11/19 en formato
+     * UNIX TIMESTAMP, la cual en dicho formato
+     * es 1572566400
+     */
     long dateUnixTimeStamp = 1572566400;
     Calendar date = Calendar.getInstance();
 
     /*
-    * Convierte los segundos a milisegundos en formato
-    * long porque este metodo utiliza la fecha dada
-    * por el formato UNIX TIMESTAMP en segundos,
-    * en milisegundos en formato long
-    *
-    * Lo que se logra con esto es convertir la fecha
-    * en formato UNIX TIMESTAMP a formato de año, mes
-    * y dia
-    */
+     * Convierte los segundos a milisegundos en formato
+     * long porque este metodo utiliza la fecha dada
+     * por el formato UNIX TIMESTAMP en segundos,
+     * en milisegundos en formato long
+     *
+     * Lo que se logra con esto es convertir la fecha
+     * en formato UNIX TIMESTAMP a formato de año, mes
+     * y dia
+     */
     date.setTimeInMillis(dateUnixTimeStamp * 1000L);
 
     ClimateLogService climateLogService = ClimateLogService.getInstance();
@@ -95,30 +93,30 @@ public class ClimateClientTest {
     double longitude = -58.5033379;
 
     /*
-    * La API del clima utilizada brinda los
-    * datos climaticos de una locacion dada
-    * en una fecha anterior a la que se le pasa
-    * como parametro de consulta (QUERY_STRING,
-    * clase ClimateClient), con lo cual como se
-    * quiere recuperar los datos climaticos de
-    * la fecha 31/10/19 se le tiene que pasar
-    * como parametro la fecha 1/11/19 en formato
-    * UNIX TIMESTAMP, la cual en dicho formato
-    * es 1572566400
-    */
+     * La API del clima utilizada brinda los
+     * datos climaticos de una locacion dada
+     * en una fecha anterior a la que se le pasa
+     * como parametro de consulta (QUERY_STRING,
+     * clase ClimateClient), con lo cual como se
+     * quiere recuperar los datos climaticos de
+     * la fecha 31/10/19 se le tiene que pasar
+     * como parametro la fecha 1/11/19 en formato
+     * UNIX TIMESTAMP, la cual en dicho formato
+     * es 1572566400
+     */
     long dateUnixTimeStamp = 1572566400;
     Calendar date = Calendar.getInstance();
 
     /*
-    * Convierte los segundos a milisegundos en formato
-    * long porque este metodo utiliza la fecha dada
-    * por el formato UNIX TIMESTAMP en segundos,
-    * en milisegundos en formato long
-    *
-    * Lo que se logra con esto es convertir la fecha
-    * en formato UNIX TIMESTAMP a formato de año, mes
-    * y dia
-    */
+     * Convierte los segundos a milisegundos en formato
+     * long porque este metodo utiliza la fecha dada
+     * por el formato UNIX TIMESTAMP en segundos,
+     * en milisegundos en formato long
+     *
+     * Lo que se logra con esto es convertir la fecha
+     * en formato UNIX TIMESTAMP a formato de año, mes
+     * y dia
+     */
     date.setTimeInMillis(dateUnixTimeStamp * 1000L);
 
     ClimateLogService climateLogService = ClimateLogService.getInstance();

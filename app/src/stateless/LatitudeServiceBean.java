@@ -38,7 +38,7 @@ public  class LatitudeServiceBean {
    * @param  latitudeValue
    * @return latitude
    */
-  public Latitude getLatitude(int latitudeValue) {
+  public Latitude find(int latitudeValue) {
     Query query = entityManager.createQuery("SELECT l FROM Latitude l WHERE l.decimalLatitude = :latitudeValue");
     query.setParameter("latitudeValue", latitudeValue);
     return (Latitude) query.getSingleResult();

@@ -41,7 +41,7 @@ public class MaximumInsolation {
 
   // Constructor method
   public MaximumInsolation() {
-    
+
   }
 
   /* Getters and setters */
@@ -66,7 +66,7 @@ public class MaximumInsolation {
    * Returns value of maximumInsolationValue
    * @return
    */
-  public float getMaximumInsolation() {
+  public float getInsolation() {
     return maximumInsolationValue;
   }
 

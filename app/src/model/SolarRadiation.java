@@ -40,7 +40,7 @@ public class SolarRadiation {
 
   // Constructor method
   public SolarRadiation() {
-    
+
   }
 
   /* Getters and setters */
@@ -57,7 +57,7 @@ public class SolarRadiation {
    * Returns value of solarRadiationValue
    * @return
    */
-  public float getSolarRadiation() {
+  public float getRadiation() {
     return solarRadiationValue;
   }
 

@@ -11,13 +11,11 @@ import model.Cultivo;
 
 public interface CultivoService {
   public void setEntityManager(EntityManager em);
-  public Cultivo create(Cultivo cul);
+  public Cultivo create(Cultivo cultivo);
   public Cultivo remove(int id);
   public Cultivo change(int id, Cultivo cultivo);
   public Cultivo find(int id);
   public Collection<Cultivo> findAll();
   public Page<Cultivo> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters);
-  public double getKc(Cultivo crop, Calendar seedTime, Calendar currentDate);
   public double getKc(Cultivo crop, Calendar seedTime);
-  public Cultivo findByName(String cropName);
 }

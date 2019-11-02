@@ -12,6 +12,7 @@
     <class>model.Parcel</class>
     <class>model.SolarRadiation</class>
     <class>model.TypeGround</class>
+    <class>model.Usuario</class>
     <properties>
       <property name="eclipselink.target-database" value="DERBY"/>
       <property name="eclipselink.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>

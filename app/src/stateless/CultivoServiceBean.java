@@ -87,71 +87,7 @@ public class CultivoServiceBean implements CultivoService {
     return getEntityManager().find(Cultivo.class, id);
   }
 
-  public double getKc(Cultivo crop, Calendar seedTime, Calendar currentDate) {
-    /*
-     * Numero del dia en el cual comienza la etapa inicial
-     * sumada a la etapa de desarrollo del cultivo dado
-     *
-     * Entre los integrantes del equipo de desarrollo se ha establecido
-     * que las etapas inicial y desarrollo son una sola, y es por esto
-     * que se suman los dias que duran ambas
-     */
-    int initialDayFirstStage = 1;
-
-    /*
-     * Numero del dia en el cual comienza la segunda etapa
-     * del cultivo dado
-     */
-    int initialDaySecondStage = crop.getEtInicial() + crop.getEtDesarrollo() + 1;
-
-    /*
-     * Dias de vida que ha vivido el cultivo dado
-     * desde su fecha de siembra hasta la fecha actual
-     */
-    int daysLife = getDaysLife(seedTime, currentDate);
-
-    /*
-     * Si la cantidad de dias de vida del cultivo dado esta entre uno
-     * y el maximo de la cantidad de dias resultante de la
-     * suma de los dias de la etapa inicial y de la etapa de
-     * desarrollo, este metodo retorna el coeficiente inicial (kc)
-     * del cultivo dado
-     *
-     * Entre los integrantes del equipo de desarrollo se ha establecido
-     * que las etapas inicial y desarrollo son una sola, y es por esto
-     * que se suman los dias que duran ambas
-     */
-    if ((initialDayFirstStage <= daysLife) && (daysLife <= (crop.getEtInicial() + crop.getEtDesarrollo()))) {
-      return crop.getKcInicial();
-    }
-
-    /*
-     * Si la cantidad de dias de vida del cultivo dado esta entre el dia
-     * del comienzo de la etapa media y el maximo de dias que dura la
-     * etapa media (el cual resulta de sumar los dias que duran las
-     * etapas inicial, desarrollo y media), este metodo retorna el
-     * coeficiente medio (kc) del cultivo dado
-     */
-    if ((initialDaySecondStage <= daysLife) && (daysLife <= (crop.getEtInicial() + crop.getEtDesarrollo() + crop.getEtMedia()))) {
-      return crop.getKcMedio();
-    }
-
-    /*
-     * Si la cantidad de dias de vida del cultivo dado no esta entre
-     * los dias que dura la etapa inicial (dias de la etapa incial
-     * mas dias de la etapa de desarrollo), ni entre los dias que
-     * dura la etapa media, entonces esta entre el dia de comienzo
-     * de la etapa final y el maximo de dias de la misma etapa, con
-     * lo cual este metodo retorna el coeficiente del cultivo (kc)
-     * final
-     */
-    return crop.getKcFinal();
-  }
-
-  private int getDaysLife(Calendar seedTime, Calendar currentDate) {
-    return (currentDate.get(Calendar.DAY_OF_YEAR) - seedTime.get(Calendar.DAY_OF_YEAR));
-  }
-
+  // FIXME, NOTE: Documentar
   public double getKc(Cultivo crop, Calendar seedTime) {
     /*
      * Numero del dia en el cual comienza la etapa inicial
@@ -286,16 +222,5 @@ public class CultivoServiceBean implements CultivoService {
   private String capitalize(final String line) {
     return Character.toUpperCase(line.charAt(0)) + line.substring(1);
   }
-
-  public Cultivo findByName(String cropName) {
-    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c WHERE c.nombre = :cropName");
-    query.setParameter("cropName", cropName.toUpperCase());
-    return (Cultivo) query.getSingleResult();
-  }
-
-  /*
-   * NOTE: Despues de la demostracion los metodos que tiene
-   * Calendar seedTime, Calendar currentDate tienen que ser borrados
-   */
 
 }

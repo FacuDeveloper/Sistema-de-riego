@@ -6,149 +6,106 @@ import org.junit.Ignore;
 import stateless.et.ETo;
 import stateless.ClimateLogService;
 
-// import stateless.SolarRadiationServiceBean;
-// import stateless.MaximumInsolationServiceBean;
-// import stateless.LatitudeServiceBean;
-// import stateless.MonthServiceBean;
-
 import model.ClimateLog;
-// import model.Latitude;
-// import model.Month;
-
-// import javax.persistence.EntityManager;
-// import javax.persistence.EntityManagerFactory;
-// import javax.persistence.Persistence;
 
 public class EToTest {
 
-  // private static EntityManager entityManager;
-  // private static EntityManagerFactory entityMangerFactory;
-  // private static SolarRadiationServiceBean solarService;
-  // private static MaximumInsolationServiceBean insolationService;
-  // private static LatitudeServiceBean latitudeService;
-  // private static MonthServiceBean monthService;
-
-  // @BeforeClass
-  // public static void preTest(){
-  //   entityMangerFactory = Persistence.createEntityManagerFactory("SisRiegoDB");
-  //   entityManager = entityMangerFactory.createEntityManager();
-  //
-  //   solarService = new SolarRadiationServiceBean();
-  //   solarService.setEntityManager(entityManager);
-  //
-  //   insolationService = new MaximumInsolationServiceBean();
-  //   insolationService.setEntityManager(entityManager);
-  //
-  //   latitudeService = new LatitudeServiceBean();
-  //   latitudeService.setEntityManager(entityManager);
-  //
-  //   monthService = new MonthServiceBean();
-  //   monthService.setEntityManager(entityManager);
-  // }
-
   /*
-  * Bloque de codigo fuente de prueba
-  * unitaria para el calculo de la ETo
-  * de la localidad Puerto Madryn
-  * con los datos climaticos del dia
-  * 31/10/19
+  * Bloque de codigo fuente de prueba unitaria
+  * del bloque de codigo para el calculo de la
+  * ETo para la localidad Uccle (Bruselas, Belgica)
+  * con los datos climaticos del dia 6/7/19, los
+  * cuales son provistos por el ejemplo de la pagina
+  * 72 del libro FAO numero 56
   */
-  // @Ignore
-  // public void testGetEto() {
-  //   System.out.println("Prueba unitaria de obtención de evapotranspiración del cultivo de referencia");
-  //   System.out.println();
-  //
-  //   // [°C]
-  //   double temperatureMin = 13.27;
-  //   double temperatureMax = 25.18;
-  //
-  //   // Presion atmosferica en milibar
-  //   double pressure = 1004.42;
-  //
-  //   // Velocidad del viento a 10 metros de altura, en metros por segundo
-  //   double windSpeed = 9.21;
-  //
-  //   // Punto de rocío
-  //   double dewPoint = -10.25;
-  //
-  //   // Nubosidad
-  //   double cloudCover = 0.84;
-  //
-  //   // Radiacion solar extraterrestre diaria
-  //   double extraterrestrialSolarRadiation = 34.7;
-  //
-  //   // Insolacion maxima diaria
-  //   double maximumInsolation = 13.2;
-  //
-  //   System.out.println("La ETo es: " + ETo.getEto(temperatureMin, temperatureMax, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover) + " (mm/día)");
-  // }
-
-  /*
-   * Bloque de codigo fuente de prueba unitaria
-   * del bloque de codigo para el calculo de la
-   * ETo para la localidad Uccle (Bruselas, Belgica)
-   * con los datos climaticos del dia 6/7/19
-   */
   @Test
-  public void testGetEtoUccleJulio() {
-    double latitude = 50.7903541;
-    double longitude = 4.3272857;
+  public void testETo() {
+    /*
+     * [°C]
+     */
+    double temperatureMin = 12.3;
+    double temperatureMax = 21.5;
 
     /*
-     * Fecha 7/7/19 en formato UNIX TIMESTAMP
+     * Presion atmosferica
      *
-     * A la API del clima Dark Sky se le envia una
-     * fecha inmediatamente posterior a la fecha en
-     * la cual se quieren recuperar los datos climaticos
-     * porque recupera los datos climaticos de la fecha
-     * inmediatamente anterior a la fecha que se le
-     * envia como parametro de la cadena de consulta en
-     * el URL
+     * El valor de presion atmosferica tiene que
+     * estar en milibares porque el servicio climatico
+     * que utilizamos nos la provee en la unidad de
+     * medida mencionada, con lo cual tuvimos
+     * que implementar un bloque de codigo fuente
+     * que reciba la presion atmosferica en la
+     * unidad de medida mencionada y la convierta
+     * en kilopascales, que es la unidad de medida
+     * en la cual la presion atmosferica es utilizada
+     * en la formula de la ETo
      *
-     * Esto significa que si se le envia la fecha
-     * 7/7/19 en formato UNIX TIMESTAMP nos va
-     * devolver como resultado los datos climaticos
-     * de la fecha anterior a la fecha que se le envio (7/7/19),
-     * es decir, nos va a devolver los datos climaticos
-     * de la fecha 6/7/19
+     * La presion atmosferica del ejemplo del libro
+     * esta en kilopascales pero para que el metodo
+     * getEto() devuelva el resultado correcto se le
+     * tiene que pasar la presion atmosferica en milibares
+     * para que el bloque de codigo encargado de la conversion
+     * la convierta de milibares a kilopascales
      */
-    long unixDate = 1562457600;
+    double pressure = 1001;
 
-    System.out.println("Prueba unitaria del calculo de la ETo para Uccle (Bruselas, Belgica) con datos metereologicos medidos el 6 de Julio");
-    System.out.println("Latitud: " + latitude + " (grados decimales)");
-    System.out.println("Longitud: " + longitude + " (grados decimales)");
-    System.out.println();
+    /*
+     * Velocidad del viento [metros por segundo]
+     *
+     * Este valor tiene que estar en la unidad
+     * de medidad metros por segundo porque la
+     * formula de la ETo utiliza la velocidad del
+     * viento en metros por segundo
+     *
+     * Para ver la formula que utiliza la velocidad
+     * del viento dirigase a la pagina numero 56 del
+     * libro FAO numero 56
+     *
+     * El ejemplo de la pagina numero 72 del libro
+     * FAO numero 56 da este valor en metros por
+     * segundo
+     */
+    double windSpeed = 2.78;
 
-    ClimateLogService climateLogService = ClimateLogService.getInstance();
-    ClimateLog choosenLog = climateLogService.getClimateLog(latitude, longitude, unixDate);
+    /*
+     * Duracion real de la insolacion (n) [horas]
+     *
+     * Para ver la formula de la radiacion solar (Rs)
+     * dirigase a la pagina numero 50 del libro FAO 56
+     */
+    double cloudCover = 9.25;
 
-    System.out.println("*** Datos climáticos obtenidos para Uccle en el día 6 de Julio ***");
-    System.out.println(choosenLog);
-    System.out.println();
+    /*
+     * Duracion maxima posible de insolacion (N) [horas]
+     */
+    double maximumInsolation = 16.1;
 
-    // [°C]
-    double temperatureMin = choosenLog.getTemperatureMin();
-    double temperatureMax = choosenLog.getTemperatureMax();
+    /*
+     * Radiacion solar extraterrestre (Ra) [MJ/metro cuadrado * dia]
+     */
+    double extraterrestrialSolarRadiation = 41.09;
 
-    // Presion atmosferica en milibar convertida a kPa
-    double pressure = choosenLog.getPressure();
+    /*
+     * Punto de rocio [°C]
+     *
+     * Este valor es cero porque el ejemplo de la
+     * pagina numero 72 del libro FAO numero 56
+     * no utiliza la temperatura del punto de rocio
+     * para calcular la ETo (evapotranspiracion
+     * del cultivo de referencia)
+     */
+    double dewPoint = 0.0;
 
-    // Velocidad del viento a 10 metros de altura, en metros por segundo
-    double windSpeed = choosenLog.getWindSpeed();
-
-    // Punto de rocío [°C]
-    double dewPoint = choosenLog.getDewPoint();
-
-    // Nubosidad, entre 0 y 1
-    double cloudCover = choosenLog.getCloudCover();
-
-    // Radiacion solar extraterrestre diaria [MJ/metros cuadrados * dia]
-    double extraterrestrialSolarRadiation = 40.2;
-
-    // Insolacion maxima diaria [horas]
-    double maximumInsolation = 15.7;
-
-    System.out.println("La ETo es: " + ETo.getEto(temperatureMin, temperatureMax, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover) + " (mm/día)");
+    /*
+     * Para que esta prueba arroje el mismo valor
+     * de ETo que esta en el ejemplo de la pagina numero
+     * 72 del libro FAO numero 56 se tienen que
+     * asignar los numeros 1.997 y 1.409 a las
+     * variables es (presion media de vapor de saturacion)
+     * y ea (presion real de vapor) respectivamente
+     */
+    System.out.println("La ETo es: " +
+    ETo.getEto(temperatureMin, temperatureMax, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover) + " (mm/día)");
   }
 
   /**
@@ -209,13 +166,13 @@ public class EToTest {
     System.out.println("Prueba unitaria del factor de conversion");
     System.out.println();
 
-    System.out.println("Para una altura z = 1.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(1.0));
-    System.out.println("Para una altura z = 2.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(2.0));
-    System.out.println("Para una altura z = 3.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(3.0));
-    System.out.println("Para una altura z = 4.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(4.0));
-    System.out.println("Para una altura z = 6.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(6.0));
-    System.out.println("Para una altura z = 10.5 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(10.5));
-    System.out.println();
+    // System.out.println("Para una altura z = 1.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(1.0));
+    // System.out.println("Para una altura z = 2.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(2.0));
+    // System.out.println("Para una altura z = 3.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(3.0));
+    // System.out.println("Para una altura z = 4.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(4.0));
+    // System.out.println("Para una altura z = 6.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(6.0));
+    // System.out.println("Para una altura z = 10.5 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(10.5));
+    // System.out.println();
   }
 
   /**
@@ -248,7 +205,6 @@ public class EToTest {
   // public void testDecimalDegreesToRadians() {
   // System.out.println("Prueba unitaria de conversion de grados decimales a radianes");
   // System.out.println();
-
 
   // Latitud de Bankok, Tailandia
   // System.out.println("Para una latitud 13.73 (grados decimales) la misma en radianes es " + ETo.latitudeDecimalDegreesToRadians(13.73));

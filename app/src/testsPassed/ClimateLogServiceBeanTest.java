@@ -75,4 +75,11 @@ public class ClimateLogServiceBeanTest {
 
   }
 
+  @AfterClass
+  public static void postTest() {
+    // Cierra las conexiones
+    entityManager.close();
+    entityMangerFactory.close();
+  }
+
 }

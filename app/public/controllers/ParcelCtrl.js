@@ -75,10 +75,11 @@ app.controller(
 
       service.update(
         $scope.data.id,
-        $scope.data.parcelName,
+        $scope.data.name,
         $scope.data.area,
         $scope.data.latitude,
         $scope.data.longitude,
+        $scope.data.active,
         function(error, data){
           if(error){
             console.log(error);

@@ -31,7 +31,7 @@ public class IrrigationLog {
   @Column(name="IRRIGATION_LOG_ID")
   private int id;
 
-  @Column(name="DATE", nullable=false)
+  @Column(name="WEATERING_DATE", nullable=false)
   @Temporal(TemporalType.DATE)
   private Calendar wateringDate; // fecha de riego
 
@@ -75,9 +75,13 @@ public class IrrigationLog {
   @Column(name="IRRIGATION_DONE", nullable=false)
   private double irrigationDone;
 
+  @ManyToOne
+  @JoinColumn(name="FK_PARCEL", nullable=false)
+  private Parcel parcel;
+
   // Constructor method
   public IrrigationLog() {
-    
+
   }
 
   /* Getters and setters */
@@ -138,9 +142,26 @@ public class IrrigationLog {
     this.irrigationDone = irrigationDone;
   }
 
+  /**
+   * Returns value of parcel
+   * @return
+   */
+  public Parcel getParcel() {
+    return parcel;
+  }
+
+  /**
+   * Sets new value of parcel
+   * @param
+   */
+  public void setParcel(Parcel parcel) {
+    this.parcel = parcel;
+  }
+
   @Override
   public String toString() {
-    return "IrrigationLog id: " + id + " fecha de riego: " + wateringDate + " riego sugerido (ETc): " + suggestedIrrigation + " riego realizado: " + irrigationDone;
+    return String.format("ID: %d\nFecha de riego: %s\nRiego sugerido: %.f\nRiego realizado: %f\nID de parcela: %d\n", id,
+    (wateringDate.get(Calendar.DAY_OF_MONTH) + "-" + (wateringDate.get(Calendar.MONTH) + 1) + "-" + wateringDate.get(Calendar.YEAR)), suggestedIrrigation, irrigationDone, parcel.getId());
   }
 
 }

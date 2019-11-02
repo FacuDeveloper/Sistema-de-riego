@@ -45,7 +45,7 @@ public  class ParcelServiceBean {
     Parcel parcel = find(id);
 
     if (parcel != null) {
-      getEntityManager().remove(parcel);
+      parcel.setActive(false);
       return parcel;
     }
 
@@ -75,6 +75,7 @@ public  class ParcelServiceBean {
       choosenParcel.setArea(modifiedParcel.getArea());
       choosenParcel.setLongitude(modifiedParcel.getLongitude());
       choosenParcel.setLatitude(modifiedParcel.getLatitude());
+      choosenParcel.setActive(modifiedParcel.getActive());
       return choosenParcel;
     }
 

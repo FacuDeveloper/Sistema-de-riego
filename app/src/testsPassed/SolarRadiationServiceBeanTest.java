@@ -57,7 +57,7 @@ public class SolarRadiationServiceBeanTest {
     System.out.println("Recuperación de la radiación solar de la latitud = " + numberLatitude + " en el mes número " + numberMonth);
     System.out.println();
 
-    Latitude latitude = latitudeService.getLatitude(numberLatitude);
+    Latitude latitude = latitudeService.find(numberLatitude);
     assertNotNull(latitude);
 
     Month month = monthService.find(numberMonth);
@@ -66,7 +66,7 @@ public class SolarRadiationServiceBeanTest {
     SolarRadiation solarRadiation = null;
 
     try {
-      solarRadiation = solarService.findSolarRadiation(month, latitude);
+      solarRadiation = solarService.find(month, latitude);
     } catch(NoResultException ex) {
     }
 
@@ -75,7 +75,7 @@ public class SolarRadiationServiceBeanTest {
     System.out.println("Radiacion solar");
     System.out.println("Latitud: " + solarRadiation.getLatitude().getLatitude());
     System.out.println("Número del mes: " + month.getId());
-    System.out.println("Valor de la radiacion: " + solarRadiation.getSolarRadiation());
+    System.out.println("Valor de la radiacion: " + solarRadiation.getRadiation());
     System.out.println("******************************************");
     System.out.println();
   }
@@ -111,7 +111,7 @@ public class SolarRadiationServiceBeanTest {
     SolarRadiation solarRadiation = null;
 
     try {
-      solarRadiation = solarService.findSolarRadiation(month, latitude);
+      solarRadiation = solarService.find(month, latitude);
     } catch(NoResultException ex) {
       System.out.println("No existe un valor de radiación solar extraterrestre para el mes y la latitud solicitados");
     }
@@ -161,7 +161,7 @@ public class SolarRadiationServiceBeanTest {
      *
      */
     if (numberLatitude > 0) {
-      solarRadiation = solarService.findSolarRadiation(month, latitudeService.getLatitude(0)).getSolarRadiation();
+      solarRadiation = solarService.find(month, latitudeService.find(0)).getRadiation();
     }
 
     /*
@@ -170,7 +170,7 @@ public class SolarRadiationServiceBeanTest {
      * solar extraterrestre en el mes dado de la latitud -70 (Hemisferio sur)
      */
     if (numberLatitude < -70) {
-      solarRadiation = solarService.findSolarRadiation(month, latitudeService.getLatitude(-70)).getSolarRadiation();
+      solarRadiation = solarService.find(month, latitudeService.find(-70)).getRadiation();
     }
 
     /*
@@ -182,11 +182,11 @@ public class SolarRadiationServiceBeanTest {
      * solares extraterrestres
      */
     if ((numberLatitude >= -70) && (numberLatitude <= 0) && ((numberLatitude % 2) != 0)) {
-      previousLatitude = latitudeService.getLatitude(numberLatitude - 1);
-      nextLatitude = latitudeService.getLatitude(numberLatitude + 1);
-      solarRadiation = ((solarService.findSolarRadiation(month, previousLatitude).getSolarRadiation() + solarService.findSolarRadiation(month, nextLatitude).getSolarRadiation()) / 2.0);
-      System.out.println("Radiación solar de la latitud: " + previousLatitude.getLatitude() + " es "+ solarService.findSolarRadiation(month, previousLatitude).getSolarRadiation());
-      System.out.println("Radiación solar de la laitud: " + nextLatitude.getLatitude() + " es " + solarService.findSolarRadiation(month, nextLatitude).getSolarRadiation());
+      previousLatitude = latitudeService.find(numberLatitude - 1);
+      nextLatitude = latitudeService.find(numberLatitude + 1);
+      solarRadiation = ((solarService.find(month, previousLatitude).getRadiation() + solarService.find(month, nextLatitude).getRadiation()) / 2.0);
+      System.out.println("Radiación solar de la latitud: " + previousLatitude.getLatitude() + " es "+ solarService.find(month, previousLatitude).getRadiation());
+      System.out.println("Radiación solar de la laitud: " + nextLatitude.getLatitude() + " es " + solarService.find(month, nextLatitude).getRadiation());
     }
 
     /*
@@ -196,7 +196,7 @@ public class SolarRadiationServiceBeanTest {
      * correspondiente a la latitud y el mes solicitados
      */
     if ((numberLatitude >= -70) && (numberLatitude <= 0) && ((numberLatitude % 2) == 0)) {
-      solarRadiation = solarService.findSolarRadiation(month, latitudeService.getLatitude(numberLatitude)).getSolarRadiation();
+      solarRadiation = solarService.find(month, latitudeService.find(numberLatitude)).getRadiation();
     }
 
     System.out.println("La radiación solar correspondiente a la latitud " + numberLatitude + " y al mes número " + numberMonth + " es: " + solarRadiation);

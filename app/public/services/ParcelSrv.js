@@ -14,7 +14,7 @@ app.service(
 	    }
 
       this.searchByPage = function(search, page, cant, callback) {
-				$http.get('rest/parcel?page=' + page + '&cant=' + cant+ "&search="+JSON.stringify(search))
+				$http.get('rest/parcel?page=' + page + '&cant=' + cant+ "&search=" + JSON.stringify(search))
 						.then(function(res) {
 							return callback(false, res.data)
 						}, function(err) {
@@ -43,12 +43,12 @@ app.service(
     			});
 	    }
 
-      this.update = function(id, parcelName, area, latitude, longitude, callback){
-        console.log("Actualizando: " + id + " - " + parcelName);
+      this.update = function(id, name, area, latitude, longitude, active, callback){
+        console.log("Actualizando: " + id + " - " + name);
         $http({
           method:"PUT",
           url:"rest/parcel/"+id,
-          params:{"parcelName": parcelName, "area": area, "latitude": latitude, "longitude": longitude} })
+          params:{"name": name, "area": area, "latitude": latitude, "longitude": longitude, "active": active} })
         .then(
 			    function(result){
 				    callback(false,result.data);
