@@ -1,0 +1,91 @@
+@startuml
+
+Parcela "*"-->"1" Usuario
+Parcela "*"-->"1" Suelo
+RegHistoricoClima "*"-->"1" Parcela
+RegHistoricoRiego "*"-->"1" Parcela
+InstanciaParcela "*"-->"1" Parcela
+InstanciaParcela "*"-->"1" Cultivo
+Suelo "*"-->"1" TipoSuelo
+
+class Parcela {
+-id
+-nombre
+-area
+-latitud
+-longitud
+-activa
+}
+
+class Suelo {
+-id
+-nombreIdentificador
+-profundidad
+-pedregosidad
+}
+
+class Cultivo {
+-id
+-etapaInicial
+-etapaDesarrollo
+-etapaMedia
+-etapaFinal
+-kcInicial
+-kcMedio
+-kcFinal
+-agotamientoCritico
+}
+
+class TipoSuelo {
+-id
+-nombre
+-descripcion
+}
+
+class RegHistoricoClima {
+-id
+-fecha
+-zonaHoraria
+-intesidadPrecipitacion
+-probabilidadPrecipitacion
+-tipoPrecipitacion
+-puntoRocio
+-presionAtmosferica
+-velocidadViento
+-nubosidad
+-temperaturaMinima
+-temperaturaMaxima
+-cantidadRestanteAgua
+-eto
+-etc
+}
+
+class InstanciaParcela {
+-id
+-fechaSiembra
+-fechaCosecha
+}
+
+class RegHistoricoRiego {
+-id
+-fechaRiego
+-riegoSugerido
+-riegoRealizado
+}
+
+class Usuario {
+-id
+-nombreUsuario
+-contraseña
+-nombre
+-apellido
+-dni
+-telefono
+-email
+-estado
+-fechaAlta
+-fechaBaja
+-superUsuario
+}
+
+@enduml
