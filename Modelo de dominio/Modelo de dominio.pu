@@ -55,6 +55,7 @@ class RegHistoricoClima {
 -nubosidad
 -temperaturaMinima
 -temperaturaMaxima
+-cantidadTotalAgua
 -cantidadRestanteAgua
 -eto
 -etc
