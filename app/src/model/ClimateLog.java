@@ -39,13 +39,14 @@ import javax.persistence.TemporalType;
 import javax.persistence.Table;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.UniqueConstraint;
 
 import weatherApiClasses.ForecastResponse;
 
 import java.util.Calendar;
 
 @Entity
-@Table(name="CLIMATE_LOG")
+@Table(name="CLIMATE_LOG", uniqueConstraints={@UniqueConstraint(columnNames={"DATE", "FK_PARCEL"})})
 public class ClimateLog {
 
   @Id
@@ -58,7 +59,7 @@ public class ClimateLog {
    * en base a unas coordenadas geograficas
    * han sido solicitados
    */
-  @Column(name="DATE")
+  @Column(name="DATE", nullable=false)
   @Temporal(TemporalType.DATE)
   private Calendar date;
 
@@ -68,7 +69,7 @@ public class ClimateLog {
    * El nombre de la zona horaria de la
    * IANA para la ubicacion solicitada
    */
-  @Column(name="TIME_ZONE")
+  @Column(name="TIME_ZONE", nullable=false)
   private String timezone;
 
   /*
@@ -86,7 +87,7 @@ public class ClimateLog {
    * devueltos como respuesta a la llamada es la SI, la
    * cual especifica que la intensidad de la precipitacion
    */
-  @Column(name="PRECIP_INTENSITY")
+  @Column(name="PRECIP_INTENSITY", nullable=false)
   private Double precipIntensity;
 
   /*
@@ -95,7 +96,7 @@ public class ClimateLog {
    * La probabilidad de que ocurra una precipitacion,
    * entre 0 y 1, inclusive
    */
-  @Column(name="PRECIP_PROBABILITY")
+  @Column(name="PRECIP_PROBABILITY", nullable=false)
   private Double precipProbability;
 
   /*
@@ -112,7 +113,7 @@ public class ClimateLog {
    * en nuestras fuentes, la precipTypeinformación histórica
    * generalmente se estima, en lugar de observarse).
    */
-  @Column(name="PRECIP_TYPE")
+  @Column(name="PRECIP_TYPE", nullable=false)
   private String precipType;
 
   /*
@@ -122,7 +123,7 @@ public class ClimateLog {
    * del servicio climatico en la unidad
    * de medida [°C]
    */
-  @Column(name="DEW_POINT")
+  @Column(name="DEW_POINT", nullable=false)
   private Double dewPoint;
 
   /*
@@ -130,7 +131,7 @@ public class ClimateLog {
    *
    * La presion del aire a nivel del mar
    */
-  @Column(name="PRESSURE")
+  @Column(name="PRESSURE", nullable=false)
   private Double pressure;
 
   /*
@@ -139,7 +140,7 @@ public class ClimateLog {
    * Con el uso de la unidad SI, este
    * fenomeno es medido en metros por segundo
    */
-  @Column(name="WIND_SPEED")
+  @Column(name="WIND_SPEED", nullable=false)
   private Double windSpeed;
 
   /*
@@ -148,7 +149,7 @@ public class ClimateLog {
    * El porcentaje de cielo olcuido por nobres,
    * entre 0 y 1, inclusive
    */
-  @Column(name="CLOUD_COVER")
+  @Column(name="CLOUD_COVER", nullable=false)
   private Double cloudCover;
 
   /*
@@ -158,7 +159,7 @@ public class ClimateLog {
    * fenomeno es medido en grados
    * centigrados
    */
-  @Column(name="TEMP_MIN")
+  @Column(name="TEMP_MIN", nullable=false)
   private Double temperatureMin;
 
   /*
@@ -168,19 +169,42 @@ public class ClimateLog {
    * fenomeno es medido en grados
    * centigrados
    */
-  @Column(name="TEMP_MAX")
+  @Column(name="TEMP_MAX", nullable=false)
   private Double temperatureMax;
 
   /*
-   * Agua restante
+   * Cantidad total de agua
+   *
+   * La cantidad total de agua es el resultado
+   * de sumar el agua de riego (si la hubo) mas
+   * el agua de lluvia (si la hubo, estas dos
+   * del dia actual) mas el restante del dia
+   * de ayer (agua del dia de ayer a favor
+   * para el dia de hoy) y de esta forma
+   * se calcula la cantidad total de agua
+   * del dia en el cual se obtuvieron los
+   * datos climaticos
+   */
+  @Column(name="TOTAL_WATER")
+  private double totalWater;
+
+  /*
+   * Cantidad restante de agua
    *
    * El agua restante en el suelo en el
    * cual esta plantado un cultivo es igual a
    * el agua de lluvia (si la hubo) mas
-   * el agua de riego (si la hubo) menos
-   * la cantidad de agua que va a evaporar
-   * un cultivo dado bajo condiciones estandar
-   * (ETc)
+   * el agua de riego (si la hubo, estas
+   * dos del dia de hoy) mas el agua
+   * restante del dia de ayer (agua
+   * a favor del dia de ayer para el dia
+   * de hoy) menos la cantidad de agua que
+   * va a evaporo un cultivo dado bajo
+   * condiciones estandar (ETc) en el dia
+   * de ayer (ETc de ayer) y de esta forma
+   * se calcula la cantidad restante de agua
+   * del dia en el cual se obtuvieron los
+   * datos climaticos
    */
   @Column(name="WATER_REMAINING")
   private Double waterRemaining;
@@ -367,57 +391,73 @@ public class ClimateLog {
 	}
 
 	/**
-	* Sets new value of cloudCover
-	* @param
-	*/
+	 * Sets new value of cloudCover
+	 * @param
+	 */
 	public void setCloudCover(Double cloudCover) {
 		this.cloudCover = cloudCover;
 	}
 
 	/**
-	* Returns value of temperatureMin
-	* @return
-	*/
+	 * Returns value of temperatureMin
+	 * @return
+	 */
 	public Double getTemperatureMin() {
 		return temperatureMin;
 	}
 
 	/**
-	* Sets new value of temperatureMin
-	* @param
-	*/
+	 * Sets new value of temperatureMin
+	 * @param
+	 */
 	public void setTemperatureMin(Double temperatureMin) {
 		this.temperatureMin = temperatureMin;
 	}
 
   /**
-	* Returns value of temperatureMax
-	* @return
-	*/
+	 * Returns value of temperatureMax
+	 * @return
+	 */
 	public Double getTemperatureMax() {
 		return temperatureMax;
 	}
 
 	/**
-	* Sets new value of temperatureMax
-	* @param
-	*/
+	 * Sets new value of temperatureMax
+	 * @param
+	 */
 	public void setTemperatureMax(Double temperatureMax) {
 		this.temperatureMax = temperatureMax;
 	}
 
   /**
-  * Returns value of waterRemaining
-  * @return
-  */
+   * Returns value of totalWater
+   * @return
+   */
+  public double getTotalWater() {
+    return totalWater;
+  }
+
+  /**
+   * Sets new value of totalWater
+   * @param
+   */
+  public void setTotalWater(double totalWater) {
+    this.totalWater = totalWater;
+  }
+
+  /**
+   * Returns value of waterRemaining
+   * @return
+   */
   public double getWaterRemaining() {
     return waterRemaining;
   }
 
   /**
-  * Sets new value of waterRemaining
-  * @param
-  */
+   * Sets new value of waterRemaining
+   * @param
+   */
   public void setWaterRemaining(double waterRemaining) {
     this.waterRemaining = waterRemaining;
   }
