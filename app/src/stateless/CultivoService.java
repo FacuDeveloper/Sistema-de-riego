@@ -18,4 +18,10 @@ public interface CultivoService {
   public Collection<Cultivo> findAll();
   public Page<Cultivo> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters);
   public double getKc(Cultivo crop, Calendar seedTime);
+
+  /*
+   * Metodo utilizado para la clase de prueba
+   * unitaria llamada KcTest
+   */
+  public double getKc(Cultivo crop, Calendar seedTime, Calendar currentDate);
 }

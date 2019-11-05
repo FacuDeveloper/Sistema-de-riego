@@ -19,6 +19,7 @@ import model.Cultivo;
 
 @Stateless
 public class CultivoServiceBean implements CultivoService {
+
   @PersistenceContext(unitName="SisRiegoDB")
   protected EntityManager em;
 
@@ -32,12 +33,12 @@ public class CultivoServiceBean implements CultivoService {
 
   /**
   * Persiste en la base da datos la instancia de Cultivo recibida
-  * @param cul
+  * @param crop
   * @return referencia a un objeto de tipo Cultivo
   */
-  public Cultivo create(Cultivo cul) {
-    getEntityManager().persist(cul);
-    return cul;
+  public Cultivo create(Cultivo crop) {
+    getEntityManager().persist(crop);
+    return crop;
   }
 
   /**
@@ -49,11 +50,11 @@ public class CultivoServiceBean implements CultivoService {
    * referencia a nada (nulo) en caso contrario
    */
   public Cultivo remove(int id) {
-    Cultivo cul= find(id);
+    Cultivo crop = find(id);
 
-    if (cul != null) {
-      getEntityManager().remove(cul);
-      return cul;
+    if (crop != null) {
+      getEntityManager().remove(crop);
+      return crop;
     }
 
     return null;
@@ -66,18 +67,18 @@ public class CultivoServiceBean implements CultivoService {
   * @return Cultivo se retorna el cultivo de la base de datos con las modificaciones, o null si no se encontro Cultivosio correspondiente al id
   */
   public Cultivo change(int id, Cultivo cultivo) {
-    Cultivo cul = find(id);
+    Cultivo crop = find(id);
 
-    if (cul != null) {
-      cul.setKcInicial(cultivo.getKcInicial());
-      cul.setKcMedio(cultivo.getKcMedio());
-      cul.setKcFinal(cultivo.getKcFinal());
-      cul.setNombre(cultivo.getNombre());
-      cul.setEtInicial(cultivo.getEtInicial());
-      cul.setEtDesarrollo(cultivo.getEtDesarrollo());
-      cul.setEtMedia(cultivo.getEtMedia());
-      cul.setEtFinal(cultivo.getEtFinal());
-      return cul;
+    if (crop != null) {
+      crop.setKcInicial(cultivo.getKcInicial());
+      crop.setKcMedio(cultivo.getKcMedio());
+      crop.setKcFinal(cultivo.getKcFinal());
+      crop.setNombre(cultivo.getNombre());
+      crop.setEtInicial(cultivo.getEtInicial());
+      crop.setEtDesarrollo(cultivo.getEtDesarrollo());
+      crop.setEtMedia(cultivo.getEtMedia());
+      crop.setEtFinal(cultivo.getEtFinal());
+      return crop;
     }
 
     return null;
@@ -87,85 +88,229 @@ public class CultivoServiceBean implements CultivoService {
     return getEntityManager().find(Cultivo.class, id);
   }
 
-  // FIXME, NOTE: Documentar
-  public double getKc(Cultivo crop, Calendar seedTime) {
+  /**
+   * *** NOTA ***
+   * Este metodo es unicamente para la clase de prueba
+   * unitaria KcTest, con lo cual no sera utilizado
+   * en la version final del sistema, sino que es
+   * unicamente para usarlo en una prueba untiaria
+   * con el fin de verificar su correcto funcionamiento
+   * *** FIN DE NOTA ***
+   *
+   * Devuelve el kc (coeficiente del cultivo) de un
+   * cultivo dado en funcion de la etapa de vida
+   * en la que se encuentre la cantidad de dias
+   * que ha vivido desde su fecha de siembra
+   * hasta la fecha actual
+   *
+   * @param  crop
+   * @param  seedDate [fecha de siembra del cultivo dado]
+   * @return kc (coeficiente del cultivo) de un cultivo
+   * dado correspondiente a la etapa de vida en la
+   * que se encuentre
+   */
+  public double getKc(Cultivo crop, Calendar seedDate, Calendar currentDate) {
+    int daysLife = 0;
+
+    /*
+     * Si la fecha de siembra y la fecha actual son del mismo
+     * año se calcula la diferencia de dias entre ambas fechas
+     * sin tener en cuenta el año debido a que pertenecen al
+     * mismo año y dicha diferencia es la cantidad de dias
+     * de vida que ha vivido el cultivo desde su fecha
+     * de siembra hasta la fecha actual
+     */
+    if (seedDate.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)) {
+      daysLife = currentDate.get(Calendar.DAY_OF_YEAR) - seedDate.get(Calendar.DAY_OF_YEAR);
+      return calculateKc(crop, daysLife);
+    }
+
+    /*
+     * Si la fecha de siembra y la fecha actual no son del mismo
+     * año se calcula la diferencia de dias entre ambas teniendo
+     * en cuenta el año de cada una debido a que pertenecen a
+     * años diferentes
+     *
+     * Cantidad de dias de vida = Numero del dia del año de la fecha
+     * actual + (365 - numero del dia del año de la fecha de siembra + 1)
+     */
+    daysLife = currentDate.get(Calendar.DAY_OF_YEAR) + (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1);
+    return calculateKc(crop, daysLife);
+  }
+
+  /**
+   * Devuelve el kc (coeficiente del cultivo) de un
+   * cultivo dado en funcion de la etapa de vida
+   * en la que se encuentre la cantidad de dias
+   * que ha vivido desde su fecha de siembra
+   * hasta la fecha actual
+   *
+   * @param  crop
+   * @param  seedDate [fecha de siembra del cultivo dado]
+   * @return kc (coeficiente del cultivo) de un cultivo
+   * dado correspondiente a la etapa de vida en la
+   * que se encuentre
+   */
+  public double getKc(Cultivo crop, Calendar seedDate) {
+    int daysLife = 0;
+    Calendar currentDate = Calendar.getInstance();
+
+    /*
+     * Si la fecha de siembra y la fecha actual son del mismo
+     * año se calcula la diferencia de dias entre ambas fechas
+     * sin tener en cuenta el año debido a que pertenecen al
+     * mismo año y dicha diferencia es la cantidad de dias
+     * de vida que ha vivido el cultivo desde su fecha
+     * de siembra hasta la fecha actual
+     */
+    if (seedDate.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)) {
+      daysLife = currentDate.get(Calendar.DAY_OF_YEAR) - seedDate.get(Calendar.DAY_OF_YEAR);
+      return calculateKc(crop, daysLife);
+    }
+
+    /*
+     * Si la fecha de siembra y la fecha actual no son del mismo
+     * año se calcula la diferencia de dias entre ambas teniendo
+     * en cuenta el año de cada una debido a que pertenecen a
+     * años diferentes
+     *
+     * Cantidad de dias de vida = Numero del dia del año de la fecha
+     * actual + (365 - numero del dia del año de la fecha de siembra + 1)
+     */
+    daysLife = currentDate.get(Calendar.DAY_OF_YEAR) + (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1);
+    return calculateKc(crop, daysLife);
+  }
+
+  /**
+   * Calcula el kc (coeficiente del cultivo) de un cultivo
+   * dado verificando si la cantidad de dias de vida del mismo
+   * esta dentro de una de sus tres etapas de vida
+   *
+   * Si la cantidad de dias de vida del cultivo dado no
+   * estan dentro de ninguna de sus tres etapas de vida, este
+   * metodo retorna como resultado un kc = 0.0
+   *
+   * La cantidad de dias de vida que ha vivido un cultivo
+   * se calcula como la diferencia entre la fecha actual
+   * y su fecha de siembra
+   *
+   * @param  crop
+   * @param  daysLife [dias de vida del cultivo dado]
+   * @return coeficiente del cultivo (kc) dado en funcion
+   * de la etapa de vida en la que se encuentre, en caso
+   * de que no este dentro de ninguna de sus tres etapas
+   * de vida, este metodo retorna un kc = 0.0
+   */
+  private double calculateKc(Cultivo crop, int daysLife) {
+    double zeroKc = 0.0;
+
     /*
      * Numero del dia en el cual comienza la etapa inicial
      * sumada a la etapa de desarrollo del cultivo dado
+     */
+    int initialDayInitialStage = 1;
+
+    /*
+     * Numero del dia en el cual comienza la segunda etapa
+     * (la etapa media) de vida del cultivo dado
+     */
+    int initialDayMiddleStage = crop.getEtInicial() + crop.getEtDesarrollo() + 1;
+
+    /*
+     * Numero del dia en el cual comienza la tercera etapa
+     * (etapa final) de vida del cultivo dado
+     */
+    int initialDayFinalStage = crop.getEtInicial() + crop.getEtDesarrollo() + crop.getEtMedia() + 1;
+
+    /*
+     * El limite superior o ultimo dia de la etapa inicial
+     * de un cultivo es igual a la suma de los dias de su
+     * etapa incial mas los dias de su etapa de desarrollo
      *
      * Entre los integrantes del equipo de desarrollo se ha establecido
      * que las etapas inicial y desarrollo son una sola, y es por esto
-     * que se suman los dias que duran ambas
+     * que se suman los dias que duran ambas y que se toma la etapa
+     * inicial como la suma de los dias que dura la etapa inicial mas
+     * los dias que dura la etapa de desarrollo, quedando la etapa
+     * incial como la etapa incial mas la etapa de desarrollo
      */
-    int initialDayFirstStage = 1;
+    int upperLimitFirstStage = crop.getEtInicial() + crop.getEtDesarrollo();
 
     /*
-     * Numero del dia en el cual comienza la etapa media
+     * El limite superior o ultimo dia de la etapa media
+     * de un cultivo es igual a la suma de los dias de su
+     * etapa inicial mas los dias de su etapa de desarrollo
+     * mas los dias de su etapa media
+     */
+    int upperLimitSecondStage = crop.getEtInicial() + crop.getEtDesarrollo() + crop.getEtMedia();
+
+    /*
+     * El limite superior o ultimo dia de la etapa final
+     * de un cultivo es igual a la suma de los dias de su
+     * etapa incial mas los dias de su etapa de desarrollo
+     * mas los dias de su etapas media mas los dias de su
+     * etapa final
+     */
+    int upperLimitThirdStage = crop.getEtInicial() + crop.getEtDesarrollo() + crop.getEtMedia() + crop.getEtFinal();
+
+    /*
+     * Si la cantidad de dias de vida del cultivo dado esta entre
+     * entre el dia del comienzo de la etapa inicial y el maximo
+     * de dias (o limite superior) que dura la misma (recordar que la etapa inicial
+     * es la suma de la cantidad de dias que dura la etapa incial
+     * mas la suma de la cantidad de dias que dura la etapa de
+     * desarrollo), este metodo retorna el coeficiente incial (kc)
      * del cultivo dado
-     */
-    int initialDaySecondStage = crop.getEtInicial() + crop.getEtDesarrollo() + 1;
-
-    /*
-     * Dias de vida que ha vivido el cultivo dado
-     * desde su fecha de siembra hasta la fecha actual
-     */
-    int daysLife = getDaysLife(seedTime);
-
-    /*
-     * Si la cantidad de dias de vida del cultivo dado esta entre uno
-     * y el maximo de la cantidad de dias resultante de la
-     * suma de los dias de la etapa inicial y de la etapa de
-     * desarrollo, este metodo retorna el coeficiente inicial (kc)
-     * del cultivo dado
+     *
+     * Dicho en otras palabras, si la cantidad de dias de vida
+     * del cultivo dado esta entre uno y el maximo de la cantidad
+     * de dias resultante de la suma de los dias de la etapa inicial
+     * y de la etapa de desarrollo, este metodo retorna el coeficiente
+     * inicial (kc) del cultivo dado
      *
      * Entre los integrantes del equipo de desarrollo se ha establecido
      * que las etapas inicial y desarrollo son una sola, y es por esto
-     * que se suman los dias que duran ambas
+     * que se suman los dias que duran ambas, y por ende la etapa inicial
+     * es la etapa inicial mas la etapa de desarrollo
      */
-    if ((initialDayFirstStage <= daysLife) && (daysLife <= (crop.getEtInicial() + crop.getEtDesarrollo()))) {
+    if ((initialDayInitialStage <= daysLife) && (daysLife <= upperLimitFirstStage)) {
       return crop.getKcInicial();
     }
 
     /*
      * Si la cantidad de dias de vida del cultivo dado esta entre el dia
-     * del comienzo de la etapa media y el maximo de dias que dura la
-     * etapa media (el cual resulta de sumar los dias que duran las
+     * del comienzo de la etapa media y el maximo de dias (o limite superior) que dura la
+     * misma (el cual resulta de sumar los dias que duran las
      * etapas inicial, desarrollo y media), este metodo retorna el
      * coeficiente medio (kc) del cultivo dado
      */
-    if ((initialDaySecondStage <= daysLife) && (daysLife <= (crop.getEtInicial() + crop.getEtDesarrollo() + crop.getEtMedia()))) {
+    if ((initialDayMiddleStage <= daysLife) && (daysLife <= upperLimitSecondStage)) {
       return crop.getKcMedio();
     }
 
     /*
-     * Si la cantidad de dias de vida del cultivo dado no esta entre
-     * los dias que dura la etapa inicial (dias de la etapa incial
-     * mas dias de la etapa de desarrollo), ni entre los dias que
-     * dura la etapa media, entonces esta entre el dia de comienzo
-     * de la etapa final y el maximo de dias de la misma etapa, con
-     * lo cual este metodo retorna el coeficiente del cultivo (kc)
-     * final
+     * Si la cantidad de dias de vida del cultivo dado esta entre el dia
+     * del comienzo de la etapa final y el maximo de dias (o limite superior) que dura la
+     * misma (el cual resulta de sumar los dias que duran las etapas
+     * incial, desarrollo, media y final), este metodo retorna el
+     * coeficiente final (kc) del cultivo dado
      */
-    return crop.getKcFinal();
+    if ((initialDayFinalStage <= daysLife) && (daysLife <= upperLimitThirdStage)) {
+      return crop.getKcFinal();
+    }
+
+    /*
+     * Si la cantidad de dias de vida del cultivo dado no esta
+     * dentro de ninguna de las tres etapas del mismo, este
+     * metodo retorna un coeficiente del cultivo (kc) igual a 0.0
+     */
+    return zeroKc;
   }
 
   /**
-   * Calcula la diferencia entre la fecha de siembra de un cultivo
-   * dado y la fecha actual, operacion que produce como resultado
-   * la cantidad de dias de vida que ha transcurrido el cultivo dado
-   *
-   * @param  seedTime [fecha de siembra de un cultivo dado]
-   * @return cantidad de dias de vida de un cultivo dado desde su
-   * fecha de siembra
+   * Busca en la base de datos la lista completa de Cultivos
+   * @return Collection<Cultivo> se retorna la lista de Cultivos
    */
-  private int getDaysLife(Calendar seedTime) {
-    return (Calendar.getInstance().get(Calendar.DAY_OF_YEAR) - seedTime.get(Calendar.DAY_OF_YEAR));
-  }
-
-  /**
-  * Busca en la base de datos la lista completa de Cultivos
-  * @return Collection<Cultivo> se retorna la lista de Cultivos
-  */
   public Collection<Cultivo> findAll() {
     Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c ORDER BY e.id");
     return (Collection<Cultivo>) query.getResultList();
