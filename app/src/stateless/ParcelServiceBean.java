@@ -86,6 +86,19 @@ public  class ParcelServiceBean {
     return getEntityManager().find(Parcel.class, id);
   }
 
+  // TODO: Crear metodo que recupere todas las parcelas activas
+  // Este metodo probablemente vaya a ser para la pantalla de
+  // instancia parcela (registro historico de parcela) para que
+  // el usuario no elija parcelas inactivas al momento de crear
+  // regitros historicos de parcelas
+
+  // TODO: Quizas haya que crear un bloque de codigo fuente
+  // en el caso en el que el usuario presione el boton de
+  // obtener agua de riego y no exista el registro historico
+  // climatico del dia anterior para la parcela sobre la
+  // cual se presiono el boton mencionado y la cual obviamente
+  // tiene un cultivo sembrado
+
   public Collection<Parcel> findAll() {
     Query query = getEntityManager().createQuery("SELECT p FROM Parcel p ORDER BY p.id");
     return (Collection<Parcel>) query.getResultList();

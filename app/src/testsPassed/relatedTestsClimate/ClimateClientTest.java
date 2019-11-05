@@ -22,7 +22,7 @@ import org.junit.Ignore;
 
 import java.util.Calendar;
 
-import stateless.ClimateLogService;
+import climate.ClimateLogService;
 
 import model.ClimateLog;
 

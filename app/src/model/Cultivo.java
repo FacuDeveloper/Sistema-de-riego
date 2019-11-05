@@ -5,19 +5,17 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-// import javax.persistence.Table;
 // import javax.persistence.UniqueConstraint;
 // import javax.persistence.Enumerated;
 // import javax.persistence.EnumType;
 
 @Entity
-public class Cultivo{
-  @Id
-  @Column(name="CULTIVO_ID") @GeneratedValue(strategy=GenerationType.IDENTITY)
-  private int id;
+public class Cultivo {
 
-  // @Column(name="NUMERO_CUL")
-  // private int numCultivo;
+  @Id
+  @Column(name="CULTIVO_ID")
+  @GeneratedValue(strategy=GenerationType.IDENTITY)
+  private int id;
 
   @Column(name="NOMBRE")
   private String nombre;

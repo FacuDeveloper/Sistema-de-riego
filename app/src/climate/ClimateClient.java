@@ -47,7 +47,7 @@ public class ClimateClient {
      * para recuperar los datos climaticos en base
      * a una fecha y a unas coordenadas geograficas
      */
-    INCOMPLETE_WEATHER_URL = "https://api.darksky.net/forecast/63dca785e324c5ffadd993bb157b1e1a/";
+    INCOMPLETE_WEATHER_URL = "https://api.darksky.net/forecast/6a0d25da734d746d5bfd6fb97e8dcf1e/";
 
     /*
      * Cadena de consulta

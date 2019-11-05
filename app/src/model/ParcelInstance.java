@@ -27,20 +27,20 @@ public class ParcelInstance {
   @GeneratedValue(strategy=GenerationType.IDENTITY)
   private int id;
 
-  @Column(name="SEED_DATE")
+  @Column(name="SEED_DATE", nullable=false)
   @Temporal(TemporalType.DATE)
-  private Calendar seedDate; // fecha de siembra
+  private Calendar seedDate; // fecha de siembra de un cultivo
 
   @Column(name="HARVEST_DATE")
   @Temporal(TemporalType.DATE)
-  private Calendar harvestDate; // fecha de cosecha
+  private Calendar harvestDate; // fecha de cosecha de un cultivo
 
   @ManyToOne
-  @JoinColumn(name="FK_CROP")
+  @JoinColumn(name="FK_CROP", nullable=false)
   private Cultivo crop;
 
   @ManyToOne
-  @JoinColumn(name="FK_PARCEL")
+  @JoinColumn(name="FK_PARCEL", nullable=false)
   private Parcel parcel;
 
   // Constructor method
@@ -82,6 +82,12 @@ public class ParcelInstance {
 
   public void setParcel(Parcel parcel) {
     this.parcel = parcel;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("ID: %s\nCultivo: %s\nFecha de siembra: %s\n", id, crop.getNombre(),
+    (seedDate.get(Calendar.DAY_OF_MONTH) + "-" + (seedDate.get(Calendar.MONTH) + 1) + "-" + seedDate.get(Calendar.YEAR)));
   }
 
 }

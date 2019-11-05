@@ -4,7 +4,7 @@
 
 package et;
 
-public class ETc {
+public class Etc {
 
   /**
    * Calcula la evapotranspiracion del cultivo bajo condiciones
@@ -25,7 +25,7 @@ public class ETc {
    */
   public static double getEtc(double cropCoefficient, double minTemperature, double maxTemperature, double pressure, double windSpeed, double dewPoint,
     double extraterrestrialSolarRadiation, double maximumInsolation, double cloudCover) {
-    return (cropCoefficient * ETo.getEto(minTemperature, maxTemperature, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover));
+    return (cropCoefficient * Eto.getEto(minTemperature, maxTemperature, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover));
   }
 
 }

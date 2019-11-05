@@ -50,6 +50,15 @@
     de registros climaticos para cada parcela en el sistema -->
     <target name="parcela" depends="init, run_parcels_sql" />
 
+    <!-- Conjunto de datos para hacer la prueba del metodo exist de la clase ClimateLogServiceBean -->
+    <target name="clima" depends="init, run_climateLogs_sql" />
+
+    <!-- Conjunto de datos para hacer la prueba del metodo getCurrentCrop de la clase ParcelInstanceServiceBean -->
+    <target name="instancia" depends="init, run_parcelLogs_sql" />
+
+    <!-- Comando para borrar el contenido de la tabla de registros climaticos de la base de datos -->
+    <target name="deleteclimate" depends="init, run_deleteClimateLogs_sql" />
+
     <target name="delete-domain" depends="init,stop,delete_domain" />
     <target name="create-domain" depends="init,create_domain,start,createdb" />
 

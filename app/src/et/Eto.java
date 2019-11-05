@@ -6,7 +6,7 @@ package et;
 
 import java.lang.Math;
 
-public class ETo {
+public class Eto {
 
   /**
    * Calcula la evapotranspiracion del cultivo de referencia,
@@ -42,7 +42,7 @@ public class ETo {
     // System.out.println("El delta es: " + delta);
 
     // Constante psicrometrica (letra griega gamma) [kPa/°C]
-    double gamma = psychometricConstant(pressureMiliBarToKiloPascals(pressure));
+    double gamma = psychometricConstant(pressureHectoPascalsToKiloPascals(pressure));
 
     // System.out.println("El gamma es: " + gamma);
 
@@ -471,13 +471,13 @@ public class ETo {
   }
 
   /**
-   * Convierte la presión atmosferica dada en milibares a kilopascales
+   * Convierte la presión atmosferica dada en hectopascales a kilopascales
    *
-   * @param  miliBarPressure
+   * @param  hectoPascalPressure
    * @return presion atmosferica [kPa]
    */
-  private static double pressureMiliBarToKiloPascals(double miliBarPressure) {
-    return (miliBarPressure * 0.1);
+  private static double pressureHectoPascalsToKiloPascals(double hectoPascalPressure) {
+    return (hectoPascalPressure * 0.1);
   }
 
 }

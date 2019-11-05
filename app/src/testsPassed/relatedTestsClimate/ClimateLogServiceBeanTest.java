@@ -5,7 +5,11 @@ import org.junit.AfterClass;
 import org.junit.Ignore;
 
 import stateless.ClimateLogServiceBean;
-import stateless.ClimateLogService;
+import stateless.ParcelServiceBean;
+
+import climate.ClimateLogService;
+
+import model.ClimateLog;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -13,6 +17,7 @@ import javax.persistence.Persistence;
 
 public class ClimateLogServiceBeanTest {
   private static ClimateLogServiceBean climateLogServiceBean;
+  private static ParcelServiceBean parcelServiceBean;
   private static EntityManager entityManager;
   private static EntityManagerFactory entityMangerFactory;
 
@@ -23,6 +28,9 @@ public class ClimateLogServiceBeanTest {
 
     climateLogServiceBean = new ClimateLogServiceBean();
     climateLogServiceBean.setEntityManager(entityManager);
+
+    parcelServiceBean = new ParcelServiceBean();
+    parcelServiceBean.setEntityManager(entityManager);
   }
 
   /*
@@ -53,21 +61,12 @@ public class ClimateLogServiceBeanTest {
      */
     long dateUnixTimeStamp = 1572566400;
 
+    ClimateLog climateLog = climateLogService.getClimateLog(latitude, longitude, dateUnixTimeStamp);
+    climateLog.setParcel(parcelServiceBean.find(1));
+
     entityManager.getTransaction().begin();
-    climateLogServiceBean.create(climateLogService.getClimateLog(latitude, longitude, dateUnixTimeStamp));
+    climateLogServiceBean.create(climateLog);
     entityManager.getTransaction().commit();
-
-    /*
-     * Si se recupera satisfactoriamente de la base
-     * de datos el registro del clima que tiene id = 1
-     * el metodo find() de la clase ClimateLogServiceBean
-     * tiene que retornar una referencia no nula con lo
-     * cual esta prueba tiene que ser existosa, en caso
-     * contrario fallara
-     */
-    assertNotNull(climateLogServiceBean.find(1));
-
-    System.out.println(climateLogServiceBean.find(1));
   }
 
   @Test
