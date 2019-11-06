@@ -69,7 +69,7 @@ class InstanciaParcela {
 
 class RegHistoricoRiego {
 -id
--fechaRiego
+-fecha
 -riegoSugerido
 -riegoRealizado
 }
