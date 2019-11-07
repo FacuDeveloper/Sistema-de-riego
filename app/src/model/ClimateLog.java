@@ -45,6 +45,8 @@ import weatherApiClasses.ForecastResponse;
 
 import java.util.Calendar;
 
+import util.FormatDate;
+
 @Entity
 @Table(name="CLIMATE_LOG", uniqueConstraints={@UniqueConstraint(columnNames={"DATE", "FK_PARCEL"})})
 public class ClimateLog {
@@ -173,20 +175,28 @@ public class ClimateLog {
   private Double temperatureMax;
 
   /*
-   * Cantidad total de agua
+   * Cantidad total ocurrida de agua en el
+   * dia de hoy
    *
-   * La cantidad total de agua es el resultado
-   * de sumar el agua de riego (si la hubo) mas
-   * el agua de lluvia (si la hubo, estas dos
-   * del dia actual) mas el restante del dia
+   * La cantidad total ocurrida de agua en
+   * el dia de hoy es el resultado de sumar
+   * el agua de riego (si la hubo) mas el agua
+   * de lluva (si la hubo, estas dos del dia
+   * de hoy, es decir, del dia actual) mas
+   * mas la cantidad restante de agua del dia
    * de ayer (agua del dia de ayer a favor
    * para el dia de hoy) y de esta forma
    * se calcula la cantidad total de agua
-   * del dia en el cual se obtuvieron los
-   * datos climaticos
+   * ocurrida para el dia de hoy, dia en el cual
+   * el sistema obtiene los datos climaticos de
+   * forma automatica
+   *
+   * El sistema obtiene y almacena de forma
+   * automatica los datos climaticos de cada
+   * dia para cada parcela existente en el
    */
-  @Column(name="TOTAL_WATER")
-  private double totalWater;
+  @Column(name="TOTAL_WATER_OCCURRED")
+  private double totalWaterOccurred;
 
   /*
    * Cantidad restante de agua
@@ -207,7 +217,7 @@ public class ClimateLog {
    * datos climaticos
    */
   @Column(name="WATER_REMAINING")
-  private Double waterRemaining;
+  private double waterRemaining;
 
   /*
    * Evapotranspiracion del cultivo de referencia (pasto)
@@ -247,73 +257,73 @@ public class ClimateLog {
   }
 
 	/**
-	* Returns value of id
-	* @return
-	*/
+	 * Returns value of id
+	 * @return
+	 */
 	public int getId() {
 		return id;
 	}
 
   /**
-  * Returns value of date
-  * @return
-  */
+   * Returns value of date
+   * @return
+   */
   public Calendar getDate() {
     return date;
   }
 
   /**
-  * Sets new value of date
-  * @param
-  */
+   * Sets new value of date
+   * @param
+   */
   public void setDate(Calendar date) {
     this.date = date;
   }
 
   /**
-  * Returns value of timezone
-  * @return
-  */
+   * Returns value of timezone
+   * @return
+   */
   public String getTimezone() {
     return timezone;
   }
 
   /**
-  * Sets new value of timezone
-  * @param
-  */
+   * Sets new value of timezone
+   * @param
+   */
   public void setTimezone(String timezone) {
     this.timezone = timezone;
   }
 
 	/**
-	* Returns value of precipIntensity
-	* @return
-	*/
+	 * Returns value of precipIntensity
+	 * @return
+	 */
 	public Double getPrecipIntensity() {
 		return precipIntensity;
 	}
 
 	/**
-	* Sets new value of precipIntensity
-	* @param
-	*/
+	 * Sets new value of precipIntensity
+	 * @param
+	 */
 	public void setPrecipIntensity(Double precipIntensity) {
 		this.precipIntensity = precipIntensity;
 	}
 
   /**
-	* Returns value of precipProbability
-	* @return
-	*/
+	 * Returns value of precipProbability
+	 * @return
+	 */
 	public Double getPrecipProbability() {
 		return precipProbability;
 	}
 
 	/**
-	* Sets new value of precipProbability
-	* @param
-	*/
+	 * Sets new value of precipProbability
+	 * @param
+	 */
 	public void setPrecipProbability(Double precipProbability) {
 		this.precipProbability = precipProbability;
 	}
@@ -375,17 +385,17 @@ public class ClimateLog {
 	}
 
 	/**
-	* Sets new value of windSpeed
-	* @param
-	*/
+	 * Sets new value of windSpeed
+	 * @param
+	 */
 	public void setWindSpeed(Double windSpeed) {
 		this.windSpeed = windSpeed;
 	}
 
 	/**
-	* Returns value of cloudCover
-	* @return
-	*/
+	 * Returns value of cloudCover
+	 * @return
+	 */
 	public Double getCloudCover() {
 		return cloudCover;
 	}
@@ -431,19 +441,19 @@ public class ClimateLog {
 	}
 
   /**
-   * Returns value of totalWater
+   * Returns value of totalWaterOccurred
    * @return
    */
-  public double getTotalWater() {
-    return totalWater;
+  public double getTotalWaterOccurred() {
+    return totalWaterOccurred;
   }
 
   /**
-   * Sets new value of totalWater
+   * Sets new value of totalWaterOccurred
    * @param
    */
-  public void setTotalWater(double totalWater) {
-    this.totalWater = totalWater;
+  public void setTotalWaterOccurred(double totalWaterOccurred) {
+    this.totalWaterOccurred = totalWaterOccurred;
   }
 
   /**
@@ -495,17 +505,17 @@ public class ClimateLog {
   }
 
   /**
-  * Returns value of parcel
-  * @return
-  */
+   * Returns value of parcel
+   * @return
+   */
   public Parcel getParcel() {
     return parcel;
   }
 
   /**
-  * Sets new value of parcel
-  * @param
-  */
+   * Sets new value of parcel
+   * @param
+   */
   public void setParcel(Parcel parcel) {
     this.parcel = parcel;
   }
@@ -526,16 +536,15 @@ public class ClimateLog {
    *
    * Unidades SI:
    * Intensidad de precipitación (precipIntensity) [milimetros por hora]
-   * Precipitacion acumulada de nieve (precipAccumulation) [centimetros]
    * Temperatura minima (temperatureMin) [°C]
    * Temperatura maxima (temperatureMax) [°C]
    * Punto de rocio (dewPoint) [°C]
    * Velocidad del viento (windSpeed) [metros por segundo]
    * Presion atmosferica (pressure) [hectopascales] convertida a [kPa]
    *
-   * @param forecastResponse este parametro (pronostico como
-   * respuesta) contiene todos los datos climaticos devueltos
-   * por la llamada a la API del clima Dark Sky
+   * @param forecastResponse (pronostico) este parametro contiene
+   * todos los datos climaticos devueltos por la llamada a la API
+   * del clima Dark Sky
    */
   public void load(ForecastResponse forecastResponse) {
     /*
@@ -549,7 +558,7 @@ public class ClimateLog {
     /*
      * Convierte los segundos a milisegundos en formato
      * long porque este metodo utiliza la fecha dada
-     * por el formato UNIX TIMESTAMP en segundos,
+     * por el formato UNIX TIMESTAMP (el cual utiliza segundos),
      * en milisegundos en formato long
      *
      * Lo que se logra con esto es convertir la fecha
@@ -562,20 +571,18 @@ public class ClimateLog {
 
     timezone = forecastResponse.getTimezone();
 
-    if (forecastResponse.getDaily().getData().get(0).getPrecipProbability() != null) {
-      precipProbability = forecastResponse.getDaily().getData().get(0).getPrecipProbability();
-    } else {
-      precipProbability = 0.0;
-    }
+    /*
+     * La probabilidad de que ocurra la precipitación, entre 0 y 1, inclusive.
+     */
+    precipProbability = forecastResponse.getDaily().getData().get(0).getPrecipProbability();
 
-    precipType = forecastResponse.getDaily().getData().get(0).getPrecipType();
     dewPoint = forecastResponse.getDaily().getData().get(0).getDewPoint();
 
     /*
      * Presion atmosferica convertida de hectopascales a kilopascales
      * por estar multiplicada por 0.1
      *
-     * 1 milibar = 0.1 kilopascales
+     * 1 hectopascales = 0.1 kilopascales
      */
     pressure = forecastResponse.getDaily().getData().get(0).getPressure() * 0.1;
 
@@ -600,10 +607,20 @@ public class ClimateLog {
      * este valor (intensidad de la precipitacion) por 24 vamos a obtener como
      * resultado la cantidad total de agua de lluvia
      */
-    if (forecastResponse.getDaily().getData().get(0).getPrecipIntensity() != null) {
-      precipIntensity = forecastResponse.getDaily().getData().get(0).getPrecipIntensity();
+    precipIntensity = forecastResponse.getDaily().getData().get(0).getPrecipIntensity();
+
+    /*
+     * El tipo de precipitación que ocurre en el momento dado. Si se define, esta
+     * propiedad tendrá uno de los siguientes valores: "lluvia", "nieve" o "aguanieve"
+     * (que se refiere a lluvia helada, gránulos de hielo y "mezcla invernal" respectivamente).
+     * (Si precipIntensity es cero, entonces esta propiedad no se definirá. Además, debido
+     * a la falta de datos en nuestras fuentes, la información histórica de precipType
+     * generalmente se estima, en lugar de observarse).
+     */
+    if (forecastResponse.getDaily().getData().get(0).getPrecipType() != null) {
+      precipType = forecastResponse.getDaily().getData().get(0).getPrecipType();
     } else {
-      precipIntensity = 0.0;
+      precipType = "undefined";
     }
 
   }
@@ -615,8 +632,8 @@ public class ClimateLog {
      * porque los numeros de los meses van desde 0
      * (Enero) a 11 (Diciembre)
      */
-    return String.format("ID: %d\nLatitud: %f (grados decimales) Longitud: %f (grados decimales)\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)\nCantidad de agua restante: %f\n",
-    id, parcel.getLatitude(), parcel.getLongitude(), (date.get(Calendar.DAY_OF_MONTH) + "-" + (date.get(Calendar.MONTH) + 1) + "-" + date.get(Calendar.YEAR)), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, (precipIntensity * 24), waterRemaining);
+    return String.format("ID: %d\nLatitud: %f (grados decimales) Longitud: %f (grados decimales)\nZona horaria: %s\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)\nCantidad restante de agua: %f\n",
+    id, parcel.getLatitude(), parcel.getLongitude(), timezone, FormatDate.formatDate(date), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, (precipIntensity * 24), waterRemaining);
   }
 
 }
