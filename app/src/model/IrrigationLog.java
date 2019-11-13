@@ -19,6 +19,8 @@ import javax.persistence.TemporalType;
 
 import java.util.Calendar;
 
+import util.FormatDate;
+
 @Entity
 @Table(name="IRRIGATION_LOG")
 public class IrrigationLog {
@@ -33,7 +35,7 @@ public class IrrigationLog {
 
   @Column(name="WEATERING_DATE", nullable=false)
   @Temporal(TemporalType.DATE)
-  private Calendar wateringDate; // fecha de riego
+  private Calendar date;
 
   /*
    * Riego sugerido
@@ -87,27 +89,27 @@ public class IrrigationLog {
   /* Getters and setters */
 
 	/**
-	* Returns value of id
-	* @return
-	*/
+	 * Returns value of id
+	 * @return
+	 */
 	public int getId() {
 		return id;
 	}
 
 	/**
-	* Returns value of wateringDate
-	* @return wateringDate
-	*/
-	public Calendar getWateringDate() {
-		return wateringDate;
+	 * Returns value of date
+	 * @return date
+	 */
+	public Calendar getDate() {
+		return date;
 	}
 
 	/**
-	* Sets new value of wateringDate
-	* @param wateringDate
-	*/
-	public void setWateringDate(Calendar wateringDate) {
-		this.wateringDate = wateringDate;
+	 * Sets new value of date
+	 * @param date
+	 */
+	public void setDate(Calendar date) {
+		this.date = date;
 	}
 
 	/**
@@ -160,8 +162,8 @@ public class IrrigationLog {
 
   @Override
   public String toString() {
-    return String.format("ID: %d\nFecha de riego: %s\nRiego sugerido: %.f\nRiego realizado: %f\nID de parcela: %d\n", id,
-    (wateringDate.get(Calendar.DAY_OF_MONTH) + "-" + (wateringDate.get(Calendar.MONTH) + 1) + "-" + wateringDate.get(Calendar.YEAR)), suggestedIrrigation, irrigationDone, parcel.getId());
+    return String.format("ID: %d\nFecha de riego: %s\nRiego sugerido: %.f\nRiego realizado: %f\nID de parcela: %d\n",
+    id, FormatDate.formatDate(date), suggestedIrrigation, irrigationDone, parcel.getId());
   }
 
 }
