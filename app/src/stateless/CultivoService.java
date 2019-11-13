@@ -24,4 +24,6 @@ public interface CultivoService {
    * unitaria llamada KcTest
    */
   public double getKc(Cultivo crop, Calendar seedTime, Calendar currentDate);
+  public Cultivo findByName(String cropName);
+  public Calendar calculateHarvestDate(Calendar seedDate, Cultivo crop);
 }

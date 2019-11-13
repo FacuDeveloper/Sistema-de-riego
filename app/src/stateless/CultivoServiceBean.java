@@ -308,12 +308,63 @@ public class CultivoServiceBean implements CultivoService {
   }
 
   /**
+   * Calcula la fecha de cosecha de un cultivo a partir de su fecha
+   * de siembra
+   *
+   * @param  seedDate [fecha de siembra]
+   * @param  crop     [cultivo]
+   * @return fecha de cosecha del cultivo dado
+   */
+  public Calendar calculateHarvestDate(Calendar seedDate, Cultivo crop) {
+    // Fecha de cosecha
+    Calendar harvestDate = Calendar.getInstance();
+
+    /*
+     * La cantidad total de dias de vida del cultivo dado
+     * es igual a la suma de la duracion en dias de cada una
+     * de sus etapas
+     */
+    int totalDaysLife = crop.getEtInicial() + crop.getEtDesarrollo() + crop.getEtMedia() + crop.getEtFinal();
+
+    /*
+     * Si el numero del dia de siembra en el año mas la cantidad
+     * total de dias de vida del cultivo dado es mayor a 365
+     * (por ende, la fecha de siembra y la fecha de cosecha no
+     * estan en el mismo año), la fecha de cosecha es igual fecha
+     * de siembra mas la cantidad total de dias de vida del cultivo
+     * dado menos 365
+     */
+    if ((seedDate.get(Calendar.DAY_OF_YEAR) + totalDaysLife) > 365) {
+      harvestDate.set(Calendar.DAY_OF_YEAR, ((seedDate.get(Calendar.DAY_OF_YEAR) + totalDaysLife) - 365));
+      harvestDate.set(Calendar.YEAR, seedDate.get(Calendar.YEAR) + 1);
+      return harvestDate;
+    }
+
+    /*
+     * Si el numero del dia de siembra en el año mas la cantidad
+     * total de dias de vida del cultivo dado no es mayor a 365
+     * (por ende, la fecha de siembra y la fecha de cosecha estan
+     * en el mismo año), la fecha de cosecha es igual a la fecha
+     * de siembra mas la cantidad total de dias de vida del cultivo
+     * dado
+     */
+    harvestDate.set(Calendar.DAY_OF_YEAR, (seedDate.get(Calendar.DAY_OF_YEAR) + totalDaysLife));
+    return harvestDate;
+  }
+
+  /**
    * Busca en la base de datos la lista completa de Cultivos
    * @return Collection<Cultivo> se retorna la lista de Cultivos
    */
   public Collection<Cultivo> findAll() {
-    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c ORDER BY e.id");
+    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c ORDER BY c.id");
     return (Collection<Cultivo>) query.getResultList();
+  }
+
+  public Cultivo findByName(String cropName) {
+    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c WHERE c.nombre = :cropName");
+    query.setParameter("cropName", cropName.toUpperCase());
+    return (Cultivo) query.getSingleResult();
   }
 
   public Page<Cultivo> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters) {

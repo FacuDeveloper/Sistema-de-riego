@@ -195,9 +195,6 @@ Comandos para detener el server y la base de datos.
   </exec>
 </target>
 
-
-
-
 <target name="run_sql">
   <sql driver="org.apache.derby.jdbc.ClientDriver"
     url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
@@ -329,7 +326,11 @@ Comandos para detener el server y la base de datos.
   </sql>
 </target>
 
-<target name="run_parcelLogs_sql">
+<!-- Esto fue creado para probar la capa de persistencia de datos de la
+clase entidad InstanceParcel, pero como fue reemplazada por la clase entidad
+InstanciaParcela ya no se lo usa, lo que a su vez hace que el archivo SQL
+llamado parcelLog quede sin utilizarse -->
+<!-- <target name="run_parcelLogs_sql">
   <sql driver="org.apache.derby.jdbc.ClientDriver"
     url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
     userid="${DERBY_USER}"
@@ -340,7 +341,7 @@ Comandos para detener el server y la base de datos.
       <pathelement path="${DERBY_CLASSPATH}"/>
     </classpath>
   </sql>
-</target>
+</target> -->
 
 <target name="run_deleteClimateLogs_sql">
   <sql driver="org.apache.derby.jdbc.ClientDriver"
@@ -361,6 +362,19 @@ Comandos para detener el server y la base de datos.
     userid="${DERBY_USER}"
     password="${DERBY_PWD}"
     src="etc/sql/forClimateLogFindTest.sql"
+    onerror="continue">
+    <classpath>
+      <pathelement path="${DERBY_CLASSPATH}"/>
+    </classpath>
+  </sql>
+</target>
+
+<target name="run_instanciasParcelas_sql">
+  <sql driver="org.apache.derby.jdbc.ClientDriver"
+    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
+    userid="${DERBY_USER}"
+    password="${DERBY_PWD}"
+    src="etc/sql/instanciasParcelas.sql"
     onerror="continue">
     <classpath>
       <pathelement path="${DERBY_CLASSPATH}"/>

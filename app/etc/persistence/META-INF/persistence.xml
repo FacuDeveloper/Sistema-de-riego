@@ -4,12 +4,12 @@
     <class>model.ClimateLog</class>
     <class>model.Cultivo</class>
     <class>model.Ground</class>
+    <class>model.InstanciaParcela</class>
     <class>model.IrrigationLog</class>
     <class>model.Latitude</class>
     <class>model.MaximumInsolation</class>
     <class>model.Month</class>
     <class>model.Parcel</class>
-    <class>model.ParcelInstance</class>
     <class>model.SolarRadiation</class>
     <class>model.TypeGround</class>
     <class>model.Usuario</class>

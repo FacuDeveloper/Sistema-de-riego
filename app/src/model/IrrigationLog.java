@@ -33,7 +33,7 @@ public class IrrigationLog {
   @Column(name="IRRIGATION_LOG_ID")
   private int id;
 
-  @Column(name="WEATERING_DATE", nullable=false)
+  @Column(name="DATE", nullable=false)
   @Temporal(TemporalType.DATE)
   private Calendar date;
 

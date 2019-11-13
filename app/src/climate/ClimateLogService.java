@@ -13,7 +13,7 @@ import model.ClimateLog;
 public class ClimateLogService {
 
   /*
-   * Variable de clase
+   * Class variable
    */
   private static ClimateLogService climateLogService;
 

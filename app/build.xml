@@ -28,14 +28,14 @@
     <target name="suelo" depends="init, run_typeGround_sql" />
 
     <!-- Conjunto de datos para la carga de radiaciones solares extraterrestres -->
-    <target name="rad" depends="init, run_solarRadiations_sql" />
+    <target name="radiacion" depends="init, run_solarRadiations_sql" />
 
     <!-- Conjunto de datos para la carga de duracion maxima de insolacion diaria -->
     <!-- Para que este comando funcione sin la presencia de excepciones SQL
     se tiene que ejecutar primero el comando que carga las radiaciones solares porque
     este carga la tabla de los numeros del año del dia 15 de cada mes y la tabla
     de las latitudes -->
-    <target name="ins" depends="init, run_maximumInsolations_sql" />
+    <target name="insolacion" depends="init, run_maximumInsolations_sql" />
 
     <!-- Conjunto de datos para la carga de usuarios -->
     <target name="usuario" depends="init, run_users_sql" />
@@ -53,7 +53,12 @@
 
     <!-- Conjunto de datos para hacer la prueba unitaria (FindCurrentParcelInstanceTest) del metodo
     findCurrentParcelInstance de la clase ParcelInstanceServiceBean -->
-    <target name="instancia" depends="init, run_parcelLogs_sql" />
+    <!-- Esto comando fue hecho para la clase InstanceParcel, pero como fue reemplazada por
+    la clase entidad InstanciaParcela ya no se lo usa -->
+    <!-- <target name="instancia" depends="init, run_parcelLogs_sql" /> -->
+
+    <!-- Conjunto de datos para hacer la prueba (via web) de la funcionalidad que calcula el riego sugerido -->
+    <target name="instancia" depends="init, run_instanciasParcelas_sql" />
 
     <!-- Conjunto de datos para hacer la prueba unitaria (ClimateLogFindTest) del metodo
     find(Calendar givenDate, Parcel currentParcel) de la clase ClimateLogServiceBean -->

@@ -61,6 +61,14 @@ public class ParcelRestServlet {
   }
 
   @GET
+  @Path("/findAllActive")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String findAllActive() throws IOException {
+    Collection<Parcel> activeParcels = service.findAllActive();
+    return mapper.writeValueAsString(activeParcels);
+  }
+
+  @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String find(@PathParam("id") int id) throws IOException {

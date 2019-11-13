@@ -86,12 +86,6 @@ public  class ParcelServiceBean {
     return getEntityManager().find(Parcel.class, id);
   }
 
-  // TODO: Crear metodo que recupere todas las parcelas activas
-  // Este metodo probablemente vaya a ser para la pantalla de
-  // instancia parcela (registro historico de parcela) para que
-  // el usuario no elija parcelas inactivas al momento de crear
-  // regitros historicos de parcelas
-
   // TODO: Quizas haya que crear un bloque de codigo fuente
   // en el caso en el que el usuario presione el boton de
   // obtener agua de riego y no exista el registro historico
@@ -104,36 +98,45 @@ public  class ParcelServiceBean {
     return (Collection<Parcel>) query.getResultList();
   }
 
+  /**
+   * @return coleccion con todas las parcelas que estan activas
+   */
+  public Collection<Parcel> findAllActive() {
+    Query query = getEntityManager().createQuery("SELECT p FROM Parcel p WHERE p.active = TRUE ORDER BY p.id");
+    return (Collection<Parcel>) query.getResultList();
+  }
+
   public Page<Parcel> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters) {
     // Genero el WHERE dinámicamente
     StringBuffer where = new StringBuffer(" WHERE 1=1");
+
     if (parameters != null)
-      for (String param : parameters.keySet()) {
-        Method method;
-        try {
-          method = Parcel.class.getMethod("get" + capitalize(param));
-          if (method == null || parameters.get(param) == null || parameters.get(param).isEmpty()) {
-            continue;
-          }
-          switch (method.getReturnType().getSimpleName()) {
-          case "String":
-            where.append(" AND UPPER(e.");
-            where.append(param);
-            where.append(") LIKE UPPER('%");
-            where.append(parameters.get(param));
-            where.append("%')");
-            break;
-          default:
-            where.append(" AND e.");
-            where.append(param);
-            where.append(" = ");
-            where.append(parameters.get(param));
-            break;
-          }
-        } catch (NoSuchMethodException | SecurityException e) {
-          e.printStackTrace();
+    for (String param : parameters.keySet()) {
+      Method method;
+      try {
+        method = Parcel.class.getMethod("get" + capitalize(param));
+        if (method == null || parameters.get(param) == null || parameters.get(param).isEmpty()) {
+          continue;
         }
+        switch (method.getReturnType().getSimpleName()) {
+          case "String":
+          where.append(" AND UPPER(e.");
+          where.append(param);
+          where.append(") LIKE UPPER('%");
+          where.append(parameters.get(param));
+          where.append("%')");
+          break;
+          default:
+          where.append(" AND e.");
+          where.append(param);
+          where.append(" = ");
+          where.append(parameters.get(param));
+          break;
+        }
+      } catch (NoSuchMethodException | SecurityException e) {
+        e.printStackTrace();
       }
+    }
 
     // Cuento el total de resultados
     Query countQuery = getEntityManager()
