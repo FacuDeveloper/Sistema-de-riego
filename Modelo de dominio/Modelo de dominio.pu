@@ -2,8 +2,8 @@
 
 Parcela "*"-->"1" Usuario
 Parcela "*"-->"1" Suelo
-RegHistoricoClima "*"-->"1" Parcela
-RegHistoricoRiego "*"-->"1" Parcela
+RegistroHistoricoClima "*"-->"1" Parcela
+RegistroHistoricoRiego "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Cultivo
 Suelo "*"-->"1" TipoSuelo
@@ -42,7 +42,7 @@ class TipoSuelo {
 -descripcion
 }
 
-class RegHistoricoClima {
+class RegistroHistoricoClima {
 -id
 -fecha
 -zonaHoraria
@@ -55,8 +55,8 @@ class RegHistoricoClima {
 -nubosidad
 -temperaturaMinima
 -temperaturaMaxima
--cantidadTotalOcurridaAgua
--cantidadRestanteAgua
+-cantidadAguaLluvia
+-cantidadAguaAcumulada
 -eto
 -etc
 }
@@ -67,7 +67,7 @@ class InstanciaParcela {
 -fechaCosecha
 }
 
-class RegHistoricoRiego {
+class RegistroHistoricoRiego {
 -id
 -fecha
 -riegoSugerido
