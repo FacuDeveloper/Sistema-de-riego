@@ -37,9 +37,6 @@
     de las latitudes -->
     <target name="ins" depends="init, run_maximumInsolations_sql" />
 
-    <!-- Comando para borrar el contenido de las tablas de la base de datos subyacente -->
-    <target name="delete" depends="init, run_deleteAll_sql" />
-
     <!-- Conjunto de datos para la carga de usuarios -->
     <target name="usuario" depends="init, run_users_sql" />
 
@@ -50,11 +47,20 @@
     de registros climaticos para cada parcela en el sistema -->
     <target name="parcela" depends="init, run_parcels_sql" />
 
-    <!-- Conjunto de datos para hacer la prueba del metodo exist de la clase ClimateLogServiceBean -->
+    <!-- Conjunto de datos para hacer la prueba unitaria (ClimateLogExistTest) del metodo exist de la
+    clase ClimateLogServiceBean -->
     <target name="clima" depends="init, run_climateLogs_sql" />
 
-    <!-- Conjunto de datos para hacer la prueba del metodo getCurrentCrop de la clase ParcelInstanceServiceBean -->
+    <!-- Conjunto de datos para hacer la prueba unitaria (FindCurrentParcelInstanceTest) del metodo
+    findCurrentParcelInstance de la clase ParcelInstanceServiceBean -->
     <target name="instancia" depends="init, run_parcelLogs_sql" />
+
+    <!-- Conjunto de datos para hacer la prueba unitaria (ClimateLogFindTest) del metodo
+    find(Calendar givenDate, Parcel currentParcel) de la clase ClimateLogServiceBean -->
+    <target name="findclimate" depends="init, run_forClimateLogFindTest_sql" />
+
+    <!-- Comando para borrar el contenido de las tablas de la base de datos subyacente -->
+    <target name="delete" depends="init, run_deleteAll_sql" />
 
     <!-- Comando para borrar el contenido de la tabla de registros climaticos de la base de datos -->
     <target name="deleteclimate" depends="init, run_deleteClimateLogs_sql" />

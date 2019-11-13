@@ -40,10 +40,12 @@
       <src path="src/model" />
       <src path="src/stateless" />
 
-      <!-- Observar que paquetes del estilo servlet no son referenciados aca -->
+      <!-- Observacion: Los paquetes del estilo servlet no son referenciados aca -->
       <!-- Los nuevos paquetes de la carpeta src tienen que ser referenciados aca -->
       <src path="src/climate" />
       <src path="src/et" />
+      <src path="src/irrigation" />
+      <src path="src/util" />
       <src path="src/weatherApiClasses" />
       <classpath>
         <pathelement path="${CLIENT_CLASSPATH}" />
@@ -346,6 +348,19 @@ Comandos para detener el server y la base de datos.
     userid="${DERBY_USER}"
     password="${DERBY_PWD}"
     src="etc/sql/deleteClimateLogs.sql"
+    onerror="continue">
+    <classpath>
+      <pathelement path="${DERBY_CLASSPATH}"/>
+    </classpath>
+  </sql>
+</target>
+
+<target name="run_forClimateLogFindTest_sql">
+  <sql driver="org.apache.derby.jdbc.ClientDriver"
+    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
+    userid="${DERBY_USER}"
+    password="${DERBY_PWD}"
+    src="etc/sql/forClimateLogFindTest.sql"
     onerror="continue">
     <classpath>
       <pathelement path="${DERBY_CLASSPATH}"/>
