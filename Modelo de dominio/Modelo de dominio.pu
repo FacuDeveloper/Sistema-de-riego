@@ -1,12 +1,11 @@
 @startuml
 
 Parcela "*"-->"1" Usuario
-Parcela "*"-->"1" Suelo
+Parcela "*"-->"1" TipoSuelo
 RegistroHistoricoClima "*"-->"1" Parcela
 RegistroHistoricoRiego "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Cultivo
-Suelo "*"-->"1" TipoSuelo
 
 class Parcela {
 -id
@@ -14,14 +13,9 @@ class Parcela {
 -area
 -latitud
 -longitud
--activa
-}
-
-class Suelo {
--id
--nombreIdentificador
 -profundidad
 -pedregosidad
+-activa
 }
 
 class Cultivo {
