@@ -75,7 +75,7 @@ public class ClimateLog {
   private String timezone;
 
   /*
-   * Intensidad de precipitacion
+   * Intensidad de precipitacion [milimetros]
    *
    * La intensidad (en milimetros de agua liquida por hora)
    * de precipitacion que ocurre en el momento dado
@@ -88,6 +88,7 @@ public class ClimateLog {
    * en la cual los fenomenos climaticos tienen que ser
    * devueltos como respuesta a la llamada es la SI, la
    * cual especifica que la intensidad de la precipitacion
+   * esta dada en milimetros
    */
   @Column(name="PRECIP_INTENSITY", nullable=false)
   private Double precipIntensity;
@@ -100,23 +101,6 @@ public class ClimateLog {
    */
   @Column(name="PRECIP_PROBABILITY", nullable=false)
   private Double precipProbability;
-
-  /*
-   * Tipo de precipitacion
-   *
-   * El tipo de precipitacion que ocurre en el momento
-   * dado. Si se define, esta propiedad tendra uno de
-   * los siguientes valores: "rain", "snow"o "sleet"
-   * (que refiere a cada uno como lluvia helada, pellets
-   * de hielo y "mezcla invernal").
-   *
-   * (Si precipIntensityes cero, entonces esta propiedad
-   * no se definirá. Además, debido a la falta de datos
-   * en nuestras fuentes, la precipTypeinformación histórica
-   * generalmente se estima, en lugar de observarse).
-   */
-  @Column(name="PRECIP_TYPE", nullable=false)
-  private String precipType;
 
   /*
    * Punto de rocio
@@ -148,14 +132,14 @@ public class ClimateLog {
   /*
    * Nubosidad
    *
-   * El porcentaje de cielo olcuido por nobres,
+   * El porcentaje de cielo olcuido por nubes,
    * entre 0 y 1, inclusive
    */
   @Column(name="CLOUD_COVER", nullable=false)
   private Double cloudCover;
 
   /*
-   * Temperatura minima
+   * Temperatura minima [°C]
    *
    * Con el uso de la unidad SI, este
    * fenomeno es medido en grados
@@ -165,7 +149,7 @@ public class ClimateLog {
   private Double temperatureMin;
 
   /*
-   * Temperatura maxima
+   * Temperatura maxima [°C]
    *
    * Con el uso de la unidad SI, este
    * fenomeno es medido en grados
@@ -175,65 +159,51 @@ public class ClimateLog {
   private Double temperatureMax;
 
   /*
-   * Cantidad total ocurrida de agua en el
-   * dia de hoy
+   * Cantidad total de agua de lluvia [milimetros]
+   * en el dia de hoy
    *
-   * La cantidad total ocurrida de agua en
-   * el dia de hoy es el resultado de sumar
-   * el agua de riego (si la hubo) mas el agua
-   * de lluva (si la hubo, estas dos del dia
-   * de hoy, es decir, del dia actual) mas
-   * mas la cantidad restante de agua del dia
-   * de ayer (agua del dia de ayer a favor
-   * para el dia de hoy) y de esta forma
-   * se calcula la cantidad total de agua
-   * ocurrida para el dia de hoy, dia en el cual
-   * el sistema obtiene los datos climaticos de
-   * forma automatica
-   *
-   * El sistema obtiene y almacena de forma
-   * automatica los datos climaticos de cada
-   * dia para cada parcela existente en el
+   * Este valor es calculado multiplicando el
+   * valor de precipIntensity por 24 ya que precipIntensity
+   * es la intensidad (en milimetros de agua liquida por hora)
+   * que ocurre en el momento dado
    */
-  @Column(name="TOTAL_WATER_OCCURRED")
-  private double totalWaterOccurred;
+  @Column(name="RAIN_WATER", nullable=false)
+  private double rainWater;
 
   /*
-   * Cantidad restante de agua
+   * Cantidad de agua acumulada [milimetros] en el dia de
+   * hoy, la cual es agua del dia de hoy a favor para el
+   * dia de mañana
    *
-   * El agua restante en el suelo en el
-   * cual esta plantado un cultivo es igual a
-   * el agua de lluvia (si la hubo) mas
-   * el agua de riego (si la hubo, estas
-   * dos del dia de hoy) mas el agua
-   * restante del dia de ayer (agua
-   * a favor del dia de ayer para el dia
-   * de hoy) menos la cantidad de agua que
-   * va a evaporo un cultivo dado bajo
-   * condiciones estandar (ETc) en el dia
-   * de ayer (ETc de ayer) y de esta forma
-   * se calcula la cantidad restante de agua
-   * del dia en el cual se obtuvieron los
-   * datos climaticos
+   * Este valor se calcula haciendo la diferencia entre
+   * la ETc del dia de ayer o la ETo del dia de ayer
+   * (en caso de que en el dia de ayer no haya habido
+   * un cultivo sembrado en la parcela dada, por ende, la
+   * ETc es cero), la cantidad de agua de lluvia del dia
+   * de ayer, la cantidad de agua acumulada del dia de ayer
+   * y la cantidad de agua utilizada en los riegos realizados
+   * en el dia de hoy por parte del usuario cliente
    */
-  @Column(name="WATER_REMAINING")
-  private double waterRemaining;
+  @Column(name="WATER_ACCUMULATED", nullable=false)
+  private double waterAccumulated;
 
   /*
-   * Evapotranspiracion del cultivo de referencia (pasto)
+   * Evapotranspiracion del cultivo de referencia (ETo)
    *
    * Este valor es calculado haciendo uso de los fenomenos
    * climaticos en la formula de la ETo y su valor esta
-   * en [mm/dia]
+   * medido en [mm/dia]
+   *
+   * El cultivo de referencia es el pasto
    *
    * Para ver la formula de la ETo dirigase a la pagina
    * numero 25 del libro FAO numero 56
    */
-  @Column(name="ETO")
+  @Column(name="ETO", nullable=false)
   private double eto;
 
   /*
-   * Evapotranspiracion del cultivo bajo condiciones estandar
+   * Evapotranspiracion del cultivo bajo condiciones estandar (ETc)
    *
    * Este es calculado utilizando el coeficiente de un cultivo
    * (kc) en particular en la siguiente multiplicacion ETc = kc * ETo
@@ -244,7 +214,7 @@ public class ClimateLog {
    * Para ver la formula de la ETc dirigase a la pagina numero 6
    * del libro FAO numero 56
    */
-  @Column(name="ETC")
+  @Column(name="ETC", nullable=false)
   private double etc;
 
   @ManyToOne
@@ -326,22 +296,6 @@ public class ClimateLog {
 	 */
 	public void setPrecipProbability(Double precipProbability) {
 		this.precipProbability = precipProbability;
-	}
-
-	/**
-	 * Returns value of precipType
-	 * @return
-	 */
-	public String getPrecipType() {
-		return precipType;
-	}
-
-	/**
-	 * Sets new value of precipType
-	 * @param
-	 */
-	public void setPrecipType(String precipType) {
-		this.precipType = precipType;
 	}
 
 	/**
@@ -441,35 +395,35 @@ public class ClimateLog {
 	}
 
   /**
-   * Returns value of totalWaterOccurred
+   * Returns value of rainWater
    * @return
    */
-  public double getTotalWaterOccurred() {
-    return totalWaterOccurred;
+  public double getRainWater() {
+    return rainWater;
   }
 
   /**
-   * Sets new value of totalWaterOccurred
+   * Sets new value of rainWater
    * @param
    */
-  public void setTotalWaterOccurred(double totalWaterOccurred) {
-    this.totalWaterOccurred = totalWaterOccurred;
+  public void setRainWater(double rainWater) {
+    this.rainWater = rainWater;
   }
 
   /**
-   * Returns value of waterRemaining
+   * Returns value of waterAccumulated
    * @return
    */
-  public double getWaterRemaining() {
-    return waterRemaining;
+  public double getWaterAccumulated() {
+    return waterAccumulated;
   }
 
   /**
-   * Sets new value of waterRemaining
+   * Sets new value of waterAccumulated
    * @param
    */
-  public void setWaterRemaining(double waterRemaining) {
-    this.waterRemaining = waterRemaining;
+  public void setWaterAccumulated(double waterAccumulated) {
+    this.waterAccumulated = waterAccumulated;
   }
 
   /**
@@ -576,6 +530,9 @@ public class ClimateLog {
      */
     precipProbability = forecastResponse.getDaily().getData().get(0).getPrecipProbability();
 
+    /*
+     * Punto de rocio [°C]
+     */
     dewPoint = forecastResponse.getDaily().getData().get(0).getDewPoint();
 
     /*
@@ -586,8 +543,18 @@ public class ClimateLog {
      */
     pressure = forecastResponse.getDaily().getData().get(0).getPressure() * 0.1;
 
+    /*
+     * Velocidad del viento [metros por segundo]
+     */
     windSpeed = forecastResponse.getDaily().getData().get(0).getWindSpeed();
+
+    /*
+     * El porcentaje de cielo olcuido por nubes,
+     * entre 0 y 1, inclusive
+     */
     cloudCover = forecastResponse.getDaily().getData().get(0).getCloudCover();
+
+    // [°C]
     temperatureMin = forecastResponse.getDaily().getData().get(0).getTemperatureMin();
     temperatureMax = forecastResponse.getDaily().getData().get(0).getTemperatureMax();
 
@@ -611,29 +578,31 @@ public class ClimateLog {
 
     /*
      * El tipo de precipitación que ocurre en el momento dado. Si se define, esta
-     * propiedad tendrá uno de los siguientes valores: "lluvia", "nieve" o "aguanieve"
+     * propiedad tendrá uno de los siguientes valores: "rain", "snow" o "sleet"
      * (que se refiere a lluvia helada, gránulos de hielo y "mezcla invernal" respectivamente).
      * (Si precipIntensity es cero, entonces esta propiedad no se definirá. Además, debido
      * a la falta de datos en nuestras fuentes, la información histórica de precipType
      * generalmente se estima, en lugar de observarse).
+     *
+     * Si el tipo de precipitacion esta definido y es lluvia ("rain" en ingles) se calcula la cantidad
+     * total de agua de lluvia en el dia dado multiplicando precipIntensity por 24
+     * ya que precipIntensity es la intensidad (en milimetros de agua liquida por hora)
+     * de precipitacion que ocurre en el momento dado
+     *
+     * En caso contrario, la cantidad de agua de lluvia del dia de hoy es cero
      */
-    if (forecastResponse.getDaily().getData().get(0).getPrecipType() != null) {
-      precipType = forecastResponse.getDaily().getData().get(0).getPrecipType();
+    if ((forecastResponse.getDaily().getData().get(0).getPrecipType() != null) && (forecastResponse.getDaily().getData().get(0).getPrecipType().equals("rain"))) {
+      rainWater = precipIntensity * 24;
     } else {
-      precipType = "undefined";
+      rainWater = 0.0;
     }
 
   }
 
   @Override
   public String toString() {
-    /*
-     * Se le suma un 1 al valor de la constante MONTH
-     * porque los numeros de los meses van desde 0
-     * (Enero) a 11 (Diciembre)
-     */
-    return String.format("ID: %d\nLatitud: %f (grados decimales) Longitud: %f (grados decimales)\nZona horaria: %s\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)\nCantidad restante de agua: %f\n",
-    id, parcel.getLatitude(), parcel.getLongitude(), timezone, FormatDate.formatDate(date), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, (precipIntensity * 24), waterRemaining);
+    return String.format("ID: %d\nLatitud: %f (grados decimales) Longitud: %f (grados decimales)\nZona horaria: %s\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)\nCantidad de agua acumulada: %f\n",
+    id, parcel.getLatitude(), parcel.getLongitude(), timezone, FormatDate.formatDate(date), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, rainWater, waterAccumulated);
   }
 
 }
