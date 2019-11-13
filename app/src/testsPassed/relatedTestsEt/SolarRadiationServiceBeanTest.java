@@ -29,8 +29,8 @@ public class SolarRadiationServiceBeanTest {
   private static List<Latitude> latitudes;
   private static List<Month> months;
 
-  // @BeforeClass
-  @Ignore
+  @BeforeClass
+  // @Ignore
   public static void preTest(){
     entityMangerFactory = Persistence.createEntityManagerFactory("SisRiegoDB");
     entityManager = entityMangerFactory.createEntityManager();
@@ -68,6 +68,7 @@ public class SolarRadiationServiceBeanTest {
     try {
       solarRadiation = solarService.find(month, latitude);
     } catch(NoResultException ex) {
+      System.out.println("No existe un valor de radiación solar extraterrestre para el mes y la latitud solicitados");
     }
 
     assertNotNull(solarRadiation);
@@ -143,11 +144,12 @@ public class SolarRadiationServiceBeanTest {
    * correspondiente a la latitud y el mes dados
    *
    */
-  @Ignore
+  @Test
   public void testSolarRadiation() {
     System.out.println("Prueba unitaria de recuperación de radiación solar (Ra) con latitud impar, > 0 y < -70");
 
-    int numberLatitude = -66;
+    double doubleLatitude = -41.6098881;
+    int numberLatitude = (int) doubleLatitude;
     Latitude previousLatitude = null;
     Latitude nextLatitude = null;
     int numberMonth = 1;
@@ -209,8 +211,8 @@ public class SolarRadiationServiceBeanTest {
 
   }
 
-  // @AfterClass
-  @Ignore
+  @AfterClass
+  // @Ignore
   public static void postTest() {
     /*
      * Elimina todos los datos de la base de datos

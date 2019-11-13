@@ -43,18 +43,14 @@ public class ClimateLogExistTest {
    * existe o no un registro historico climatico de una
    * parcela en una fecha dada
    *
-   * Dicho bloque de codigo es necesario para el modulo
-   * de obtencion y almacenamiento de datos climaticos
-   * para cada parcela existente en el sistema
-   *
    * *** NOTA ***
    * El metodo exist() de la clase ClimateLogServiceBean
    * es necesario para el modulo de obtencion y almacenamiento
-   * de datos climaticos
+   * de datos climaticos para cada parcela existente en el sistema
    */
   @Test
   public void testPositiveExistClimateLog() {
-    System.out.println("Prueba unitaria de busqueda positiva de un registro climatico dado una fecha y una parcela");
+    System.out.println("Prueba unitaria de existencia positiva de un registro climatico dado una fecha y una parcela");
     System.out.println();
 
     Calendar date = Calendar.getInstance();
@@ -72,13 +68,13 @@ public class ClimateLogExistTest {
       + " y a la parcela con ID = " + parcel.getId() + ", no encontrado");
     }
 
-    System.out.println("*** Fin de prueba de busqueda positiva ***");
+    System.out.println("*** Fin de prueba de existencia positiva ***");
     System.out.println();
   }
 
   @Test
   public void testNegativeExistClimateLog() {
-    System.out.println("Prueba unitaria de busqueda negativa de un registro climatico dado una fecha y una parcela");
+    System.out.println("Prueba unitaria de existencia negativa de un registro climatico dado una fecha y una parcela");
     System.out.println();
 
     Calendar date = Calendar.getInstance();
@@ -96,7 +92,7 @@ public class ClimateLogExistTest {
       + " y a la parcela con ID = " + parcel.getId() + ", no encontrado");
     }
 
-    System.out.println("*** Fin de prueba de busqueda negativa ***");
+    System.out.println("*** Fin de prueba de existencia negativa ***");
     System.out.println();
   }
 

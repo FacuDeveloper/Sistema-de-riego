@@ -65,8 +65,10 @@ public class ClimateLogServiceBeanTest {
     climateLog.setParcel(parcelServiceBean.find(1));
 
     entityManager.getTransaction().begin();
-    climateLogServiceBean.create(climateLog);
+    climateLog = climateLogServiceBean.create(climateLog);
     entityManager.getTransaction().commit();
+
+    assertNotNull(climateLog);
   }
 
   @Test

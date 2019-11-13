@@ -53,7 +53,7 @@ public class FindCurrentParcelInstanceTest {
    * auotmatico de datos climaticos
    */
   @Test
-  public void testPositiveCurrentCrop() {
+  public void testPositiveCurrentParcelInstance() {
     System.out.println("Prueba unitaria positiva para la obtencion de un registro historico actual de una parcela");
     System.out.println();
 
@@ -73,7 +73,7 @@ public class FindCurrentParcelInstanceTest {
   }
 
   @Test
-  public void testNegativeCurrentCrop() {
+  public void testNegativeCurrentParcelInstance() {
     System.out.println("Prueba unitaria negativa para la obtencion de un registro historico actual de una parcela");
     System.out.println();
 

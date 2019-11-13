@@ -29,6 +29,18 @@ import model.ClimateLog;
 public class ClimateClientTest {
 
   /*
+   * *** NOTA ***
+   * Para ejecutar cada una de estas
+   * pruebas unitarias es necesario
+   * que la base de datos este cargada
+   * con parcelas y que cada registro
+   * del clima tenga establecida una
+   * parcela, de lo contrario ninguna
+   * de estas pruebas unitarias funcionara
+   * correctamente
+   */
+
+  /*
    * Bloque de codigo fuente para la
    * prueba untaria del modulo de obtencion
    * de datos climaticos utlizando las
