@@ -6,22 +6,6 @@ var app = angular.module('app',['ngRoute', 'Pagination', 'ui.bootstrap', 'leafle
 app.config(['$routeProvider', function(routeprovider) {
 	routeprovider
 
-	/* Ground */
-	.when('/ground',{
-		templateUrl:'partials/ground/ground-list.html',
-		controller: 'GroundsCtrl'
-	})
-
-	.when('/ground/:action/:id',{
-		templateUrl:'partials/ground/ground-form.html',
-		controller: 'GroundCtrl'
-	})
-
-	.when('/ground/:action',{
-		templateUrl:'partials/ground/ground-form.html',
-		controller: 'GroundCtrl'
-	})
-
 	/* Parcel */
 	.when('/parcel',{
 		templateUrl:'partials/parcel/parcel-list.html',
