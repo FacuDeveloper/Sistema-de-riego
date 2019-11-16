@@ -8,17 +8,17 @@ app.config(['$routeProvider', function(routeprovider) {
 
 	/* Parcel */
 	.when('/parcel',{
-		templateUrl:'partials/parcel/parcel-list.html',
+		templateUrl:'partials/parcel-list.html',
 		controller: 'ParcelsCtrl'
 	})
 
 	.when('/parcel/:action',{
-		templateUrl:'partials/parcel/parcel-form.html',
+		templateUrl:'partials/parcel-form.html',
 		controller: 'ParcelCtrl'
 	})
 
 	.when('/parcel/:action/:id',{
-		templateUrl:'partials/parcel/parcel-form.html',
+		templateUrl:'partials/parcel-form.html',
 		controller: 'ParcelCtrl'
 	})
 

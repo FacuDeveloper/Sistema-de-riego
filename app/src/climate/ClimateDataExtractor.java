@@ -26,12 +26,12 @@ import stateless.ParcelServiceBean;
 import stateless.ClimateLogServiceBean;
 import stateless.SolarRadiationServiceBean;
 import stateless.MaximumInsolationServiceBean;
-import stateless.ParcelInstanceServiceBean;
+import stateless.InstanciaParcelaService;
 import stateless.CultivoService;
 
 import model.ClimateLog;
 import model.Parcel;
-import model.ParcelInstance;
+import model.InstanciaParcela;
 
 import et.Eto;
 
@@ -50,8 +50,8 @@ public class ClimateDataExtractor {
   // inject a reference to the MaximumInsolationServiceBean
   @EJB MaximumInsolationServiceBean insolationService;
 
-  // inject a reference to the ParcelInstanceServiceBean
-  @EJB ParcelInstanceServiceBean parcelInstanceService;
+  // inject a reference to the InstanciaParcelaService
+  @EJB InstanciaParcelaService parcelInstanceService;
 
   // inject a reference to the CultivoService
   @EJB CultivoService cultivoService;
@@ -63,12 +63,13 @@ public class ClimateDataExtractor {
    * horas a partir de las 00:00 debido a que quizas, en
    * alguna hora del dia, la API climatica (Dark Sky) puede
    * que no este disponible al momento de que el sistema le
-   * pida los datos climaticos de una parcela
+   * solicite los datos climaticos para cada parcela
    *
    * @param second="*"
    * @param minute="*"
    * @param hour="0/2" cada dos horas a partir de las doce de la
    * noche
+   * @param persistent=false
    */
   // @Schedule(second="*", minute="*", hour="0/2", persistent=false)
   // @Schedule(second="*/5", minute="*", hour="*", persistent=false)
@@ -86,14 +87,23 @@ public class ClimateDataExtractor {
 
     double latitude = 0.0;
     double longitude = 0.0;
-    long unixTime = 0;
     ClimateLog climateLog = null;
-    Calendar currenDate = Calendar.getInstance();
+
+    Calendar currentDate = Calendar.getInstance();
+
+    /*
+     * Convierte el tiempo en milisegundos a segundos
+     * porque el formato UNIX TIMESTAMP utiliza el tiempo
+     * en segundos y se realiza esta conversion porque la API del
+     * clima llamada Dark Sky recibe fechas con el formato mencionado
+     */
+    long unixTime = (currentDate.getInstance().getTimeInMillis() / 1000);
+
     double eto = 0.0;
     double etc = 0.0;
     double extraterrestrialSolarRadiation = 0.0;
     double maximumInsolation = 0.0;
-    ParcelInstance parcelInstance = null;
+    InstanciaParcela parcelInstance = null;
 
     for (Parcel currentParcel : parcels) {
 
@@ -102,17 +112,9 @@ public class ClimateDataExtractor {
        * en la fecha actual para la parcela dada, entonces
        * se tiene que crear uno
        */
-      if (!climateLogServiceBean.exist(currenDate, currentParcel)) {
+      if (!climateLogServiceBean.exist(currentDate, currentParcel)) {
         latitude = currentParcel.getLatitude();
         longitude = currentParcel.getLongitude();
-
-        /*
-         * Convierte el tiempo en milisegundos a segundos
-         * porque el formato UNIX TIMESTAMP utiliza el tiempo
-         * en segundos y se realiza esta conversion porque la API del
-         * clima llamada Dark Sky recibe fechas con el formato mencionado
-         */
-        unixTime = (currenDate.getInstance().getTimeInMillis() / 1000);
 
         /*
          * Recupera un registro del clima haciendo uso de las
@@ -122,8 +124,8 @@ public class ClimateDataExtractor {
         climateLog = climateLogService.getClimateLog(latitude, longitude, unixTime);
         climateLog.setParcel(currentParcel);
 
-        extraterrestrialSolarRadiation = solarService.getRadiation(currenDate.get(Calendar.MONTH), latitude);
-        maximumInsolation = insolationService.getInsolation(currenDate.get(Calendar.MONTH), latitude);
+        extraterrestrialSolarRadiation = solarService.getRadiation(currentDate.get(Calendar.MONTH), latitude);
+        maximumInsolation = insolationService.getInsolation(currentDate.get(Calendar.MONTH), latitude);
 
         /*
          * Con los datos climaticos recuperados se calcula la
@@ -136,20 +138,32 @@ public class ClimateDataExtractor {
         parcelInstance = parcelInstanceService.findCurrentParcelInstance(currentParcel);
 
         /*
-         * Si existe (!= null) un registro historico actual de la
-         * parcela dada se obtiene su cultivo y su fecha de
-         * siembra para obtener el kc del cultivo, y todo
-         * esto es para calcular la etc del cultivo sembrado
+         * Si existe un registro historico de la parcela dada
+         * que tiene fecha de siembra y que no tiene fecha de cosecha
+         * se obtiene su cultivo y su fecha de siembra para obtener
+         * el kc del cultivo, y todo esto es para calcular la etc
+         * del cultivo sembrado
          *
-         * En pocas palabras, si hay (!= null) un registro historico
+         * El registro historico actual de una parcela es aquel
+         * registro que muestra que la parcela, a la que hace
+         * referencia, tiene un cultivo sembrado, tiene una
+         * fecha de siembra y no tiene una fecha de cosecha
+         *
+         * Si hay (!= null) un registro historico
          * actual de la parcela dada es porque la misma
-         * actualmente tiene un cultivo y por ende, se
-         * calcula su ETc
+         * actualmente tiene un cultivo sembrado y
+         * sin cosechar, por ende, se calcula la ETc
+         * del cultivo que tiene
          *
-         * En caso contrario la ETc sera cero
+         * En el caso en el que la parcela no tenga un
+         * registro historico actual, la ETc sera cero
+         * porque este registro es el que tiene el
+         * cultivo que esta sembrado actualmente y si
+         * no existe tampoco existe un cultivo para
+         * el cual calcular la ETc
          */
         if (parcelInstance != null) {
-          etc = cultivoService.getKc(parcelInstance.getCrop(), parcelInstance.getSeedDate()) * eto;
+          etc = cultivoService.getKc(parcelInstance.getCultivo(), parcelInstance.getFechaSiembra()) * eto;
         } else {
           etc = 0.0;
         }

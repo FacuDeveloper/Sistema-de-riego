@@ -28,6 +28,7 @@ class Cultivo {
 -kcMedio
 -kcFinal
 -agotamientoCritico
+-activo
 }
 
 class TipoSuelo {

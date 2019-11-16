@@ -41,7 +41,7 @@ app.controller(
           icon: icondata
         });
 
-        console.log($scope.data);
+        // console.log($scope.data);
       });
     }
 
