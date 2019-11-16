@@ -64,6 +64,10 @@
     find(Calendar givenDate, Parcel currentParcel) de la clase ClimateLogServiceBean -->
     <target name="findclimate" depends="init, run_forClimateLogFindTest_sql" />
 
+    <!-- Conjunto de datos para cargar los estados de un cultivo "sembrado" en una instancia de parcela
+    (registro historico de parcela) -->
+    <target name="estado" depends="init, run_instanceParcelStatus_sql" />
+
     <!-- Comando para borrar el contenido de las tablas de la base de datos subyacente -->
     <target name="delete" depends="init, run_deleteAll_sql" />
 

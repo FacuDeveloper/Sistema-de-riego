@@ -29,7 +29,7 @@ import java.util.Map;
 @Path("/cultivo")
 public class CultivoRestServlet {
 
-  // inject a reference to the EmployeeService slsb
+  // inject a reference to the CultivoService slsb
   @EJB CultivoService service;
 
   //mapea lista de pojo a JSON
@@ -52,6 +52,14 @@ public class CultivoRestServlet {
 
     Page<Cultivo> cultivos = service.findByPage(page, cant, map);
     return mapper.writeValueAsString(cultivos);
+  }
+
+  @GET
+  @Path("/findAllActiveCrops")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String findAllActive() throws IOException {
+    Collection<Cultivo> activeCrops = service.findAllActive();
+    return mapper.writeValueAsString(activeCrops);
   }
 
   @GET

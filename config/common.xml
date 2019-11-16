@@ -382,6 +382,21 @@ llamado parcelLog quede sin utilizarse -->
   </sql>
 </target>
 
+<!-- Carga los estados en los cuales puede estar un cutivo "sembrado" en una
+instancia de parcela (registro historico de parcela) -->
+<target name="run_instanceParcelStatus_sql">
+  <sql driver="org.apache.derby.jdbc.ClientDriver"
+    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
+    userid="${DERBY_USER}"
+    password="${DERBY_PWD}"
+    src="etc/sql/instanceParcelStatus.sql"
+    onerror="continue">
+    <classpath>
+      <pathelement path="${DERBY_CLASSPATH}"/>
+    </classpath>
+  </sql>
+</target>
+
 <!-- Other commands -->
 <target name="deploy_war">
   <echo message=" --user ${ADMIN_USER} ${PASSWORD_PREFIX} ${PASSWORD_FILE} deploy dist/${example_name}.war"/>

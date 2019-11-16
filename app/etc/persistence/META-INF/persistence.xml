@@ -3,7 +3,7 @@
     <jta-data-source>jdbc/SisRiegoDB</jta-data-source>
     <class>model.ClimateLog</class>
     <class>model.Cultivo</class>
-    <class>model.Ground</class>
+    <class>model.InstanceParcelStatus</class>
     <class>model.InstanciaParcela</class>
     <class>model.IrrigationLog</class>
     <class>model.Latitude</class>

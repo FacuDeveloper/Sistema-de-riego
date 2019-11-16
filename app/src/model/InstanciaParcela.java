@@ -31,7 +31,7 @@ public class InstanciaParcela {
   @Temporal(TemporalType.DATE)
   private Calendar fechaSiembra;
 
-  @Column(name="FECHA_COSECHA")
+  @Column(name="FECHA_COSECHA", nullable=false)
   @Temporal(TemporalType.DATE)
   private Calendar fechaCosecha;
 
@@ -42,6 +42,10 @@ public class InstanciaParcela {
   @ManyToOne
   @JoinColumn(name="FK_CULTIVO", nullable=false)
   private Cultivo cultivo;
+
+  @ManyToOne
+  @JoinColumn(name="FK_ESTADO", nullable=false)
+  private InstanceParcelStatus instanceParcelStatus;
 
   // Constructor method
   public InstanciaParcela() {
@@ -82,6 +86,14 @@ public class InstanciaParcela {
 
   public void setParcel(Parcel parcel) {
     this.parcel = parcel;
+  }
+
+  public InstanceParcelStatus getStatus() {
+    return instanceParcelStatus;
+  }
+
+  public void setStatus(InstanceParcelStatus instanceParcelStatus) {
+    this.instanceParcelStatus = instanceParcelStatus;
   }
 
 }
