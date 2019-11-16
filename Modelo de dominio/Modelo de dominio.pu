@@ -6,6 +6,7 @@ RegistroHistoricoClima "*"-->"1" Parcela
 RegistroHistoricoRiego "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Cultivo
+InstanciaParcela "*"-->"1" EstadoInstanciaParcela
 
 class Parcela {
 -id
@@ -82,6 +83,12 @@ class Usuario {
 -fechaAlta
 -fechaBaja
 -superUsuario
+}
+
+class EstadoInstanciaParcela {
+-id
+-nombre
+-descripcion
 }
 
 @enduml
