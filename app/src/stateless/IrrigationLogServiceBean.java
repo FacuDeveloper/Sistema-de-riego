@@ -10,9 +10,13 @@ import javax.ejb.Stateless;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import model.IrrigationLog;
+import model.Parcel;
+
+import java.lang.NullPointerException;
 
 @Stateless
 public  class IrrigationLogServiceBean {
@@ -65,7 +69,7 @@ public  class IrrigationLogServiceBean {
     IrrigationLog choosenIrrigationLog = find(id);
 
     if (choosenIrrigationLog != null) {
-      choosenIrrigationLog.setWateringDate(modifiedIrrigationLog.getWateringDate());
+      choosenIrrigationLog.setDate(modifiedIrrigationLog.getDate());
       choosenIrrigationLog.setSuggestedIrrigation(modifiedIrrigationLog.getSuggestedIrrigation());
       choosenIrrigationLog.setIrrigationDone(modifiedIrrigationLog.getIrrigationDone());
       return choosenIrrigationLog;
@@ -81,6 +85,66 @@ public  class IrrigationLogServiceBean {
   public Collection<IrrigationLog> findAll() {
     Query query = getEntityManager().createQuery("SELECT i FROM IrrigationLog i ORDER BY i.id");
     return (Collection<IrrigationLog>) query.getResultList();
+  }
+
+  /**
+   * @param  givenParcel
+   * @return la cantidad total de agua utilizada para el riego
+   * (de un cultivo dado) por el usuario cliente en la parcela
+   * dada y en la fecha actual del sistema
+   */
+  public double getTotalWaterIrrigation(Parcel givenParcel) {
+    /*
+     * Fecha actual del sistema
+     */
+    Calendar currentDate = Calendar.getInstance();
+
+    /*
+     * Suma cada riego realizado, por parte del usuario cliente,
+     * para un cultivo dado, de la parcela dada en la fecha
+     * actual
+     */
+    Query query = entityManager.createQuery("SELECT SUM(i.irrigationDone) FROM IrrigationLog i WHERE (i.date = :currentDate AND i.parcel = :givenParcel)");
+    query.setParameter("currentDate", currentDate);
+    query.setParameter("givenParcel", givenParcel);
+
+    double result = 0.0;
+
+    try {
+      result = (double) query.getSingleResult();
+    } catch(NullPointerException e) {
+
+    }
+
+    return result;
+  }
+
+  /**
+   * Comprueba si la parcela dada tiene un registro
+   * de riego asociado (en la base de datos) y si lo
+   * tiene retorna verdadero, en caso contrario retorna
+   * falso
+   *
+   * @param  givenDate
+   * @param  givenParcel
+   * @return verdadero en caso de enccontrar un registro de riego
+   * con la fecha y la parcela dadas, en caso contrario retorna falso
+   */
+  public boolean exist(Calendar givenDate, Parcel givenParcel) {
+    Query query = entityManager.createQuery("SELECT r FROM IrrigationLog r WHERE r.date = :givenDate AND r.parcel = :givenParcel");
+    query.setParameter("givenDate", givenDate);
+    query.setParameter("givenParcel", givenParcel);
+
+    boolean result = false;
+
+    try {
+      query.getSingleResult();
+      result = true;
+    } catch(NoResultException ex) {
+
+    }
+
+    return result;
   }
 
   public Page<IrrigationLog> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters) {
