@@ -6,6 +6,20 @@ var app = angular.module('app',['ngRoute', 'Pagination', 'ui.bootstrap', 'leafle
 app.config(['$routeProvider', function(routeprovider) {
 	routeprovider
 
+	/* Cultivos */
+	.when('/cultivos',{
+		templateUrl:'partials/cultivos-list.html',
+		controller: 'CultivosCtrl'
+	})
+	.when('/cultivo/:action',{
+		templateUrl:'partials/cultivo-form.html',
+		controller: 'CultivoCtrl'
+	})
+	.when('/cultivo/:action/:id',{
+		templateUrl:'partials/cultivo-form.html',
+		controller: 'CultivoCtrl'
+    })
+
 	/* Parcel */
 	.when('/parcel',{
 		templateUrl:'partials/parcel-list.html',

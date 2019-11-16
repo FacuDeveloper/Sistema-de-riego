@@ -15,7 +15,6 @@ import javax.persistence.Query;
 import javax.persistence.NoResultException;
 
 import model.Cultivo;
-//import model.TipoCultivo;
 
 @Stateless
 public class CultivoServiceBean implements CultivoService {
@@ -42,7 +41,7 @@ public class CultivoServiceBean implements CultivoService {
   }
 
   /**
-   * Elimina de la base de datos subyacente el cultivo
+   * Elimina de forma logica de la base de datos subyacente el cultivo
    * que tiene el identificador dado
    *
    * @param  id [identificador]
@@ -53,7 +52,7 @@ public class CultivoServiceBean implements CultivoService {
     Cultivo crop = find(id);
 
     if (crop != null) {
-      getEntityManager().remove(crop);
+      crop.setActivo(false);
       return crop;
     }
 
@@ -78,6 +77,8 @@ public class CultivoServiceBean implements CultivoService {
       crop.setEtDesarrollo(cultivo.getEtDesarrollo());
       crop.setEtMedia(cultivo.getEtMedia());
       crop.setEtFinal(cultivo.getEtFinal());
+      crop.setAgotamientoCritico(cultivo.getAgotamientoCritico());
+      crop.setActivo(cultivo.getActivo());
       return crop;
     }
 

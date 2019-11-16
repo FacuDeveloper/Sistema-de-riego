@@ -5,9 +5,6 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-// import javax.persistence.UniqueConstraint;
-// import javax.persistence.Enumerated;
-// import javax.persistence.EnumType;
 
 @Entity
 public class Cultivo {
@@ -46,6 +43,9 @@ public class Cultivo {
 
   @Column(name="AGOTAMIENTO_CRITICO")
   private double agotamientoCritico;
+
+  @Column(name="ACTIVO")
+  private boolean activo;
 
   // Constructor method
   public Cultivo() {
@@ -126,6 +126,22 @@ public class Cultivo {
 
   public void setEtFinal(int etFinal) {
     this.etFinal = etFinal;
+  }
+
+  public double getAgotamientoCritico() {
+    return agotamientoCritico;
+  }
+
+  public void setAgotamientoCritico(double agotamientoCritico) {
+    this.agotamientoCritico = agotamientoCritico;
+  }
+
+  public boolean getActivo() {
+    return activo;
+  }
+
+  public void setActivo(boolean activo) {
+    this.activo = activo;
   }
 
   @Override
