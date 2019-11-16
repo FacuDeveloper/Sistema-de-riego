@@ -13,6 +13,16 @@ app.service(
     			});
 	    }
 
+      this.findAllActive = function(callback){
+        $http.get("rest/parcel/findAllActive").then(
+          function(result){
+            callback(false,result.data);
+          },
+          function(error){
+            callback(error);
+          });
+        }
+
       this.searchByPage = function(search, page, cant, callback) {
 				$http.get('rest/parcel?page=' + page + '&cant=' + cant+ "&search=" + JSON.stringify(search))
 						.then(function(res) {

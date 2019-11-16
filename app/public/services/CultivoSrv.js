@@ -22,6 +22,16 @@ app.service("CultivoSrv", ["$http", function($http) {
         });
       };
 
+      this.findAllActiveCrops = function(callback){
+        $http.get("rest/cultivo/findAllActiveCrops").then(
+          function(result){
+            callback(false, result.data);
+          },
+          function(error){
+            callback(error);
+          });
+        }
+
       this.searchByPage = function(search, page, cant, callback) {
         $http.get('rest/cultivo?page=' + page + '&cant=' + cant+ "&search=" + JSON.stringify(search))
         .then(function(res) {

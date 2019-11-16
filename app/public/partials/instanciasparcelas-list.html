@@ -1,0 +1,115 @@
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <strong>Instancias de parcelas</strong>
+  </div>
+  <div class="panel-body">
+    <a href="#!/instanciaparcela/new" class="btn btn-success" role="button">Cargar</a>
+  </div>
+  <table class="table table-condensed table-hover table-fixed-top">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Fecha de siembra</th>
+        <th>Fecha de cosecha</th>
+        <th>Parcela</th>
+        <th>Cultivo</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="ins in instanciaParcelas">
+        <td>{{ins.id}}</td>
+        <td>{{ins.fechaSiembra | date:'dd/MM/yyyy'}}</td>
+        <td>{{ins.fechaCosecha | date:'dd/MM/yyyy'}}</td>
+        <td>{{ins.parcel.name}}</td>
+        <td>{{ins.cultivo.nombre}}</td>
+        <td class="text-right">
+          <div class="btn-group" role="group" aria-label="...">
+            <a href="#!/instanciaparcela/view/{{ins.id}}" class="btn btn-success" role="button">
+              <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            </a>
+            <a href="#!/instanciaparcela/edit/{{ins.id}}" class="btn btn-success" role="button">
+              <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </a>
+
+            <button type="button"
+            class="btn btn-success" id="calcularRiego"
+            aria-label="Calcular"
+            data-toggle="modal"
+            data-target="#NuevoModal"
+            ng-click="calcularRiego(ins.id)">Calcular
+          </button>
+
+          <!-- Esto lo podemos usar en esta pantalla y en el resto del proyecto -->
+          <!-- ng-show="{{ins.state.name == 'En desarrollo'}}" -->
+          <!-- onclick="this.disabled=true" -->
+
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- PANEL CALCULO DE RIEGO SUGERIDO Y RIEGO REALIZADO -->
+<div class="modal fade" id="NuevoModal" tabindex="-1" role="dialog" aria-labelledby="irrigationModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="irrigationModalCenterTitle">
+          <p class="titulo">Calculo de Riego</p>
+        </h5>
+      </div>
+
+      <div class="modal-body">
+        <form id="formIrrigation" class="form-horizontal" role="form" name="formIrrigation" novalidate>
+
+          <div class="form-group">
+            <label for="suggestedIrrigation" class="col-md-3 control-label">
+              <p class="text-right">Riego sugerido (mm)</p>
+            </label>
+            <div class="col-md-4">
+              <input type="number" class="form-control" id="suggestedIrrigation"
+              ng-model="irrigationLog.suggestedIrrigation" ng-disabled="true">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="tomorrowPrecipitation" class="col-md-3 control-label">
+              <p class="text-right">Precipitación total estimada del día de mañana (mm)</p>
+            </label>
+            <div class="col-md-4">
+              <input type="number" class="form-control" id="tomorrowPrecipitation"
+              ng-model="irrigationLog.tomorrowPrecipitation" ng-disabled="true">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="irrigationDone" class="col-md-3 control-label">
+              <p class="text-right">Riego realizado (mm):</p>
+            </label>
+            <div class="col-md-4">
+              <input type="number" min="0" name="irrigationDone" class="form-control"
+              id="irrigationDone" placeholder="Riego Realizado"
+              ng-model="irrigationLog.irrigationDone" required/>
+            </div>
+            <div ng-show="formIrrigation.irrigationDone.$error.required" class="col-md-2">
+              <p style="color: red">Requerido</p>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="cancelar()">Cancelar</button>
+        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="guardarRegistroRiego()"
+        ng-disabled="formIrrigation.irrigationDone.$error.required">
+        {{irrigationLog.id ? 'Actualizar':'Guardar'}}
+      </button>
+    </div>
+
+  </div>
+</div>
+</div>

@@ -16,6 +16,7 @@ public interface CultivoService {
   public Cultivo change(int id, Cultivo cultivo);
   public Cultivo find(int id);
   public Collection<Cultivo> findAll();
+  public Collection<Cultivo> findAllActive();
   public Page<Cultivo> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters);
   public double getKc(Cultivo crop, Calendar seedTime);
 

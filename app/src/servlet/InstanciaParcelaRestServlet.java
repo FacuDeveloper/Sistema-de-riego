@@ -93,16 +93,6 @@ public class InstanciaParcelaRestServlet {
   @Produces(MediaType.APPLICATION_JSON)
   public String change(@PathParam("id") int id, String json) throws IOException  {
     InstanciaParcela instancia = mapper.readValue(json,InstanciaParcela.class);
-
-    /*
-     * Por el momento sabemos que tenemos que darle
-     * al usuario cliente la opcion de establecer la
-     * fecha de cosecha de su cultivo en la modificacion
-     * del registro historico de la parcela
-     */
-    // Calendar harvestDate = getHarvestDate(instancia);
-    // instancia.setFechaCosecha(harvestDate);
-
     instancia = service.change(id, instancia);
     return mapper.writeValueAsString(instancia);
   }

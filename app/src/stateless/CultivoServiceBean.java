@@ -90,6 +90,14 @@ public class CultivoServiceBean implements CultivoService {
   }
 
   /**
+   * @return coleccion con todas los cultivos que estan activos
+   */
+  public Collection<Cultivo> findAllActive() {
+    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c WHERE c.activo = TRUE ORDER BY c.id");
+    return (Collection<Cultivo>) query.getResultList();
+  }
+
+  /**
    * *** NOTA ***
    * Este metodo es unicamente para la clase de prueba
    * unitaria KcTest, con lo cual no sera utilizado

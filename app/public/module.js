@@ -36,6 +36,20 @@ app.config(['$routeProvider', function(routeprovider) {
 		controller: 'ParcelCtrl'
 	})
 
+	/* Instancias de parcelas (registro historico de parcela) */
+	.when('/instanciasparcelas',{
+		templateUrl:'partials/instanciasparcelas-list.html',
+		controller: 'InstanciasParcelasCtrl'
+	})
+	.when('/instanciaparcela/:action',{
+		templateUrl:'partials/instanciaparcela-form.html',
+		controller: 'InstanciaParcelaCtrl'
+	})
+	.when('/instanciaparcela/:action/:id',{
+		templateUrl:'partials/instanciaparcela-form.html',
+		controller: 'InstanciaParcelaCtrl'
+	})
+
 	/* De otra manera */
 	.otherwise({
 		templateUrl: 'partials/404.html'
