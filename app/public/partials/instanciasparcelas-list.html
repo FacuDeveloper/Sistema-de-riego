@@ -13,7 +13,7 @@
         <th>Fecha de cosecha</th>
         <th>Parcela</th>
         <th>Cultivo</th>
-        <th></th>
+        <th>Estado del cultivo</th>
       </tr>
     </thead>
     <tbody>
@@ -23,6 +23,7 @@
         <td>{{ins.fechaCosecha | date:'dd/MM/yyyy'}}</td>
         <td>{{ins.parcel.name}}</td>
         <td>{{ins.cultivo.nombre}}</td>
+        <td>{{ins.status.name}}</td>
         <td class="text-right">
           <div class="btn-group" role="group" aria-label="...">
             <a href="#!/instanciaparcela/view/{{ins.id}}" class="btn btn-success" role="button">
@@ -31,19 +32,14 @@
             <a href="#!/instanciaparcela/edit/{{ins.id}}" class="btn btn-success" role="button">
               <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
             </a>
-
             <button type="button"
             class="btn btn-success" id="calcularRiego"
             aria-label="Calcular"
             data-toggle="modal"
             data-target="#NuevoModal"
+            ng-show="{{ins.status.name == 'En desarrollo'}}"
             ng-click="calcularRiego(ins.id)">Calcular
           </button>
-
-          <!-- Esto lo podemos usar en esta pantalla y en el resto del proyecto -->
-          <!-- ng-show="{{ins.state.name == 'En desarrollo'}}" -->
-          <!-- onclick="this.disabled=true" -->
-
         </div>
       </td>
     </tr>
