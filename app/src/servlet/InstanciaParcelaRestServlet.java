@@ -21,6 +21,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import model.InstanciaParcela;
+import model.InstanceParcelStatus;
 import model.Cultivo;
 import model.Parcel;
 import model.ClimateLog;
@@ -29,6 +30,7 @@ import model.IrrigationLog;
 import stateless.InstanciaParcelaService;
 import stateless.ClimateLogServiceBean;
 import stateless.IrrigationLogServiceBean;
+import stateless.InstanceParcelStatusServiceBean;
 import stateless.CultivoService;
 
 import irrigation.WaterMath;
@@ -49,6 +51,9 @@ public class InstanciaParcelaRestServlet {
 
   // inject a reference to the IrrigationLogServiceBean slsb
   @EJB IrrigationLogServiceBean irrigationLogService;
+
+  // inject a reference to the InstanceParcelStatusServiceBean slsb
+  @EJB InstanceParcelStatusServiceBean statusService;
 
   // mapea lista de pojo a JSON
   ObjectMapper mapper = new ObjectMapper();
@@ -73,8 +78,15 @@ public class InstanciaParcelaRestServlet {
   public String create(String json) throws IOException  {
     InstanciaParcela instancia = mapper.readValue(json, InstanciaParcela.class);
 
-    Calendar harvestDate = getHarvestDate(instancia);
+    /*
+     * En funcion de la fecha de siembra del cultivo dado y
+     * de la suma de sus dias de vida (suma de la cantidad de
+     * dias que dura cada una de sus etapas), se calcula
+     * la fecha de cosecha del cultivo dado
+     */
+    Calendar harvestDate = cultivoService.calculateHarvestDate(instancia.getFechaSiembra(), instancia.getCultivo());
     instancia.setFechaCosecha(harvestDate);
+    instancia.setStatus(getStatus(harvestDate));
 
     instancia = service.create(instancia);
     return mapper.writeValueAsString(instancia);
@@ -93,6 +105,8 @@ public class InstanciaParcelaRestServlet {
   @Produces(MediaType.APPLICATION_JSON)
   public String change(@PathParam("id") int id, String json) throws IOException  {
     InstanciaParcela instancia = mapper.readValue(json,InstanciaParcela.class);
+    instancia.setStatus(getStatus(instancia.getFechaCosecha()));
+
     instancia = service.change(id, instancia);
     return mapper.writeValueAsString(instancia);
   }
@@ -163,12 +177,28 @@ public class InstanciaParcelaRestServlet {
   }
 
   /**
-   * @param  instancia
-   * @return fecha de cosecha de la instancia parcela dada (registro
-   * historico de parcela)
+   * @param  harvestDate [fecha de cosecha]
+   * @return el estado "En desarrollo" si la fecha de cosecha esta
+   * despues de la fecha actual del sistema y el estado "Finalizado"
+   * si la fecha de cosecha esta antes de la fecha actual del sistema
+   * o si es igual a la misma
    */
-  private Calendar getHarvestDate(InstanciaParcela instancia) {
-    return cultivoService.calculateHarvestDate(instancia.getFechaSiembra(), instancia.getCultivo());
+  private InstanceParcelStatus getStatus(Calendar harvestDate) {
+    /*
+     * Si la fecha de cosecha del registro historico de parcela
+     * esta despues de la fecha actual del sistema retorna el
+     * estado "En desarrollo"
+     */
+    if ((harvestDate.compareTo(Calendar.getInstance())) > 0) {
+      return statusService.find(2);
+    }
+
+    /*
+     * En cambio si la fecha de cosecha del registro historico
+     * de parcela esta antes de la fecha actual del sistema
+     * o es igual a la misma, retorna el estado "Finalizado"
+     */
+    return statusService.find(1);
   }
 
 }

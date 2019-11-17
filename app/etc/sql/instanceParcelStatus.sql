@@ -3,5 +3,5 @@ DELETE FROM INSTANCIA_PARCELA_ESTADO;
 ALTER TABLE INSTANCIA_PARCELA_ESTADO ALTER COLUMN INSTANCIA_PARCELA_ESTADO_ID RESTART WITH 1;
 
 -- INSERTS
-INSERT INTO APP.INSTANCIA_PARCELA_ESTADO (NOMBRE, DESCRIPCION) VALUES ('Cosechado', 'Estado del cultivo que ha alcanzado su fecha de cosecha');
+INSERT INTO APP.INSTANCIA_PARCELA_ESTADO (NOMBRE, DESCRIPCION) VALUES ('Finalizado', 'Estado del cultivo que ha alcanzado su fecha de cosecha');
 INSERT INTO APP.INSTANCIA_PARCELA_ESTADO (NOMBRE, DESCRIPCION) VALUES ('En desarrollo', 'Estado del cultivo que no ha alcanzado su fecha de cosecha');

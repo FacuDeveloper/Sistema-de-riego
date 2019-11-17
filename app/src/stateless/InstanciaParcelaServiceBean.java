@@ -84,6 +84,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
       instanciaParcela.setCultivo(ins.getCultivo());
       instanciaParcela.setFechaSiembra(ins.getFechaSiembra());
       instanciaParcela.setFechaCosecha(ins.getFechaCosecha());
+      instanciaParcela.setStatus(ins.getStatus());
       return instanciaParcela;
     }
 
