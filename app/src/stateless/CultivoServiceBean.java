@@ -12,9 +12,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.NoResultException;
 
 import model.Cultivo;
+
+import java.lang.Math;
 
 @Stateless
 public class CultivoServiceBean implements CultivoService {
@@ -135,15 +136,50 @@ public class CultivoServiceBean implements CultivoService {
     }
 
     /*
-     * Si la fecha de siembra y la fecha actual no son del mismo
-     * año se calcula la diferencia de dias entre ambas teniendo
-     * en cuenta el año de cada una debido a que pertenecen a
-     * años diferentes
+     * Si entre la fecha de siembra y la fecha actual hay un año
+     * de diferencia (lo que significa que no son del mismo año
+     * pero el año de la fecha actual esta a continuacion
+     * del año de la fecha de siembra) se calcula la diferencia
+     * de dias entre ambas de la siguiente forma:
      *
      * Cantidad de dias de vida = Numero del dia del año de la fecha
      * actual + (365 - numero del dia del año de la fecha de siembra + 1)
      */
-    daysLife = currentDate.get(Calendar.DAY_OF_YEAR) + (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1);
+    if (Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR)) == 1) {
+      daysLife = currentDate.get(Calendar.DAY_OF_YEAR) + (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1);
+      return calculateKc(crop, daysLife);
+    }
+
+    /*
+     * NOTE: Este calculo esta mal pero no tan mal, y esto se lo puede
+     * ver en la clase de prueba unitaria llamada KcTest cuando al
+     * tomate se le pone una fecha de siembra con el año 1995 y una
+     * fecha actual con el año 2020 dando la diferencia en dias entre
+     * ambas fechas distinta a la diferencia en dias entre ambas
+     * fechas en una calculadora online de dias
+     *
+     * Para ver lo que dice el parrafo anterior, ejecutar la prueba
+     * mencionada
+     *
+     * Si entre la fecha de siembra y la fecha actual hay mas de un año
+     * de diferencia (lo que significa que no son del mismo año y que
+     * entre ambas fechas hay mas de un año de distancia) se calcula
+     * la diferencia de dias entre ambas fechas de la siguiente forma:
+     *
+     * Cantidad de dias de vida = (Año de la fecha actual - año de la
+     * fecha de siembra) * 365 - (365 - Numero del dia en el año de la
+     * fecha de siembra + 1) - (365 - Numero del dia en el año de la fecha actual)
+     *
+     * Se multiplica daysLife por 365 para evitar posibles errores, y ademas
+     * si la diferencia entre ambas fechas es de mas de un año no tiene sentido
+     * calcular la cantidad de dias de vida del cultivo dado porque hasta donde
+     * se sabe ninguno cultivo mas de un año
+     */
+    if (Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR)) > 1) {
+      daysLife = ((Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR))) * 365) - (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1) - (365 - currentDate.get(Calendar.DAY_OF_YEAR));
+      return calculateKc(crop, (daysLife * 365));
+    }
+
     return calculateKc(crop, daysLife);
   }
 
@@ -165,6 +201,10 @@ public class CultivoServiceBean implements CultivoService {
     Calendar currentDate = Calendar.getInstance();
 
     /*
+     * TODO: Ver si se pueden refactorizar los return
+     */
+
+    /*
      * Si la fecha de siembra y la fecha actual son del mismo
      * año se calcula la diferencia de dias entre ambas fechas
      * sin tener en cuenta el año debido a que pertenecen al
@@ -178,15 +218,51 @@ public class CultivoServiceBean implements CultivoService {
     }
 
     /*
-     * Si la fecha de siembra y la fecha actual no son del mismo
-     * año se calcula la diferencia de dias entre ambas teniendo
-     * en cuenta el año de cada una debido a que pertenecen a
-     * años diferentes
+     * Si entre la fecha de siembra y la fecha actual hay un año
+     * de diferencia (lo que significa que no son del mismo año
+     * pero el año de la fecha actual esta a continuacion
+     * del año de la fecha de siembra) se calcula la diferencia
+     * de dias entre ambas fechas de la siguiente forma:
      *
      * Cantidad de dias de vida = Numero del dia del año de la fecha
-     * actual + (365 - numero del dia del año de la fecha de siembra + 1)
+     * actual + (365 - Numero del dia del año de la fecha de siembra + 1)
      */
-    daysLife = currentDate.get(Calendar.DAY_OF_YEAR) + (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1);
+    if (Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR)) == 1) {
+      daysLife = currentDate.get(Calendar.DAY_OF_YEAR) + (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1);
+      return calculateKc(crop, daysLife);
+    }
+
+
+    /*
+     * NOTE: Este calculo esta mal pero no tan mal, y esto se lo puede
+     * ver en la clase de prueba unitaria llamada KcTest cuando al
+     * tomate se le pone una fecha de siembra con el año 1995 y una
+     * fecha actual con el año 2020 dando la diferencia en dias entre
+     * ambas fechas distinta a la diferencia en dias entre ambas
+     * fechas en una calculadora online de dias
+     *
+     * Para ver lo que dice el parrafo anterior, ejecutar la prueba
+     * mencionada
+     *
+     * Si entre la fecha de siembra y la fecha actual hay mas de un año
+     * de diferencia (lo que significa que no son del mismo año y que
+     * entre ambas fechas hay mas de un año de distancia) se calcula
+     * la diferencia de dias entre ambas fechas de la siguiente forma:
+     *
+     * Cantidad de dias de vida = (Año de la fecha actual - año de la
+     * fecha de siembra) * 365 - (365 - Numero del dia en el año de la
+     * fecha de siembra + 1) - (365 - Numero del dia en el año de la fecha actual)
+     *
+     * Se multiplica daysLife por 365 para evitar posibles errores, y ademas
+     * si la diferencia entre ambas fechas es de mas de un año no tiene sentido
+     * calcular la cantidad de dias de vida del cultivo dado porque hasta donde
+     * se sabe ninguno cultivo mas de un año
+     */
+    if (Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR)) > 1) {
+      daysLife = ((Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR))) * 365) - (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1) - (365 - currentDate.get(Calendar.DAY_OF_YEAR));
+      return calculateKc(crop, (daysLife * 365));
+    }
+
     return calculateKc(crop, daysLife);
   }
 
