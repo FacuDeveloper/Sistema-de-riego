@@ -1,0 +1,5 @@
+En la creación y en la modificación de registros históricos de parcela falta el control sobre la cantidad de días que hay entre la fecha de siembra y la fecha de cosecha. Si la diferencia entre ambas fechas es mayor que la cantidad de días que dura la etapa de vida del cultivo elegido no se tiene que crear o modificar el registro histórico de parcela dado. Además de esto, también falta crear un cartel que diga "La cantidad de días entre la fecha de siembra y la fecha de cosecha elegidas es mayor que la cantidad de días que dura la etapa de vida del cultivo elegido (colocar cantidad de días que dura la etapa de vida del cultivo elegido)". Este es el problema #60.
+
+En el cruce de fechas de un registro histórico de parcela a crear con otro de la misma parcela en el estado "Finalizado" falta crear un cartel que diga "No se permite la superposición de fechas" o algo por el estilo.
+
+En el cruce de fechas de un registro histórico de parcela a modificar con otro anterior o siguiente de la misma parcela en el estado "Finalizado" falta crear un cartel que diga "No se permite la superposición de fechas" o algo por el estilo.
