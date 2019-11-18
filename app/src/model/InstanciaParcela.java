@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import util.FormatDate;
+
 @Entity
 @Table(name="INSTANCIA_PARCELA")
 public class InstanciaParcela {
@@ -45,7 +47,7 @@ public class InstanciaParcela {
 
   @ManyToOne
   @JoinColumn(name="FK_ESTADO", nullable=false)
-  private InstanceParcelStatus instanceParcelStatus;
+  private InstanceParcelStatus status;
 
   // Constructor method
   public InstanciaParcela() {
@@ -89,11 +91,17 @@ public class InstanciaParcela {
   }
 
   public InstanceParcelStatus getStatus() {
-    return instanceParcelStatus;
+    return status;
   }
 
-  public void setStatus(InstanceParcelStatus instanceParcelStatus) {
-    this.instanceParcelStatus = instanceParcelStatus;
+  public void setStatus(InstanceParcelStatus status) {
+    this.status = status;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("ID: %d\nFecha de siembra: %s\nFecha de cosecha: %s\nParcela: %s\nCultivo: %s\nEstado de inst. parcela: %s\n", id, FormatDate.formatDate(fechaSiembra),
+    FormatDate.formatDate(fechaCosecha), parcel.getName(), cultivo.getNombre(), status.getName());
   }
 
 }
