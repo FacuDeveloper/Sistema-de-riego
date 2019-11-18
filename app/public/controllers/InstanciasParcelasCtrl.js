@@ -15,7 +15,7 @@ app.controller(
 		}
 
 		$scope.calcularRiego = function(id){
-			console.log("Calcular riego de : " + id)
+			// console.log("Calcular riego de : " + id)
 			servicio.calcularRiego(id, function(error, irrigationLog){
 				if(error){
 					console.log(error);
