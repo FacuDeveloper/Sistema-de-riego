@@ -15,6 +15,8 @@ public interface InstanciaParcelaService {
   public InstanciaParcela change(int id, InstanciaParcela ins);
   public InstanciaParcela find(int id);
   public InstanciaParcela find(Parcel parcela, Cultivo cultivo);
+  public InstanciaParcela find(Parcel givenParcel, int id);
   public Collection<InstanciaParcela> findAll();
-  public InstanciaParcela findCurrentParcelInstance(Parcel parcel);
+  public InstanciaParcela findInDevelopment(Parcel givenParcel);
+  public InstanciaParcela findRecentFinished(Parcel givenParcel);
 }

@@ -116,6 +116,22 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
     return getEntityManager().find(InstanciaParcela.class, id);
   }
 
+  public InstanciaParcela find(Parcel givenParcel, int id) {
+    Query query = getEntityManager().createQuery("SELECT i FROM InstanciaParcela i WHERE i.parcel = :givenParcel AND i.id = :id");
+    query.setParameter("givenParcel", givenParcel);
+    query.setParameter("id", id);
+
+    InstanciaParcela instanciaParcela = null;
+
+    try {
+      instanciaParcela = (InstanciaParcela) query.getSingleResult();
+    } catch(NoResultException noresult) {
+
+    }
+
+    return instanciaParcela;
+  }
+
   /**
    * @return retorna una coleccion con todas las instancias de parcela de
    * la base de datos subyacente
@@ -126,21 +142,43 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
   }
 
   /**
-   * @param  parcel
-   * @return registro historico, de una parcela dada, que
-   * tiene fecha de siembra y que no tiene fecha de cosecha
-   * para un cultivo, en caso contrario retorna el valor
-   * nulo
+   * Se considera registro historico actual de parcela a
+   * aquel que esta en el estado "En desarrollo"
+   *
+   * Solo puede haber un unico registro historico de parcela
+   * en el estado mencionado y esto es para cada parcela
+   * existente en el sistema, con lo cual siempre deberia
+   * haber un unico registro historico actual de parcela
+   * para cada parcela existente en el sistema
+   *
+   * @param  givenParcel
+   * @return registro historico de parcela actual, si hay uno
+   * actual, en caso contrario retorna falso
    */
-  public InstanciaParcela findCurrentParcelInstance(Parcel parcel) {
-    /*
-     * Selecciona el registro historico de una parcela dada, que
-     * tiene fecha de siembra y que no tiene fecha de cosecha
-     * del cultivo sembrado, y este registro es el registro
-     * historico actual de la parcela dada
-     */
-    Query query = getEntityManager().createQuery("SELECT r FROM InstanciaParcela r JOIN r.parcel p WHERE (r.seedDate IS NOT NULL AND r.harvestDate IS NULL AND p = :parcel)");
-    query.setParameter("parcel", parcel);
+  public InstanciaParcela findInDevelopment(Parcel givenParcel) {
+    Query query = getEntityManager().createQuery("SELECT r FROM InstanciaParcela r JOIN r.parcel p JOIN r.status s WHERE (s.name = 'En desarrollo' AND p = :parcel)");
+    query.setParameter("parcel", givenParcel);
+
+    InstanciaParcela resultingParcelInstancce = null;
+
+    try {
+      resultingParcelInstancce = (InstanciaParcela) query.getSingleResult();
+    } catch(Exception e) {
+
+    }
+
+    return resultingParcelInstancce;
+  }
+
+  /**
+   * @param  givenParcel
+   * @return la instancia de parcela (registro historico de parcela)
+   * mas reciente que esta en el estado "Finalizado", en caso contrario
+   * retorna el valor nulo
+   */
+  public InstanciaParcela findRecentFinished(Parcel givenParcel) {
+    Query query = getEntityManager().createQuery("SELECT r FROM InstanciaParcela r WHERE r.id = (SELECT MAX(r.id) FROM InstanciaParcela r JOIN r.parcel p JOIN r.status s WHERE (s.name = 'Finalizado' AND p = :parcel))");
+    query.setParameter("parcel", givenParcel);
 
     InstanciaParcela resultingParcelInstancce = null;
 
