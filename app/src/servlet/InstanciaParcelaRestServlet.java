@@ -312,7 +312,7 @@ public class InstanciaParcelaRestServlet {
      * Cantidad total de agua utilizada en los riegos
      * realizados en el dia de hoy
      */
-    double totalIrrigationWaterToday = irrigationLogService.getTotalWaterIrrigation(parcel);
+    double totalIrrigationWaterToday = irrigationLogService.getTotalWaterIrrigationToday(parcel);
 
     /*
      * Si el registro climatico del dia de ayer no existe en

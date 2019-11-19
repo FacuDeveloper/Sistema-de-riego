@@ -132,7 +132,8 @@ public class WaterMath {
   public static double getWaterAccumulatedToday(double yesterdayEtc, double yesterdayEto, double yesterdayRainWater,
   double waterAccumulatedYesterday, double totalIrrigationWaterToday) {
 
-    double evapotranspiration = 0.0;
+    double yesterdayEvapotranspiration = 0.0;
+    double waterAccumulatedToday = 0.0;
 
     /*
      * La ETc es cero cuando no hay un cultivo sembrado
@@ -153,19 +154,25 @@ public class WaterMath {
      * del dia de hoy para el dia de mañana
      */
     if (yesterdayEtc == 0.0) {
-      evapotranspiration = yesterdayEto;
+      yesterdayEvapotranspiration = yesterdayEto;
     } else {
-      evapotranspiration = yesterdayEtc;
+      yesterdayEvapotranspiration = yesterdayEtc;
     }
 
     /*
-     * La cantidad de agua acumulada [milimetros] del dia de hoy es
-     * igual a la diferencia entre la evapotranspiracion del dia ayer
-     * y la suma entre la cantidad de agua de lluvia del dia de ayer,
-     * la cantidad de agua acumulada del dia de ayer y la cantidad
-     * total de agua de riego utilizada en el dia de hoy
+     * Si el agua de lluvia del dia de ayer mas la cantidad de agua
+     * acumulada del dia de ayer mas la cantidad total de agua utilizada
+     * en el riego del dia de hoy es mayor que la evapotranspiracion del
+     * dia de ayer, entonces la cantidad de agua acumulada [milimetros]
+     * del dia de hoy (la cual es agua a favor para mañana) es la
+     * diferencia entre la suma de las cantidades de agua mencionadas
+     * y la evapotranspiracion del dia de ayer
      */
-    return Math.abs(evapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday));
+    if ((yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday) > yesterdayEvapotranspiration) {
+      waterAccumulatedToday = (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday) - yesterdayEvapotranspiration;
+    }
+
+    return waterAccumulatedToday;
   }
 
   /**

@@ -91,7 +91,7 @@ public  class IrrigationLogServiceBean {
    * (de un cultivo dado) por el usuario cliente en la parcela
    * dada y en la fecha actual del sistema
    */
-  public double getTotalWaterIrrigation(Parcel givenParcel) {
+  public double getTotalWaterIrrigationToday(Parcel givenParcel) {
     /*
      * Fecha actual del sistema
      */
