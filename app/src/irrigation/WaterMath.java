@@ -26,14 +26,16 @@ public class WaterMath {
    * En pocas palabras, calcula el riego sugerido en milimetros para el
    * dia de hoy en funcion de lo que ha sucedido en el dia de ayer
    *
+   * @param  hectare                   [hectarea de la parcela sobre la cual estan plantados los cultivos del usuario cliente]
    * @param  yesterdayEtc              [ETc del dia de ayer] [milimetros]
    * @param  yesterdayEto              [ETo del dia de ayer] [milimetros]
    * @param  yesterdayRainWater        [cantidad de agua de lluvia del dia de ayer] [milimetros]
    * @param  waterAccumulatedYesterday [cantidad de agua acumulada del dia de ayer] [milimetros]
    * @return el riego sugerido [milimetros] para el dia de hoy
    */
-  public static double getSuggestedIrrigation(double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday,
+  public static double getSuggestedIrrigation(double hectare, double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday,
   double totalIrrigationWaterToday) {
+    // public static double getSuggestedIrrigation(double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday, double totalIrrigationWaterToday) {
 
     /*
      * Evapotranspiracion del dia de ayer
@@ -84,8 +86,27 @@ public class WaterMath {
      * la cantidad de agua que expresa la evapotranspiracion del dia de ayer ya esta
      * suplida por la suma de las cantidades de agua mencionadas
      */
-    if (yesterdayEvapotranspiration > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
-      suggestedIrrigationToday = yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
+    // if (yesterdayEvapotranspiration > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
+    //   suggestedIrrigationToday = yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
+    // }
+    //
+    // suggestedIrrigationToday = hectare * suggestedIrrigationToday;
+
+    /*
+     * Necesidad total de riego del cultivo dado
+     *
+     * Este valor es igual a la multiplicacion
+     * entre la cantidad de hectareas de la parcela
+     * dada y la necesidad de riego del cultivo dado, la
+     * cual es igual a la evapotranspiracion del dia
+     * de ayer menos la suma entre la cantidad de agua
+     * de lluvia del dia de ayer y la cantidad de agua
+     * acumulada del dia de ayer
+     */
+    double totalNeedIrrigation = hectare * (yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday));
+
+    if (totalNeedIrrigation > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
+      suggestedIrrigationToday = totalNeedIrrigation - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
     }
 
     return truncateToThreeDecimals(suggestedIrrigationToday);
