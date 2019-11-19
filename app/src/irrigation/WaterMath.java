@@ -179,7 +179,7 @@ public class WaterMath {
    * @param  givenNumber numero con varias cifras despues del punto decimal
    * @return numero con una parte entera y tres cifras decimales
    */
-  private static double truncateToThreeDecimals(double givenNumber) {
+  public static double truncateToThreeDecimals(double givenNumber) {
     /*
      * Multiplica el numero decimal por 1000 y toma
      * la parte entera del resultado de la multiplicacion,

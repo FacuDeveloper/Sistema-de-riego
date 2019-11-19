@@ -40,6 +40,20 @@ public  class ClimateLogServiceBean {
   }
 
   /**
+   * @param  givenDate
+   * @param  givenParcel
+   * @return registro climatico de la parcela dada en
+   * la fecha dada
+   */
+  public ClimateLog find(Calendar givenDate, Parcel givenParcel) {
+    Query query = entityManager.createQuery("SELECT r FROM ClimateLog r WHERE r.date = :date AND r.parcel = :parcel");
+    query.setParameter("date", givenDate);
+    query.setParameter("parcel", givenParcel);
+
+    return (ClimateLog) query.getSingleResult();
+  }
+
+  /**
    * Comprueba si la parcela dada tiene un registro
    * climatico asociado (en la base de datos) y si lo
    * tiene retorna verdadero, en caso contrario retorna
@@ -51,7 +65,7 @@ public  class ClimateLogServiceBean {
    * con la fecha y la parcela dadas, en caso contrario retorna falso
    */
   public boolean exist(Calendar date, Parcel parcel) {
-    Query query = entityManager.createQuery("SELECT r FROM ClimateLog r WHERE r.date = :date AND r.parcel = :parcel");
+    Query query = entityManager.createQuery("SELECT r FROM ClimateLog r WHERE (r.date = :date AND r.parcel = :parcel)");
     query.setParameter("date", date);
     query.setParameter("parcel", parcel);
 
@@ -65,6 +79,22 @@ public  class ClimateLogServiceBean {
     }
 
     return result;
+  }
+
+  /**
+   * Establece el agua acumulada del registro climatico
+   * del dia de hoy de una parcela dada
+   *
+   * @param givenDate
+   * @param givenParcel
+   * @param waterAccumulated [milimetros]
+   */
+  public void updateWaterAccumulatedToday(Calendar givenDate, Parcel givenParcel, double waterAccumulated) {
+    Query query = entityManager.createQuery("UPDATE ClimateLog c SET c.waterAccumulated = :waterAccumulated WHERE (c.date = :givenDate AND c.parcel = :givenParcel)");
+    query.setParameter("givenDate", givenDate);
+    query.setParameter("givenParcel", givenParcel);
+    query.setParameter("waterAccumulated", waterAccumulated);
+    query.executeUpdate();
   }
 
 }

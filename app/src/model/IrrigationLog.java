@@ -19,7 +19,7 @@ import javax.persistence.TemporalType;
 
 import java.util.Calendar;
 
-import util.FormatDate;
+import util.UtilDate;
 
 @Entity
 @Table(name="IRRIGATION_LOG")
@@ -185,7 +185,7 @@ public class IrrigationLog {
   @Override
   public String toString() {
     return String.format("ID: %d\nFecha de riego: %s\nRiego sugerido: %.f\nRiego realizado: %f\nPrecipitación total estimada del día de mañana: %d\nID de parcela: %d\n",
-    id, FormatDate.formatDate(date), suggestedIrrigation, irrigationDone, tomorrowPrecipitation, parcel.getId());
+    id, UtilDate.formatDate(date), suggestedIrrigation, irrigationDone, tomorrowPrecipitation, parcel.getId());
   }
 
 }

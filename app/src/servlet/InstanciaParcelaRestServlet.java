@@ -49,6 +49,8 @@ import java.text.ParseException;
 
 import et.Eto;
 
+import util.UtilDate;
+
 @Path("/instanciaParcela")
 public class InstanciaParcelaRestServlet {
 
@@ -293,8 +295,7 @@ public class InstanciaParcelaRestServlet {
      * Fecha del dia de mañana para solicitar la precipitacion
      * del dia de mañana
      */
-    Calendar tomorrowDate = Calendar.getInstance();
-    tomorrowDate.set(Calendar.DAY_OF_YEAR, tomorrowDate.get(Calendar.DAY_OF_YEAR) + 1);
+    Calendar tomorrowDate = UtilDate.getTomorrowDate();
 
     /*
      * Solicita el registro del clima del dia de mañana
@@ -306,7 +307,7 @@ public class InstanciaParcelaRestServlet {
      * Fecha del dia inmediatamente anterior a la fecha
      * actual del sistema
      */
-    Calendar yesterdayDate = getYesterdayDate();
+    Calendar yesterdayDate = UtilDate.getYesterdayDate();
 
     /*
      * Cantidad total de agua utilizada en los riegos
@@ -354,34 +355,10 @@ public class InstanciaParcelaRestServlet {
     IrrigationLog newIrrigationLog = new IrrigationLog();
     newIrrigationLog.setDate(currentDate);
     newIrrigationLog.setSuggestedIrrigation(suggestedIrrigationToday);
-    newIrrigationLog.setTomorrowPrecipitation(tomorrowPrecipitation);
+    newIrrigationLog.setTomorrowPrecipitation(WaterMath.truncateToThreeDecimals(tomorrowPrecipitation));
     newIrrigationLog.setParcel(parcel);
 
     return mapper.writeValueAsString(newIrrigationLog);
-  }
-
-  /**
-   * @return la fecha anterior a la fecha actual del sistema
-   */
-  private Calendar getYesterdayDate() {
-    Calendar currentDate = Calendar.getInstance();
-    Calendar yesterdayDate = Calendar.getInstance();
-
-    /*
-    * Si la fecha actual es el primero de Enero, entonces
-    * la fecha anterior a la fecha actual es el 31 de Diciembre
-    *
-    * Si la fecha actual no es el primero de Enero, entonces
-    * la fecha anterior a la fecha actual es el dia anterior
-    * a la fecha actual
-    */
-    if (currentDate.get(Calendar.DAY_OF_YEAR) == 1) {
-      yesterdayDate.set(Calendar.DAY_OF_YEAR, 365);
-    } else {
-      yesterdayDate.set(Calendar.DAY_OF_YEAR, currentDate.get(Calendar.DAY_OF_YEAR) - 1);
-    }
-
-    return yesterdayDate;
   }
 
   /**

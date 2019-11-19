@@ -18,7 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import util.FormatDate;
+import util.UtilDate;
 
 @Entity
 @Table(name="INSTANCIA_PARCELA")
@@ -100,8 +100,8 @@ public class InstanciaParcela {
 
   @Override
   public String toString() {
-    return String.format("ID: %d\nFecha de siembra: %s\nFecha de cosecha: %s\nParcela: %s\nCultivo: %s\nEstado de inst. parcela: %s\n", id, FormatDate.formatDate(fechaSiembra),
-    FormatDate.formatDate(fechaCosecha), parcel.getName(), cultivo.getNombre(), status.getName());
+    return String.format("ID: %d\nFecha de siembra: %s\nFecha de cosecha: %s\nParcela: %s\nCultivo: %s\nEstado de inst. parcela: %s\n", id, UtilDate.formatDate(fechaSiembra),
+    UtilDate.formatDate(fechaCosecha), parcel.getName(), cultivo.getNombre(), status.getName());
   }
 
 }

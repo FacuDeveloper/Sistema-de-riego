@@ -24,6 +24,8 @@ import java.util.Calendar;
 
 import irrigation.WaterMath;
 
+import util.UtilDate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -125,8 +127,7 @@ public class IrrigationLogRestServlet {
      * para recuperar, de la base de datos, el registro
      * climatico del dia de ayer
      */
-    Calendar yesterdayDate = Calendar.getInstance();
-    yesterdayDate.set(Calendar.DAY_OF_YEAR, yesterdayDate.get(Calendar.DAY_OF_YEAR) - 1);
+    Calendar yesterdayDate = UtilDate.getYesterdayDate();
 
     ClimateLog yesterdayClimateLog = climateLogServiceBean.find(yesterdayDate, givenParcel);
     yesterdayEto = yesterdayClimateLog.getEto();
@@ -137,7 +138,7 @@ public class IrrigationLogRestServlet {
     totalIrrigationWaterToday = service.getTotalWaterIrrigationToday(givenParcel);
 
     waterAccumulatedToday = WaterMath.getWaterAccumulatedToday(yesterdayEtc, yesterdayEto, yesterdayRainWater, waterAccumulatedYesterday, totalIrrigationWaterToday);
-    climateLogServiceBean.updateWaterAccumulated(currentDate, givenParcel, waterAccumulatedToday);
+    climateLogServiceBean.updateWaterAccumulatedToday(currentDate, givenParcel, waterAccumulatedToday);
   }
 
 }

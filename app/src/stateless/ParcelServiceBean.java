@@ -86,13 +86,6 @@ public  class ParcelServiceBean {
     return getEntityManager().find(Parcel.class, id);
   }
 
-  // TODO: Quizas haya que crear un bloque de codigo fuente
-  // en el caso en el que el usuario presione el boton de
-  // obtener agua de riego y no exista el registro historico
-  // climatico del dia anterior para la parcela sobre la
-  // cual se presiono el boton mencionado y la cual obviamente
-  // tiene un cultivo sembrado
-
   public Collection<Parcel> findAll() {
     Query query = getEntityManager().createQuery("SELECT p FROM Parcel p ORDER BY p.id");
     return (Collection<Parcel>) query.getResultList();

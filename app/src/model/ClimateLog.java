@@ -45,7 +45,7 @@ import weatherApiClasses.ForecastResponse;
 
 import java.util.Calendar;
 
-import util.FormatDate;
+import util.UtilDate;
 
 @Entity
 @Table(name="CLIMATE_LOG", uniqueConstraints={@UniqueConstraint(columnNames={"DATE", "FK_PARCEL"})})
@@ -602,7 +602,7 @@ public class ClimateLog {
   @Override
   public String toString() {
     return String.format("ID: %d\nLatitud: %f (grados decimales) Longitud: %f (grados decimales)\nZona horaria: %s\nFecha: %s\nIntensidad de precipitación: %f (milímetros/hora)\nProbabilidad de precipitación: %f (entre 0 y 1)\nPunto de rocío: %f (°C)\nPresión atmosférica: %f (kPa)\nVelocidad del viento: %f (metros/segundo)\nNubosidad: %f (entre 0 y 1)\nTemperatura mínima: %f (°C)\nTemperatura máxima: %f (°C)\nCantidad total de agua de lluvia: %f (milímetros)\nCantidad de agua acumulada: %f\n",
-    id, parcel.getLatitude(), parcel.getLongitude(), timezone, FormatDate.formatDate(date), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, rainWater, waterAccumulated);
+    id, parcel.getLatitude(), parcel.getLongitude(), timezone, UtilDate.formatDate(date), precipIntensity, precipProbability, dewPoint, pressure, windSpeed, cloudCover, temperatureMin, temperatureMax, rainWater, waterAccumulated);
   }
 
 }
