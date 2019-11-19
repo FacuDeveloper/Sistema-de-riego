@@ -33,6 +33,8 @@ import stateless.ClimateLogServiceBean;
 import stateless.IrrigationLogServiceBean;
 import stateless.InstanceParcelStatusServiceBean;
 import stateless.CultivoService;
+import stateless.SolarRadiationServiceBean;
+import stateless.MaximumInsolationServiceBean;
 
 import irrigation.WaterMath;
 
@@ -44,6 +46,8 @@ import climate.ClimateLogService;
 
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+
+import et.Eto;
 
 @Path("/instanciaParcela")
 public class InstanciaParcelaRestServlet {
@@ -65,6 +69,12 @@ public class InstanciaParcelaRestServlet {
 
   // inject a reference to the ParcelServiceBean slsb
   @EJB ParcelServiceBean serviceParcel;
+
+  // inject a reference to the SolarRadiationServiceBean
+  @EJB SolarRadiationServiceBean solarService;
+
+  // inject a reference to the MaximumInsolationServiceBean
+  @EJB MaximumInsolationServiceBean insolationService;
 
   // mapea lista de pojo a JSON
   ObjectMapper mapper = new ObjectMapper();
@@ -264,9 +274,15 @@ public class InstanciaParcelaRestServlet {
   public String getSuggestedIrrigation(@PathParam("id") int id) throws IOException {
     InstanciaParcela choosenParcelInstance = service.find(id);
     Parcel parcel = choosenParcelInstance.getParcel();
-    ClimateLogService climateLogService = ClimateLogService.getInstance();
     double suggestedIrrigationToday = 0.0;
     double tomorrowPrecipitation = 0.0;
+
+    ClimateLogService climateLogService = ClimateLogService.getInstance();
+    ClimateLog yesterdayClimateLog = null;
+    double yesterdayEto = 0.0;
+    double yesterdayEtc = 0.0;
+    double extraterrestrialSolarRadiation = 0.0;
+    double maximumInsolation = 0.0;
 
     /*
      * Fecha actual del sistema
@@ -297,6 +313,36 @@ public class InstanciaParcelaRestServlet {
      * realizados en el dia de hoy
      */
     double totalIrrigationWaterToday = irrigationLogService.getTotalWaterIrrigation(parcel);
+
+    /*
+     * Si el registro climatico del dia de ayer no existe en
+     * la base de datos, se lo tiene que pedir y se lo tiene
+     * que persistir en la base de datos subyacente
+     */
+    if (!(climateLogServiceBean.exist(yesterdayDate, parcel))) {
+      yesterdayClimateLog = climateLogService.getClimateLog(parcel.getLatitude(), parcel.getLongitude(), (yesterdayDate.getTimeInMillis() / 1000));
+
+      extraterrestrialSolarRadiation = solarService.getRadiation(yesterdayDate.get(Calendar.MONTH), parcel.getLatitude());
+      maximumInsolation = insolationService.getInsolation(yesterdayDate.get(Calendar.MONTH), parcel.getLatitude());
+
+      /*
+       * Evapotranspiracion del cultivo de referencia (ETo) con las
+       * condiciones climaticas del registro climatico del dia de ayer
+       */
+      yesterdayEto = Eto.getEto(yesterdayClimateLog.getTemperatureMin(), yesterdayClimateLog.getTemperatureMax(), yesterdayClimateLog.getPressure(), yesterdayClimateLog.getWindSpeed(),
+      yesterdayClimateLog.getDewPoint(), extraterrestrialSolarRadiation, maximumInsolation, yesterdayClimateLog.getCloudCover());
+
+      /*
+       * Evapotranspiracion del cultivo bajo condiciones esntandar (ETc)
+       * del cultivo dado con la ETo del dia de ayer
+       */
+      yesterdayEtc = cultivoService.getKc(choosenParcelInstance.getCultivo(), choosenParcelInstance.getFechaSiembra()) * yesterdayEto;
+
+      yesterdayClimateLog.setEto(yesterdayEto);
+      yesterdayClimateLog.setEtc(yesterdayEtc);
+      yesterdayClimateLog.setParcel(parcel);
+      climateLogServiceBean.create(yesterdayClimateLog);
+    }
 
     /*
      * Recupera el registro climatico de la parcela
