@@ -40,6 +40,8 @@ import java.lang.Math;
 
 import java.util.Date;
 
+import climate.ClimateLogService;
+
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -223,6 +225,15 @@ public class InstanciaParcelaRestServlet {
       return null;
     }
 
+    /*
+     * Si la fecha de siembra y la fecha de cosecha de la instancia
+     * de parcela que se va a modificar coinciden, no se tiene que
+     * realizar la modificacion
+     */
+    if ((instancia.getFechaSiembra() != null) && (instancia.getFechaCosecha() != null) && (instancia.getFechaSiembra().compareTo(instancia.getFechaCosecha()) == 0)) {
+      return null;
+    }
+
     // if (instancia.getStatus().getName().equals("Finalizado")) {
     //   instancia = service.change(id, instancia);
     //   return mapper.writeValueAsString(instancia);
@@ -253,6 +264,9 @@ public class InstanciaParcelaRestServlet {
   public String getSuggestedIrrigation(@PathParam("id") int id) throws IOException {
     InstanciaParcela choosenParcelInstance = service.find(id);
     Parcel parcel = choosenParcelInstance.getParcel();
+    ClimateLogService climateLogService = ClimateLogService.getInstance();
+    double suggestedIrrigationToday = 0.0;
+    double tomorrowPrecipitation = 0.0;
 
     /*
      * Fecha actual del sistema
@@ -260,12 +274,23 @@ public class InstanciaParcelaRestServlet {
     Calendar currentDate = Calendar.getInstance();
 
     /*
+     * Fecha del dia de mañana para solicitar la precipitacion
+     * del dia de mañana
+     */
+    Calendar tomorrowDate = Calendar.getInstance();
+    tomorrowDate.set(Calendar.DAY_OF_YEAR, tomorrowDate.get(Calendar.DAY_OF_YEAR) + 1);
+
+    /*
+     * Solicita el registro del clima del dia de mañana
+     */
+    ClimateLog tomorrowClimateLog = climateLogService.getClimateLog(parcel.getLatitude(), parcel.getLongitude(), (tomorrowDate.getTimeInMillis() / 1000));
+    tomorrowPrecipitation = tomorrowClimateLog.getRainWater();
+
+    /*
      * Fecha del dia inmediatamente anterior a la fecha
      * actual del sistema
      */
     Calendar yesterdayDate = getYesterdayDate();
-
-    double suggestedIrrigationToday = 0.0;
 
     /*
      * Cantidad total de agua utilizada en los riegos
@@ -278,11 +303,12 @@ public class InstanciaParcelaRestServlet {
      * de la fecha anterior a la fecha actual
      */
     ClimateLog climateLog = climateLogServiceBean.find(yesterdayDate, parcel);
-    suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(climateLog.getEtc(), climateLog.getEto(), climateLog.getRainWater(), climateLog.getWaterAccumulated(), totalIrrigationWaterToday);
+    suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(parcel.getArea(), climateLog.getEtc(), climateLog.getEto(), climateLog.getRainWater(), climateLog.getWaterAccumulated(), totalIrrigationWaterToday);
 
     IrrigationLog newIrrigationLog = new IrrigationLog();
-    newIrrigationLog.setSuggestedIrrigation(suggestedIrrigationToday);
     newIrrigationLog.setDate(currentDate);
+    newIrrigationLog.setSuggestedIrrigation(suggestedIrrigationToday);
+    newIrrigationLog.setTomorrowPrecipitation(tomorrowPrecipitation);
     newIrrigationLog.setParcel(parcel);
 
     return mapper.writeValueAsString(newIrrigationLog);
