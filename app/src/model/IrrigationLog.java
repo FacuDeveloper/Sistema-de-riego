@@ -77,6 +77,12 @@ public class IrrigationLog {
   @Column(name="IRRIGATION_DONE", nullable=false)
   private double irrigationDone;
 
+  /*
+   * Precipitacion total del dia de mañana [milimetros]
+   */
+  @Column(name="TOMORROW_PRECIPITATION", nullable=false)
+  private double tomorrowPrecipitation;
+
   @ManyToOne
   @JoinColumn(name="FK_PARCEL", nullable=false)
   private Parcel parcel;
@@ -145,6 +151,22 @@ public class IrrigationLog {
   }
 
   /**
+   * Returns value of tomorrowPrecipitation
+   * @return
+   */
+  public double getTomorrowPrecipitation() {
+    return tomorrowPrecipitation;
+  }
+
+  /**
+   * Sets new value of tomorrowPrecipitation
+   * @param
+   */
+  public void setTomorrowPrecipitation(double tomorrowPrecipitation) {
+    this.tomorrowPrecipitation = tomorrowPrecipitation;
+  }
+
+  /**
    * Returns value of parcel
    * @return
    */
@@ -162,8 +184,8 @@ public class IrrigationLog {
 
   @Override
   public String toString() {
-    return String.format("ID: %d\nFecha de riego: %s\nRiego sugerido: %.f\nRiego realizado: %f\nID de parcela: %d\n",
-    id, FormatDate.formatDate(date), suggestedIrrigation, irrigationDone, parcel.getId());
+    return String.format("ID: %d\nFecha de riego: %s\nRiego sugerido: %.f\nRiego realizado: %f\nPrecipitación total estimada del día de mañana: %d\nID de parcela: %d\n",
+    id, FormatDate.formatDate(date), suggestedIrrigation, irrigationDone, tomorrowPrecipitation, parcel.getId());
   }
 
 }
