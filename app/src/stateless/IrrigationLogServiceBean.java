@@ -69,8 +69,6 @@ public  class IrrigationLogServiceBean {
     IrrigationLog choosenIrrigationLog = find(id);
 
     if (choosenIrrigationLog != null) {
-      choosenIrrigationLog.setDate(modifiedIrrigationLog.getDate());
-      choosenIrrigationLog.setSuggestedIrrigation(modifiedIrrigationLog.getSuggestedIrrigation());
       choosenIrrigationLog.setIrrigationDone(modifiedIrrigationLog.getIrrigationDone());
       return choosenIrrigationLog;
     }

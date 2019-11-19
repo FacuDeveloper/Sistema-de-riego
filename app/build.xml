@@ -68,6 +68,9 @@
     (registro historico de parcela) -->
     <target name="estado" depends="init, run_instanceParcelStatus_sql" />
 
+    <!-- Conjunto de datos para hacer la prueba del riego sugerido -->
+    <target name="all" depends="init, run_all_sql" />
+
     <!-- Comando para borrar el contenido de las tablas de la base de datos subyacente -->
     <target name="delete" depends="init, run_deleteAll_sql" />
 
