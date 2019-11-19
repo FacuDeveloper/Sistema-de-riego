@@ -37,13 +37,19 @@ app.controller(
 		}
 
 		$scope.guardarRegistroRiego = function() {
-			irrigationLogService.save($scope.irrigationLog, function(error, irrigationLog){
-				if(error){
-					console.log(error);
-					return;
-				}
-				$scope.irrigationLog = irrigationLog;
-			});
+
+			if ($scope.irrigationLog.irrigationDone >= 0) {
+				irrigationLogService.save($scope.irrigationLog, function(error, irrigationLog){
+					if(error){
+						console.log(error);
+						return;
+					}
+					$scope.irrigationLog = irrigationLog;
+				});
+			} else {
+				alert("El riego realizado sólo puede ser mayor o igual a cero");
+			}
+
 		}
 
 		findAllInstanciasParcelas();
