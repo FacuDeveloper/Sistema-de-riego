@@ -118,6 +118,34 @@ public  class IrrigationLogServiceBean {
   }
 
   /**
+   * @param  givenDate [una fecha dada]
+   * @param  givenParcel
+   * @return la cantidad total de agua utilizada para el riego
+   * (de un cultivo dado) por el usuario cliente en la parcela
+   * dada, en una fecha dada
+   */
+  public double getTotalWaterIrrigation(Calendar givenDate, Parcel givenParcel) {
+    /*
+     * Suma cada riego realizado, por parte del usuario cliente,
+     * para un cultivo dado, de la parcela dada en la fecha
+     * actual
+     */
+    Query query = entityManager.createQuery("SELECT SUM(i.irrigationDone) FROM IrrigationLog i WHERE (i.date = :givenDate AND i.parcel = :givenParcel)");
+    query.setParameter("givenDate", givenDate);
+    query.setParameter("givenParcel", givenParcel);
+
+    double result = 0.0;
+
+    try {
+      result = (double) query.getSingleResult();
+    } catch(NullPointerException e) {
+
+    }
+
+    return result;
+  }
+
+  /**
    * Comprueba si la parcela dada tiene un registro
    * de riego asociado (en la base de datos) y si lo
    * tiene retorna verdadero, en caso contrario retorna

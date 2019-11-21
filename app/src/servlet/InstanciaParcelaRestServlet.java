@@ -311,7 +311,9 @@ public class InstanciaParcelaRestServlet {
 
     /*
      * Cantidad total de agua utilizada en los riegos
-     * realizados en el dia de hoy
+     * realizados en el dia de hoy, la cual es necesaria
+     * para determinar el riego sugerido para el dia de
+     * hoy
      */
     double totalIrrigationWaterToday = irrigationLogService.getTotalWaterIrrigationToday(parcel);
 
@@ -349,8 +351,9 @@ public class InstanciaParcelaRestServlet {
      * Recupera el registro climatico de la parcela
      * de la fecha anterior a la fecha actual
      */
-    ClimateLog climateLog = climateLogServiceBean.find(yesterdayDate, parcel);
-    suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(parcel.getArea(), climateLog.getEtc(), climateLog.getEto(), climateLog.getRainWater(), climateLog.getWaterAccumulated(), totalIrrigationWaterToday);
+    yesterdayClimateLog = climateLogServiceBean.find(yesterdayDate, parcel);
+    suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(yesterdayClimateLog.getEtc(), yesterdayClimateLog.getEto(), yesterdayClimateLog.getRainWater(), yesterdayClimateLog.getWaterAccumulated(), totalIrrigationWaterToday);
+    // suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(parcel.getArea(), yesterdayClimateLog.getEtc(), yesterdayClimateLog.getEto(), yesterdayClimateLog.getRainWater(), yesterdayClimateLog.getWaterAccumulated(), totalIrrigationWaterToday);
 
     IrrigationLog newIrrigationLog = new IrrigationLog();
     newIrrigationLog.setDate(currentDate);

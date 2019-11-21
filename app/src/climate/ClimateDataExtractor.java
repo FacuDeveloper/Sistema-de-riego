@@ -27,6 +27,7 @@ import stateless.ClimateLogServiceBean;
 import stateless.SolarRadiationServiceBean;
 import stateless.MaximumInsolationServiceBean;
 import stateless.InstanciaParcelaService;
+import stateless.IrrigationLogServiceBean;
 import stateless.CultivoService;
 
 import model.ClimateLog;
@@ -34,6 +35,10 @@ import model.Parcel;
 import model.InstanciaParcela;
 
 import et.Eto;
+
+import irrigation.WaterMath;
+
+import util.UtilDate;
 
 @Stateless
 public class ClimateDataExtractor {
@@ -43,6 +48,9 @@ public class ClimateDataExtractor {
 
   // inject a reference to the ClimateLogServiceBean
   @EJB ClimateLogServiceBean climateLogServiceBean;
+
+  // inject a reference to the IrrigationLogServiceBean
+  @EJB IrrigationLogServiceBean irrigationLogService;
 
   // inject a reference to the SolarRadiationServiceBean
   @EJB SolarRadiationServiceBean solarService;
@@ -89,7 +97,15 @@ public class ClimateDataExtractor {
     double longitude = 0.0;
     ClimateLog climateLog = null;
 
+    /*
+     * Fecha del dia de hoy
+     */
     Calendar currentDate = Calendar.getInstance();
+
+    /*
+     * Fecha del dia de ayer
+     */
+    Calendar yesterdayDate = UtilDate.getYesterdayDate();
 
     /*
      * Convierte el tiempo en milisegundos a segundos
@@ -101,6 +117,7 @@ public class ClimateDataExtractor {
 
     double eto = 0.0;
     double etc = 0.0;
+    double waterAccumulatedToday = 0.0;
     double extraterrestrialSolarRadiation = 0.0;
     double maximumInsolation = 0.0;
     InstanciaParcela parcelInstance = null;
@@ -135,25 +152,15 @@ public class ClimateDataExtractor {
         climateLog.getDewPoint(), extraterrestrialSolarRadiation, maximumInsolation, climateLog.getCloudCover());
         climateLog.setEto(eto);
 
-        parcelInstance = parcelInstanceService.findCurrentParcelInstance(currentParcel);
+        parcelInstance = parcelInstanceService.findInDevelopment(currentParcel);
 
         /*
-         * Si existe un registro historico de la parcela dada
-         * que tiene fecha de siembra y que no tiene fecha de cosecha
-         * se obtiene su cultivo y su fecha de siembra para obtener
-         * el kc del cultivo, y todo esto es para calcular la etc
-         * del cultivo sembrado
-         *
-         * El registro historico actual de una parcela es aquel
-         * registro que muestra que la parcela, a la que hace
-         * referencia, tiene un cultivo sembrado, tiene una
-         * fecha de siembra y no tiene una fecha de cosecha
-         *
          * Si hay (!= null) un registro historico
          * actual de la parcela dada es porque la misma
          * actualmente tiene un cultivo sembrado y
-         * sin cosechar, por ende, se calcula la ETc
-         * del cultivo que tiene
+         * que aun no ha llegado a su fecha de cosecha,
+         * por ende, se calcula la ETc del cultivo que
+         * tiene
          *
          * En el caso en el que la parcela no tenga un
          * registro historico actual, la ETc sera cero
@@ -169,6 +176,17 @@ public class ClimateDataExtractor {
         }
 
         climateLog.setEtc(etc);
+
+        /*
+         * Se recupera el registro climatico del dia de
+         * ayer para calcular el agua acumulada para el dia
+         * de hoy
+         */
+        ClimateLog yesterdayClimateLog = climateLogServiceBean.find(yesterdayDate, currentParcel);
+        waterAccumulatedToday = WaterMath.getWaterAccumulatedToday(yesterdayClimateLog.getEtc(), yesterdayClimateLog.getEto(), yesterdayClimateLog.getRainWater(),
+        yesterdayClimateLog.getWaterAccumulated(), irrigationLogService.getTotalWaterIrrigation(yesterdayDate, currentParcel));
+
+        climateLog.setWaterAccumulated(waterAccumulatedToday);
 
         /*
          * Crea el registro historico recuperado estando

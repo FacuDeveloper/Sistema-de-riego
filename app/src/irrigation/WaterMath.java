@@ -33,9 +33,9 @@ public class WaterMath {
    * @param  waterAccumulatedYesterday [cantidad de agua acumulada del dia de ayer] [milimetros]
    * @return el riego sugerido [milimetros] para el dia de hoy
    */
-  public static double getSuggestedIrrigation(double hectare, double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday,
-  double totalIrrigationWaterToday) {
-    // public static double getSuggestedIrrigation(double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday, double totalIrrigationWaterToday) {
+  public static double getSuggestedIrrigation(double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday, double totalIrrigationWaterToday) {
+  // public static double getSuggestedIrrigation(double hectare, double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday,
+  // double totalIrrigationWaterToday) {
 
     /*
      * Evapotranspiracion del dia de ayer
@@ -86,10 +86,10 @@ public class WaterMath {
      * la cantidad de agua que expresa la evapotranspiracion del dia de ayer ya esta
      * suplida por la suma de las cantidades de agua mencionadas
      */
-    // if (yesterdayEvapotranspiration > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
-    //   suggestedIrrigationToday = yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
-    // }
-    //
+    if (yesterdayEvapotranspiration > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
+      suggestedIrrigationToday = yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
+    }
+
     // suggestedIrrigationToday = hectare * suggestedIrrigationToday;
 
     /*
@@ -103,11 +103,11 @@ public class WaterMath {
      * de lluvia del dia de ayer y la cantidad de agua
      * acumulada del dia de ayer
      */
-    double totalNeedIrrigation = hectare * (yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday));
-
-    if (totalNeedIrrigation > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
-      suggestedIrrigationToday = totalNeedIrrigation - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
-    }
+    // double totalNeedIrrigation = hectare * (yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday));
+    //
+    // if (totalNeedIrrigation > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
+    //   suggestedIrrigationToday = totalNeedIrrigation - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
+    // }
 
     return truncateToThreeDecimals(suggestedIrrigationToday);
   }

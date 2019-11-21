@@ -141,7 +141,10 @@ public class IrrigationLogGenerator {
          * en la fecha dada, la cantidad total de agua utilizada en
          * el riego en el dia de hoy es 0.0
          */
-        currentSuggestedIrrigation = WaterMath.getSuggestedIrrigation(currentParcel.getArea(), yesterdayEtc, yesterdayEto, yesterdayRainWater, waterAccumulatedYesterday, 0.0);
+        // currentSuggestedIrrigation = WaterMath.getSuggestedIrrigation(currentParcel.getArea(), yesterdayEtc, yesterdayEto, yesterdayRainWater, waterAccumulatedYesterday, 0.0);
+        // currentIrrigationLog.setSuggestedIrrigation(currentSuggestedIrrigation);
+
+        currentSuggestedIrrigation = WaterMath.getSuggestedIrrigation(yesterdayEtc, yesterdayEto, yesterdayRainWater, waterAccumulatedYesterday, 0.0);
         currentIrrigationLog.setSuggestedIrrigation(currentSuggestedIrrigation);
 
         /*

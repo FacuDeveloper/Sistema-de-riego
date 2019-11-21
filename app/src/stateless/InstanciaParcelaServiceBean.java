@@ -143,7 +143,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
 
   /**
    * Se considera registro historico actual de parcela a
-   * aquel que esta en el estado "En desarrollo"
+   * aquel que esta tiene su cultivo en el estado "En desarrollo"
    *
    * Solo puede haber un unico registro historico de parcela
    * en el estado mencionado y esto es para cada parcela
