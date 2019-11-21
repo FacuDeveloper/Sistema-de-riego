@@ -28,7 +28,7 @@ public class Parcel {
   private String name;
 
   @Column(name="AREA", nullable=false)
-  private double area; // superficie
+  private double hectare;
 
   @Column(name="LATITUDE", nullable=false)
   private double latitude; // en grados decimales
@@ -75,19 +75,19 @@ public class Parcel {
 	}
 
 	/**
-	 * Returns value of area
+	 * Returns value of hectare
 	 * @return
 	 */
-	public double getArea() {
-		return area;
+	public double getHectare() {
+		return hectare;
 	}
 
 	/**
-	 * Sets new value of area
+	 * Sets new value of hectare
 	 * @param
 	 */
-	public void setArea(double area) {
-		this.area = area;
+	public void setHectare(double hectare) {
+		this.hectare = hectare;
 	}
 
   /**
@@ -156,8 +156,8 @@ public class Parcel {
 
   @Override
   public String toString() {
-    return String.format("ID: %d\nNombre: %s\nArea: %f\nLatitud: %f\nLongitud: %f\nActiva: %b\nUsuario ID: %d\n",
-    id, area, latitude, longitude, active, user.getId());
+    return String.format("ID: %d\nNombre: %s\nHectárea: %f\nLatitud: %f\nLongitud: %f\nActiva: %b\nUsuario ID: %d\n",
+    id, hectare, latitude, longitude, active, user.getId());
   }
 
 	// public int hashCode() {

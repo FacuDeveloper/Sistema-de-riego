@@ -76,7 +76,7 @@ app.controller(
       service.update(
         $scope.data.id,
         $scope.data.name,
-        $scope.data.area,
+        $scope.data.hectare,
         $scope.data.latitude,
         $scope.data.longitude,
         $scope.data.active,

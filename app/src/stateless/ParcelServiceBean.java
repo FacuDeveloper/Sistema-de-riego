@@ -72,7 +72,7 @@ public  class ParcelServiceBean {
        * repetido
        */
       choosenParcel.setName(modifiedParcel.getName());
-      choosenParcel.setArea(modifiedParcel.getArea());
+      choosenParcel.setHectare(modifiedParcel.getHectare());
       choosenParcel.setLongitude(modifiedParcel.getLongitude());
       choosenParcel.setLatitude(modifiedParcel.getLatitude());
       choosenParcel.setActive(modifiedParcel.getActive());
