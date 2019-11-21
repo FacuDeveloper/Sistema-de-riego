@@ -11,7 +11,7 @@ InstanciaParcela "*"-->"1" EstadoInstanciaParcela
 class Parcela {
 -id
 -nombre
--area
+-hectarea
 -latitud
 -longitud
 -profundidad
