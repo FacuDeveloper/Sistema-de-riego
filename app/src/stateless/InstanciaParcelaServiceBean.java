@@ -142,6 +142,18 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
   }
 
   /**
+   * @param  parcelName
+   * @return coleccion de instancias de parcelas que conocen
+   * a la parcela que tiene el nombre provisto
+   */
+  public Collection<InstanciaParcela> findInstancesParcelByParcelName(String parcelName) {
+    Query query = getEntityManager().createQuery("SELECT e FROM InstanciaParcela e WHERE e.parcel.name = :parcelName ORDER BY e.id");
+    query.setParameter("parcelName", parcelName);
+
+    return (Collection<InstanciaParcela>) query.getResultList();
+  }
+
+  /**
    * Se considera registro historico actual de parcela a
    * aquel que esta tiene su cultivo en el estado "En desarrollo"
    *

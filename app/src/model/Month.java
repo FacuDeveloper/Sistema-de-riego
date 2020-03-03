@@ -1,3 +1,8 @@
+/*
+ * Esta clase es necesaria para obtener la radiacion solar
+ * en funcion del mes
+ */
+
 package model;
 
 import javax.persistence.Entity;
@@ -22,7 +27,7 @@ public class Month {
 
   // Constructor method
   public Month() {
-    
+
   }
 
   /* Getters and setters */

@@ -99,12 +99,57 @@ public  class ParcelServiceBean {
     return (Collection<Parcel>) query.getResultList();
   }
 
+  /**
+   * @param  username
+   * @return coleccion de todas las parcelas del usuario dado
+   */
+  public Collection<Parcel> findParcelasUsuario(String username){
+    Query query = getEntityManager().createQuery("SELECT p FROM Parcel p , Usuario u WHERE (u.usuario = :username AND p.user = u)");
+    query.setParameter("username", username);
+    return (Collection<Parcel>) query.getResultList();
+  }
+
+  /**
+   * @param  username
+   * @return coleccion de todas las parcelas activas del usuario dado
+   */
+  public Collection<Parcel> findParcelasActivasUsuario(String username){
+    Query query = getEntityManager().createQuery("SELECT p FROM Parcel p , Usuario u WHERE (u.usuario = :username AND p.user = u AND p.active = true)");
+    query.setParameter("username", username);
+    return (Collection<Parcel>) query.getResultList();
+  }
+
+  /**
+   * Busca las parcelas que coincidan con el nombre dado
+   *
+   * Esto es necesario para la busqueda que se hace cuando se ingresan caracteres
+   *
+   * @param  parcelName
+   * @return coleccion de parcelas que coinciden con el nombre dado
+   */
+  public Collection<Parcel> findByName(String parcelName) {
+    StringBuffer queryStr = new StringBuffer("SELECT p FROM Parcel p ");
+
+    if (parcelName != null) {
+      queryStr.append(" WHERE UPPER(p.name) LIKE :name ");
+    }
+
+    Query query = entityManager.createQuery(queryStr.toString());
+
+    if (parcelName != null) {
+      query.setParameter("name", "%" + parcelName.toUpperCase() + "%");
+    }
+
+    Collection<Parcel> operators = (Collection<Parcel>) query.getResultList();
+    return operators;
+  }
+
   public Page<Parcel> findByPage(Integer page, Integer cantPerPage, Map<String, String> parameters) {
     // Genero el WHERE dinámicamente
     StringBuffer where = new StringBuffer(" WHERE 1=1");
 
     if (parameters != null)
-    for (String param : parameters.keySet()) {
+    for(String param : parameters.keySet()) {
       Method method;
       try {
         method = Parcel.class.getMethod("get" + capitalize(param));

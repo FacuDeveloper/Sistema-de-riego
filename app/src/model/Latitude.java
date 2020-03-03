@@ -1,3 +1,8 @@
+/*
+ * Esta clase es necesaria para obtener la radiacion en
+ * funcion de la latitud
+ */
+
 package model;
 
 import javax.persistence.Entity;
@@ -22,7 +27,7 @@ public class Latitude {
 
   // Constructor method
   public Latitude() {
-    
+
   }
 
   /* Getters and setters */

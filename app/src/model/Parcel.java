@@ -27,7 +27,7 @@ public class Parcel {
   @Column(name="PARCEL_NAME", nullable=false)
   private String name;
 
-  @Column(name="AREA", nullable=false)
+  @Column(name="HECTARE", nullable=false)
   private double hectare;
 
   @Column(name="LATITUDE", nullable=false)

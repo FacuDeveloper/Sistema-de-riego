@@ -89,6 +89,14 @@ public class InstanciaParcelaRestServlet {
   }
 
   @GET
+  @Path("/findInstancesParcelByParcelName/{name}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String findInstancesParcelByParcelName(@PathParam("name") String name) throws IOException {
+    Collection<InstanciaParcela> instancias = service.findInstancesParcelByParcelName(name);
+    return mapper.writeValueAsString(instancias);
+  }
+
+  @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String find(@PathParam("id") int id) throws IOException {

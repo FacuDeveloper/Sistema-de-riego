@@ -167,12 +167,15 @@ public class WaterMath {
      * del dia de hoy (la cual es agua a favor para mañana) es la
      * diferencia entre la suma de las cantidades de agua mencionadas
      * y la evapotranspiracion del dia de ayer
+     *
+     * En caso contrario, la cantidad de agua acumulada [milimetros]
+     * del dia de hoy (la cual es agua a favor para mañana) es cero
      */
     if ((yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday) > yesterdayEvapotranspiration) {
       waterAccumulatedToday = (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday) - yesterdayEvapotranspiration;
     }
 
-    return waterAccumulatedToday;
+    return 0.0;
   }
 
   /**

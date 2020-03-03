@@ -1,6 +1,6 @@
 app.service("InstanciaParcelaSrv", ["$http", function($http) {
 
-  this.findAllInstanciasParcelas = function(callback) {
+  this.findAll = function(callback) {
     $http.get("rest/instanciaParcela").then(
       function(result) {
         callback(false, result.data);
@@ -9,6 +9,16 @@ app.service("InstanciaParcelaSrv", ["$http", function($http) {
         callback(error);
       });
     };
+
+    this.findInstancesParcelByParcelName = function(name, callback) {
+      $http.get("rest/instanciaParcela/findInstancesParcelByParcelName/" + name).then(
+        function(result) {
+          callback(false, result.data);
+        },
+        function(error) {
+          callback(error);
+        });
+      };
 
     this.findInstanciaParcelaId = function(id, callback) {
       $http.get("rest/instanciaParcela/" + id).then(

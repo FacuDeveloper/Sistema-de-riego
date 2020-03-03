@@ -106,12 +106,12 @@ public  class IrrigationLogServiceBean {
     query.setParameter("currentDate", currentDate);
     query.setParameter("givenParcel", givenParcel);
 
-    double result = 0.0;
+    double result;
 
     try {
       result = (double) query.getSingleResult();
     } catch(NullPointerException e) {
-
+      result = 0.0;
     }
 
     return result;

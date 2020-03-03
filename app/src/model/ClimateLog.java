@@ -1,5 +1,5 @@
 /*
- * Esta representa un registro que contendra los datos
+ * Esta clase representa un registro que contendra los datos
  * climaticos de los pronosticos recuperados en una
  * fecha dada para unas coordenadas geograficas dadas
  *

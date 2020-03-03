@@ -152,10 +152,14 @@ public class ClimateDataExtractor {
         climateLog.getDewPoint(), extraterrestrialSolarRadiation, maximumInsolation, climateLog.getCloudCover());
         climateLog.setEto(eto);
 
+        /*
+         * Busca una instancia de la parcela dada
+         * que tenga un cultivo en desarrollo
+         */
         parcelInstance = parcelInstanceService.findInDevelopment(currentParcel);
 
         /*
-         * Si hay (!= null) un registro historico
+         * Si hay (es decir, != null) un registro historico
          * actual de la parcela dada es porque la misma
          * actualmente tiene un cultivo sembrado y
          * que aun no ha llegado a su fecha de cosecha,
@@ -164,10 +168,11 @@ public class ClimateDataExtractor {
          *
          * En el caso en el que la parcela no tenga un
          * registro historico actual, la ETc sera cero
-         * porque este registro es el que tiene el
-         * cultivo que esta sembrado actualmente y si
-         * no existe tampoco existe un cultivo para
-         * el cual calcular la ETc
+         * debido a que este registro se crea cuando
+         * se planta un cultivo en la parcela dada,
+         * con lo cual si no hay cultivo no se
+         * puede calcular su ETc, y por lo tanto,
+         * la misma es cero
          */
         if (parcelInstance != null) {
           etc = cultivoService.getKc(parcelInstance.getCultivo(), parcelInstance.getFechaSiembra()) * eto;

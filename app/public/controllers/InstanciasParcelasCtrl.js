@@ -1,11 +1,11 @@
 app.controller(
 	"InstanciasParcelasCtrl",
-	["$scope","$location","$route","InstanciaParcelaSrv", "IrrigationLogSrv",
-	function($scope, $location, $route, servicio, irrigationLogService) {
+	["$scope","$location","$route","InstanciaParcelaSrv", "IrrigationLogSrv", "ParcelSrv",
+	function($scope, $location, $route, servicio, irrigationLogService, parcelSrv) {
 		console.log("Cargando InstanciasParcelasCtrl...")
 
-		function findAllInstanciasParcelas(){
-			servicio.findAllInstanciasParcelas( function(error, instanciaParcelas){
+		function findAll(){
+			servicio.findAll( function(error, instanciaParcelas){
 				if(error){
 					alert("Ocurrió un error: " + error);
 					return;
@@ -52,5 +52,45 @@ app.controller(
 
 		}
 
-		findAllInstanciasParcelas();
+		// Esto es necesario para la busqueda que se hace cuando se ingresan caracteres
+		$scope.findParcel = function(parcelName){
+			return parcelSrv.findByName(parcelName).
+			then(function (response) {
+				var parcels = [];
+				for (var i = 0; i < response.data.length; i++) {
+					parcels.push(response.data[i]);
+				}
+				return parcels;
+			});;
+		}
+
+		/*
+		 * Trae el listado de las instancias de parcela que
+		 * conocen a la parcela que tiene el nombre dado
+		 */
+		$scope.findInstancesParcelByParcelName = function(){
+			servicio.findInstancesParcelByParcelName($scope.parcel.name, function(error, instanciaParcelas){
+				if(error){
+					alert("Ocurrió un error: " + error);
+					return;
+				}
+				$scope.instanciaParcelas = instanciaParcelas;
+			})
+		}
+
+		/*
+		 * Trae el listado de instancias de parcelas
+		 * cuando se presiona el boton "Reiniciar listado"
+		 */
+		$scope.reset = function(){
+			servicio.findAll( function(error, instanciaParcelas){
+				if(error){
+					alert("Ocurrió un error: " + error);
+					return;
+				}
+				$scope.instanciaParcelas = instanciaParcelas;
+			})
+		}
+
+		findAll();
 	}]);

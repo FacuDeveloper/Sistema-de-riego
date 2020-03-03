@@ -108,4 +108,12 @@ public class ParcelRestServlet {
     return mapper.writeValueAsString(service.modify(id, modifiedParcel));
   }
 
+  // Esto es necesario para la busqueda que se hace cuando se ingresan caracteres
+  @GET
+  @Path("/findByName")
+  public String findByName(@QueryParam("parcelName") String parcelName) throws IOException {
+    Collection<Parcel> parcels = service.findByName(parcelName);
+    return mapper.writeValueAsString(parcels);
+  }
+
 }

@@ -2,6 +2,19 @@
   <div class="panel-heading">
     <strong>Instancias de parcelas</strong>
   </div>
+
+  <form class="form-inline">
+    <div class="form-group">
+      <!-- Campo de parcela -->
+      <input name="parcel" type="text" ng-model="parcel" placeholder="Parcela"
+      uib-typeahead="parcel as parcel.name for parcel in findParcel($viewValue)" typeahead-loading="loadingLocations"
+      class="form-control" typeahead-editable="false" typeahead-min-lenght="3">
+    </div>
+
+    <button class="btn btn-default" ng-click="findInstancesParcelByParcelName()">Filtrar</button>
+    <button class="btn btn-default" ng-click="reset()">Reiniciar listado</button>
+  </form>
+
   <div class="panel-body">
     <a href="#!/instanciaparcela/new" class="btn btn-success" role="button">Cargar</a>
   </div>
@@ -78,7 +91,7 @@
             </label>
             <div class="col-md-5">
               <input type="number" class="form-control" id="hectareaParcela"
-              ng-model="irrigationLog.parcel.area" ng-disabled="true">
+              ng-model="irrigationLog.parcel.hectare" ng-disabled="true">
             </div>
           </div>
 
