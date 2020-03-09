@@ -401,7 +401,16 @@ public class CultivoServiceBean implements CultivoService {
    * @return fecha de cosecha del cultivo dado
    */
   public Calendar calculateHarvestDate(Calendar seedDate, Cultivo crop) {
-    // Fecha de cosecha
+    /*
+     * Fecha de cosecha
+     *
+     * Recordar que el metodo getInstance() retorna
+     * una referencia a un objeto de tipo Calendar
+     * que tiene la fecha actual del sistema, por lo
+     * tanto, a esta fecha de cosecha hay que establecerle
+     * el año de la fecha de siembra luego de la sentencia
+     * de control if
+     */
     Calendar harvestDate = Calendar.getInstance();
 
     /*
@@ -415,7 +424,7 @@ public class CultivoServiceBean implements CultivoService {
      * Si el numero del dia de siembra en el año mas la cantidad
      * total de dias de vida del cultivo dado es mayor a 365
      * (por ende, la fecha de siembra y la fecha de cosecha no
-     * estan en el mismo año), la fecha de cosecha es igual fecha
+     * estan en el mismo año), la fecha de cosecha es igual a la fecha
      * de siembra mas la cantidad total de dias de vida del cultivo
      * dado menos 365
      */
@@ -431,9 +440,11 @@ public class CultivoServiceBean implements CultivoService {
      * (por ende, la fecha de siembra y la fecha de cosecha estan
      * en el mismo año), la fecha de cosecha es igual a la fecha
      * de siembra mas la cantidad total de dias de vida del cultivo
-     * dado
+     * dado, y tanto la fecha de siembra como la fecha de cosecha
+     * estan en el mismo en el mismo año
      */
     harvestDate.set(Calendar.DAY_OF_YEAR, (seedDate.get(Calendar.DAY_OF_YEAR) + totalDaysLife));
+    harvestDate.set(Calendar.YEAR, seedDate.get(Calendar.YEAR));
     return harvestDate;
   }
 
