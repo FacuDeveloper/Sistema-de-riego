@@ -6,13 +6,14 @@ import javax.persistence.EntityManager;
 
 import model.Cultivo;
 import model.InstanciaParcela;
+import model.InstanceParcelStatus;
 import model.Parcel;
 
 public interface InstanciaParcelaService {
   public void setEntityManager(EntityManager em);
   public InstanciaParcela create(InstanciaParcela ins);
   public InstanciaParcela remove(int id);
-  public InstanciaParcela change(int id, InstanciaParcela ins);
+  public InstanciaParcela modify(int id, InstanciaParcela ins);
   public InstanciaParcela find(int id);
   public InstanciaParcela find(Parcel parcela, Cultivo cultivo);
   public InstanciaParcela find(Parcel givenParcel, int id);
@@ -20,4 +21,8 @@ public interface InstanciaParcelaService {
   public Collection<InstanciaParcela> findInstancesParcelByParcelName(String parcelName);
   public InstanciaParcela findInDevelopment(Parcel givenParcel);
   public InstanciaParcela findRecentFinished(Parcel givenParcel);
+  public boolean dateOverlayInCreation(InstanciaParcela givenInstanceParcel);
+  public boolean isEmpty(String parcelName);
+  public boolean dateOverlayInModification(InstanciaParcela modifiedInstanceParcel);
+  public void modifyStates(String parcelName, InstanceParcelStatus finalized, InstanceParcelStatus inDevelopment, InstanceParcelStatus waiting);
 }

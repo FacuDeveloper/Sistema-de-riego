@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <div class="form-group" ng-hide="action == 'new'">
+      <div class="form-group">
         <label for="ins_fechaCosecha" class="col-md-2 control-label">Fecha de cosecha</label>
         <div class="col-md-3">
           <input type="date" class="form-control" id="ins_fechaCosecha" ng-model="instanciaParcela.fechaCosecha" value={{instanciaParcela.fechaCosecha}}  ng-disabled="bloquear">
@@ -34,7 +34,7 @@
       <div class="form-group">
         <div class="col-md-offset-2 col-md-3">
           <button type="submit" class="btn btn-success" ng-click="save()" ng-show="action == 'new'">Crear</button>
-          <button type="submit" class="btn btn-success" ng-click="changeInstanciaParcela()" ng-show="action == 'edit'">Actualizar</button>
+          <button type="submit" class="btn btn-success" ng-click="modify()" ng-show="action == 'edit'">Actualizar</button>
           <button type="submit" class="btn btn-success" ng-click="cancel()">Cancelar</button>
         </div>
       </div>

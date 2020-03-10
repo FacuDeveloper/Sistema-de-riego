@@ -42,6 +42,7 @@
 
       <!-- Observacion: Los paquetes del estilo servlet no son referenciados aca -->
       <!-- Los nuevos paquetes de la carpeta src tienen que ser referenciados aca -->
+      <src path="src/automaticModules" />
       <src path="src/climate" />
       <src path="src/et" />
       <src path="src/irrigation" />

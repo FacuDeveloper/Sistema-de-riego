@@ -16,14 +16,11 @@ app.controller(
           return;
         }
 
-        // console.log(inst);
-
         $scope.instanciaParcela = angular.copy(inst);
         if ($scope.instanciaParcela.fechaSiembra != null) {
           $scope.instanciaParcela.fechaSiembra = new Date($scope.instanciaParcela.fechaSiembra);
         }
 
-        //($filter('date')
         if ($scope.instanciaParcela.fechaCosecha != null) {
           $scope.instanciaParcela.fechaCosecha = new Date($scope.instanciaParcela.fechaCosecha);
           // $scope.instanciaParcela.fechaCosecha = new Date($filter('date')($scope.instanciaParcela.fechaCosecha, "yyyy-MM-dd HH:mm:ss Z"));
@@ -53,57 +50,61 @@ app.controller(
       }
 
       /*
-      Si ya hay un registro historico de parcela de la parcela dada
-      en el estado "En desarrollo", entonces no se tiene que crear
-      el nuevo registro historico de parcela
+      Comprueba si hay superposicion entre la fecha de
+      siembra y la fecha de cosecha de la nueva instancia
+      de parcela
        */
-      servicio.findCurrentParcelInstance($scope.instanciaParcela.parcel.id, function(error, instanciaParcela) {
+      servicio.overlapSeedDateHarvest($scope.instanciaParcela, function(error, instanciaParcela) {
+        if(error) {
+          alert(error.statusText);
+          return;
+        }
+
+        $scope.instanciaParcela = instanciaParcela;
+
+        if ($scope.instanciaParcela == null) {
+          alert("Las fechas no deben estar superpuestas");
+          return;
+        }
+
         /*
-        Todo este bloque de codigo sin el bloque de codigo llamado
-        findCurrentParcelInstance (el de la clase InstanciaParcelaServiceBean, Java)
-        no sirve, ya que este bloque de codigo solo muestra el cartel que esta mas
-        abajo y no hace nada mas que eso, mientras que el metodo Java mencionado
-        utilizado en el metodo create de la InstanciaParcelaRestServlet permite
-        determinar si se tiene que persistir o no la nueva instancia de parcela
+        Comprueba si hay superposicion de fechas entre la
+        nueva instancia de parcela y las demas instancias
+        de parcela, todas estas y la primera de la misma
+        parcela
          */
+        servicio.dateOverlayInCreation($scope.instanciaParcela, function(error, instanciaParcela) {
+          if(error) {
+            alert(error.statusText);
+            return;
+          }
 
-        if(error) {
-          alert(error.statusText);
-          return;
-        }
+          $scope.instanciaParcela = instanciaParcela;
 
-        $scope.instanciaParcela = instanciaParcela;
+          if ($scope.instanciaParcela == null) {
+            alert("No debe haber superposición de fechas entre esta instancia de parcela y las demás pertenecientes a la misma parcela");
+            return;
+          }
 
-        if ($scope.instanciaParcela != null) {
-          alert("No está permitido crear una instancia de parcela habiendo otra en el estado 'En desarrollo' para la misma parcela");
-          return;
-        }
+          servicio.create($scope.instanciaParcela, function(error, instanciaParcela) {
+            if(error) {
+              alert(error.statusText);
+              return;
+            }
+
+            $scope.instanciaParcela = instanciaParcela;
+            $location.path("/instanciasparcelas");
+          });
+
+        });
 
       });
 
-      /*
-      Si el ultimo registro historico de parcela esta en el estado
-      "Finalizado" pero la fecha de siembra del nuevo registro
-      historico de parcela esta detras de la fecha de cosecha del
-      registro historico de parcela anterior, entonces no se tiene
-      que crear el nuevo registro historico de parcela
-       */
-
-      servicio.createInstanciaParcela($scope.instanciaParcela, function(error, instanciaParcela) {
-        // console.log("paso por crear instancia");
-        if(error) {
-          alert(error.statusText);
-          return;
-        }
-
-        // console.log("paso por crear instancia luego del error");
-        $scope.instanciaParcela = instanciaParcela;
-        $location.path("/instanciasparcelas");
-      });
-
+      $location.path("/instanciasparcelas");
+      $route.reload();
     }
 
-    $scope.changeInstanciaParcela = function(instanciaParcela) {
+    $scope.modify = function(instanciaParcela) {
       /*
       Comprueba que los campos de fecha no esten vacios
       e impide que se ingresen los campos vacios
@@ -143,19 +144,38 @@ app.controller(
       //
       // });
 
-      servicio.changeInstanciaParcela($scope.instanciaParcela, function(error, instanciaParcela) {
+      servicio.dateOverlayInModification($scope.instanciaParcela, function(error, instanciaParcela) {
         if(error) {
           console.log(error);
           return;
         }
-        $scope.instanciaParcela.id = instanciaParcela.id;
-        $scope.instanciaParcela.fechaSiembra = instanciaParcela.fechaSiembra;
-        $scope.instanciaParcela.fechaCosecha = instanciaParcela.fechaCosecha;
-        $scope.instanciaParcela.cultivo = instanciaParcela.cultivo;
-        $scope.instanciaParcela.parcel = instanciaParcela.parcel;
+
+        $scope.instanciaParcela = instanciaParcela;
+
+        if ($scope.instanciaParcela == null) {
+          alert("No debe haber superposición de fechas entre esta instancia de parcela y las demás pertenecientes a la misma parcela");
+          return;
+        }
+
+        servicio.modify($scope.instanciaParcela, function(error, instanciaParcela) {
+          if(error) {
+            console.log(error);
+            return;
+          }
+
+          $scope.instanciaParcela.id = instanciaParcela.id;
+          $scope.instanciaParcela.fechaSiembra = instanciaParcela.fechaSiembra;
+          $scope.instanciaParcela.fechaCosecha = instanciaParcela.fechaCosecha;
+          $scope.instanciaParcela.cultivo = instanciaParcela.cultivo;
+          $scope.instanciaParcela.parcel = instanciaParcela.parcel;
+        });
+
         $location.path("/instanciasparcelas")
         $route.reload();
       });
+
+      $location.path("/instanciasparcelas")
+      $route.reload();
     }
 
     $scope.cancel = function() {

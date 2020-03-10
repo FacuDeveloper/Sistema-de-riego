@@ -182,6 +182,7 @@ INSERT INTO PARCEL (HECTARE, LATITUDE, LONGITUDE, PARCEL_NAME, ACTIVE, FK_USER) 
 -- INSERTS ESTADO DE INSTANCIA DE PARCELA
 INSERT INTO INSTANCIA_PARCELA_ESTADO (NOMBRE, DESCRIPCION) VALUES ('Finalizado', 'Estado del cultivo que ha alcanzado su fecha de cosecha');
 INSERT INTO INSTANCIA_PARCELA_ESTADO (NOMBRE, DESCRIPCION) VALUES ('En desarrollo', 'Estado del cultivo que no ha alcanzado su fecha de cosecha');
+INSERT INTO INSTANCIA_PARCELA_ESTADO (NOMBRE, DESCRIPCION) VALUES ('En espera', 'Estado del cultivo que está esperando a que comience su etapa de vida');
 
 -- INSERTS INTANCIA DE PARCELA
 -- Parcela Puerto Madryn 1

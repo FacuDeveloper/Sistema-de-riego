@@ -158,54 +158,92 @@ public class InstanciaParcelaRestServlet {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   public String create(String json) throws IOException  {
-    InstanciaParcela instancia = mapper.readValue(json, InstanciaParcela.class);
+    InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
+    newInstanceParcel = service.create(newInstanceParcel);
+
+    /*
+     * Modifica los estados de las instancias de las parcelas,
+     * todas ellas pertenecientes a la misma parcela, en base
+     * a sus fechas y a la fecha actual del sistema
+     */
+    service.modifyStates(newInstanceParcel.getParcel().getName(), statusService.find(1), statusService.find(2), statusService.find(3));
+    return mapper.writeValueAsString(newInstanceParcel);
+  }
+
+  /**
+   * Comprueba si hay superposicion entre la fecha
+   * de siembra y la fecha de cosecha de la instancia
+   * de parcela a crear
+   * @param "/overlapSeedDateHarvest"
+   */
+  @POST
+  @Path("/overlapSeedDateHarvest")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String overlapSeedDateHarvest(String json) throws IOException {
+    InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
+
+    /*
+     * Si la fecha de siembra de la nueva instancia
+     * de parcela es mayor o igual que su fecha de
+     * cosecha, esta nueva instancia de parcela no
+     * se tiene que crear
+     */
+    if ((newInstanceParcel.getFechaCosecha() != null) && ((newInstanceParcel.getFechaSiembra().compareTo(newInstanceParcel.getFechaCosecha())) >= 0)) {
+      return mapper.writeValueAsString(null);
+    }
+
+    return mapper.writeValueAsString(newInstanceParcel);
+  }
+
+  /**
+   * Comprueba si hay superposicion de fechas entre la
+   * nueva instancia de parcela y las demas instancias
+   * de parcela, todas estas y la primera de la misma
+   * parcela
+   * @param "/dateOverlay"
+   */
+  @POST
+  @Path("/dateOverlayInCreation")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String dateOverlayInCreation(String json) throws IOException {
+    InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
+    Calendar currentDate = Calendar.getInstance();
+    Calendar harvestDate = null;
 
     /*
      * Instancia de parcela (registro historico de parcela) mas
-     * reciente que esta en el estado "Finalizado"
+     * reciente (o ultima) que esta en el estado "Finalizado"
      */
-    InstanciaParcela newestInstanceParcel = service.findRecentFinished(instancia.getParcel());
+    InstanciaParcela recentFinishedInstanceParcel = service.findRecentFinished(newInstanceParcel.getParcel());
 
     /*
-     * Si la fecha de cosecha de la instancia de parcela mas reciente
-     * que esta en el estado "Finalizado" es mayor o igual que la fecha de
-     * siembra de la nueva instancia de parcela, entonces no se tiene
-     * que persistir la nueva instancia de parcela
+     * Instancia de parcela que esta en el estado 'En desarrollo',
+     * hay que recordar que solo una instancia de parcela puede
+     * estar en el estado mencionado
      */
-    if ((newestInstanceParcel != null) && ((newestInstanceParcel.getFechaCosecha().compareTo(instancia.getFechaSiembra())) >= 0)) {
-      return null;
+    InstanciaParcela instanceParcelInDevelopment = service.findInDevelopment(newInstanceParcel.getParcel());
+
+    /*
+     * Si la fecha de cosecha no fue establecida por
+     * el usuario al momento de crear una instancia
+     * de parcela, el sistema la calcula de forma
+     * automatica
+     */
+    if (newInstanceParcel.getFechaCosecha() == null) {
+      harvestDate = cultivoService.calculateHarvestDate(newInstanceParcel.getFechaSiembra(), newInstanceParcel.getCultivo());
+      newInstanceParcel.setFechaCosecha(harvestDate);
     }
 
     /*
-     * La instancia de parcela (registro historico de parcela)
-     * actual es aquella instancia de parcela que a la fecha
-     * actual del sistema esta en el estado "En desarrollo"
+     * Evita la superposicion de fechas entre las
+     * instancias de parcelas y la nueva instancia
+     * de parcela
      */
-    InstanciaParcela currentParcelInstance = service.findInDevelopment(instancia.getParcel());
-
-    /*
-     * Si no hay un registro historico actual de parcela
-     * entonces se procede a crear el nuevo registro historico
-     * de parcela, el cual es el actual porque su cultivo al
-     * estar en este nuevo registro historico actual de parcela
-     * aun no ha llegado a su fecha de cosecha
-     */
-    if (currentParcelInstance == null) {
-      /*
-       * En funcion de la fecha de siembra del cultivo dado y
-       * de la suma de sus dias de vida (suma de la cantidad de
-       * dias que dura cada una de sus etapas), se calcula
-       * la fecha de cosecha del cultivo dado
-       */
-      Calendar harvestDate = cultivoService.calculateHarvestDate(instancia.getFechaSiembra(), instancia.getCultivo());
-      instancia.setFechaCosecha(harvestDate);
-      instancia.setStatus(getStatus(harvestDate));
-
-      instancia = service.create(instancia);
-      return mapper.writeValueAsString(instancia);
+    if (service.dateOverlayInCreation(newInstanceParcel)) {
+      return mapper.writeValueAsString(null);
     }
 
-    return null;
+    return mapper.writeValueAsString(newInstanceParcel);
   }
 
   @DELETE
@@ -219,45 +257,23 @@ public class InstanciaParcelaRestServlet {
   @PUT
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public String change(@PathParam("id") int id, String json) throws IOException  {
-    InstanciaParcela instancia = mapper.readValue(json,InstanciaParcela.class);
-
-    InstanciaParcela previuosParcelInstance = service.find(instancia.getParcel(), instancia.getId() - 1);
-    InstanciaParcela nextParcelInstance = service.find(instancia.getParcel(), instancia.getId() + 1);
+  public String modify(@PathParam("id") int id, String json) throws IOException  {
+    InstanciaParcela modifiedInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
+    modifiedInstanceParcel = service.modify(id, modifiedInstanceParcel);
 
     /*
-     * Si la fecha de cosecha de la instancia de parcela anterior a la
-     * que se va a modificar es mayor a la fecha de siembra de la instancia
-     * de parcela que se va a modificar, no se tiene que realizar la modificacion
+     * Modifica el estado 'En desarrollo' (2) por el estado
+     * 'En espera' de aquellas instancias de parcela
+     * que tiene la fecha de siembra despues de la fecha
+     * actual del sistema, mientras que modifica el
+     * estado 'En espera' (3) por el estado 'En desarrollo'
+     * de aquella instancia de parcela (solo puede haber una
+     * en el estado en desarrollo) que tiene entre su fecha
+     * de siembra y su fecha de cosecha la fecha actual del
+     * sistema
      */
-    if ((previuosParcelInstance != null) && ((previuosParcelInstance.getFechaCosecha().compareTo(instancia.getFechaSiembra()) == 0)
-    || (previuosParcelInstance.getFechaCosecha().compareTo(instancia.getFechaSiembra()) > 0))) {
-      return null;
-    }
-
-    /*
-     * Si la fecha de cosecha de la instancia de parcela que se va a modificar
-     * es mayor que la fecha de siembra de la siguiente instancia de parcela
-     * a la que se va a modificar, no se tiene que realizar la modificacion
-     */
-    if ((nextParcelInstance != null) && ((instancia.getFechaCosecha().compareTo(nextParcelInstance.getFechaSiembra()) == 0)
-    || (instancia.getFechaCosecha().compareTo(nextParcelInstance.getFechaSiembra()) > 0))) {
-      return null;
-    }
-
-    /*
-     * Si la fecha de siembra y la fecha de cosecha de la instancia
-     * de parcela que se va a modificar coinciden, no se tiene que
-     * realizar la modificacion
-     */
-    if ((instancia.getFechaSiembra() != null) && (instancia.getFechaCosecha() != null) && (instancia.getFechaSiembra().compareTo(instancia.getFechaCosecha()) == 0)) {
-      return null;
-    }
-
-    // if (instancia.getStatus().getName().equals("Finalizado")) {
-    //   instancia = service.change(id, instancia);
-    //   return mapper.writeValueAsString(instancia);
-    // }
+    service.modifyStates(modifiedInstanceParcel.getParcel().getName(), statusService.find(1), statusService.find(2), statusService.find(3));
+    return mapper.writeValueAsString(modifiedInstanceParcel);
 
     /*
      * NOTE: Falta hacerlo funcionar
@@ -269,13 +285,31 @@ public class InstanciaParcelaRestServlet {
      */
     // if (!(excessStageLife(instancia.getCultivo(), instancia.getFechaSiembra(), instancia.getFechaCosecha()))) {
     //   instancia.setStatus(getStatus(instancia.getFechaCosecha()));
-    //   instancia = service.change(id, instancia);
+    //   instancia = service.modify(id, instancia);
     //   return mapper.writeValueAsString(instancia);
     // }
 
-    instancia.setStatus(getStatus(instancia.getFechaCosecha()));
-    instancia = service.change(id, instancia);
-    return mapper.writeValueAsString(instancia);
+    // instancia.setStatus(getStatus(instancia.getFechaCosecha()));
+    // instancia = service.modify(id, instancia);
+    // return mapper.writeValueAsString(instancia);
+  }
+
+  @PUT
+  @Path("/dateOverlayInModification")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String dateOverlayInModification(String json) throws IOException  {
+    InstanciaParcela modifiedInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
+
+    /*
+     * Evita la superposicion de fechas entre las
+     * instancias de parcelas y la instancia de
+     * parcela modificada
+     */
+    if (service.dateOverlayInModification(modifiedInstanceParcel)) {
+      return mapper.writeValueAsString(null);
+    }
+
+    return mapper.writeValueAsString(modifiedInstanceParcel);
   }
 
   @GET
@@ -379,26 +413,30 @@ public class InstanciaParcelaRestServlet {
    * si la fecha de cosecha esta antes de la fecha actual del sistema
    * o si es igual a la misma
    */
-  private InstanceParcelStatus getStatus(Calendar harvestDate) {
-    Calendar yesterdayCurrentDate = Calendar.getInstance();
-    yesterdayCurrentDate.set(Calendar.DAY_OF_YEAR, yesterdayCurrentDate.get(Calendar.DAY_OF_YEAR) - 1);
-
-    /*
-     * Si la fecha de cosecha del registro historico de parcela
-     * esta despues de la fecha actual del sistema - un dia retorna el
-     * estado "En desarrollo"
-     */
-    if ((harvestDate.compareTo(yesterdayCurrentDate)) > 0) {
-      return statusService.find(2);
-    }
-
-    /*
-     * En cambio si la fecha de cosecha del registro historico
-     * de parcela esta antes de la fecha actual del sistema
-     * o es igual a la misma, retorna el estado "Finalizado"
-     */
-    return statusService.find(1);
-  }
+  // private InstanceParcelStatus getStatus(Calendar harvestDate) {
+  //   /*
+  //    * Fecha actual del sistema
+  //    */
+  //   Calendar currentDate = Calendar.getInstance();
+  //
+  //   /*
+  //    * Si la fecha de cosecha de una instancia
+  //    * de parcela dada es menor o igual a la fecha
+  //    * actual del sistema, este metodo retorna el
+  //    * estado "Finalizado" (1)
+  //    */
+  //   if ((harvestDate.compareTo(currentDate)) <= 0) {
+  //     return statusService.find(1);
+  //   }
+  //
+  //   /*
+  //    * En cambio, si la fecha de cosecha de una
+  //    * instancia de parcela es mayor que la fecha
+  //    * actual del sistema, este metodo retorna el
+  //    * estado "En desarrollo" (2)
+  //    */
+  //   return statusService.find(2);
+  // }
 
   /**
    * @param  givenCrop

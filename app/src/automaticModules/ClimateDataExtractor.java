@@ -13,7 +13,7 @@
  * cultivo dado, mediante el riego
  */
 
-package climate;
+package automaticModules;
 
 import javax.ejb.Stateless;
 import javax.ejb.Schedule;
@@ -33,6 +33,8 @@ import stateless.CultivoService;
 import model.ClimateLog;
 import model.Parcel;
 import model.InstanciaParcela;
+
+import climate.ClimateLogService;
 
 import et.Eto;
 

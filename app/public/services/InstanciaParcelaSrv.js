@@ -30,11 +30,8 @@ app.service("InstanciaParcelaSrv", ["$http", function($http) {
         });
       };
 
-    this.createInstanciaParcela = function(data, callback) {
-      // console.log("antes de hacer el post"+ data);
-      $http.post(
-        "rest/instanciaParcela",data)
-
+      this.create = function(data, callback) {
+        $http.post("rest/instanciaParcela", data)
         .then(
           function(result) {
             callback(false, result.data);
@@ -42,7 +39,6 @@ app.service("InstanciaParcelaSrv", ["$http", function($http) {
           function(error) {
             callback(error);
           });
-          // console.log("saleindo del de hacer el post"+ data);
         };
 
     this.removeInstanciaParcela = function(id, callback) {
@@ -55,7 +51,7 @@ app.service("InstanciaParcelaSrv", ["$http", function($http) {
         });
       };
 
-    this.changeInstanciaParcela = function(instanciaParcela, callback) {
+    this.modify = function(instanciaParcela, callback) {
       $http.put("rest/instanciaParcela/" + instanciaParcela.id, instanciaParcela)
       .then(
         function(result) {
@@ -65,6 +61,17 @@ app.service("InstanciaParcelaSrv", ["$http", function($http) {
           callback(error);
         });
       };
+
+      this.dateOverlayInModification = function(instanciaParcela, callback) {
+        $http.put("rest/instanciaParcela/dateOverlayInModification", instanciaParcela)
+        .then(
+          function(result) {
+            callback(false, result.data);
+          },
+          function(error) {
+            callback(error);
+          });
+        };
 
     this.calcularRiego = function(id, callback){
       $http.get("rest/instanciaParcela/suggestedIrrigation/" + id).then(
@@ -104,6 +111,39 @@ app.service("InstanciaParcelaSrv", ["$http", function($http) {
         }
 
       };
+
+      /*
+      Comprueba si hay superposicion entre la fecha de
+      siembra y la fecha de cosecha de la nueva instancia
+      de parcela
+       */
+      this.overlapSeedDateHarvest = function(data, callback){
+        $http.post("rest/instanciaParcela/overlapSeedDateHarvest", data)
+        .then(
+          function(result){
+            callback(false, result.data);
+          },
+          function(error){
+            callback(error);
+          });
+      }
+
+      /*
+      Comprueba si hay superposicion de fechas entre la
+      nueva instancia de parcela y las demas instancias
+      de parcela, todas estas y la primera de la misma
+      parcela
+       */
+      this.dateOverlayInCreation = function(data, callback){
+        $http.post("rest/instanciaParcela/dateOverlayInCreation", data)
+        .then(
+          function(result){
+            callback(false, result.data);
+          },
+          function(error){
+            callback(error);
+          });
+      }
 
     // this.checkStageCropLife = function(instanciaParcela, callback) {
     //   $http.get("rest/instanciaParcela/checkStageCropLife/" + instanciaParcela)
