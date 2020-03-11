@@ -4,8 +4,11 @@ import javax.ejb.Stateless;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import model.InstanceParcelStatus;
+
+import java.util.List;
 
 @Stateless
 public class InstanceParcelStatusServiceBean {
@@ -29,5 +32,11 @@ public class InstanceParcelStatusServiceBean {
   public InstanceParcelStatus find(int id){
     return getEntityManager().find(InstanceParcelStatus.class, id);
   }
+
+  public List<InstanceParcelStatus> findAll() {
+    Query query = entityManager.createQuery("SELECT s FROM InstanceParcelStatus s ORDER BY s.id");
+    return (List<InstanceParcelStatus>) query.getResultList();
+  }
+
 
 }

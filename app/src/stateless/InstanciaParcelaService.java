@@ -1,6 +1,8 @@
 package stateless;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Calendar;
 
 import javax.persistence.EntityManager;
 
@@ -22,7 +24,7 @@ public interface InstanciaParcelaService {
   public InstanciaParcela findInDevelopment(Parcel givenParcel);
   public InstanciaParcela findRecentFinished(Parcel givenParcel);
   public boolean dateOverlayInCreation(InstanciaParcela givenInstanceParcel);
-  public boolean isEmpty(String parcelName);
   public boolean dateOverlayInModification(InstanciaParcela modifiedInstanceParcel);
-  public void modifyStates(String parcelName, InstanceParcelStatus finalized, InstanceParcelStatus inDevelopment, InstanceParcelStatus waiting);
+  public InstanceParcelStatus getStatus(Calendar seedDate, Calendar harvestDate, List<InstanceParcelStatus> states);
+  public void modifyStates(String parcelName, List<InstanceParcelStatus> states);
 }

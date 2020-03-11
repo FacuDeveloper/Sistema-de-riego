@@ -21,7 +21,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import model.InstanciaParcela;
-import model.InstanceParcelStatus;
 import model.Cultivo;
 import model.Parcel;
 import model.ClimateLog;
@@ -160,13 +159,14 @@ public class InstanciaParcelaRestServlet {
   public String create(String json) throws IOException  {
     InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
     newInstanceParcel = service.create(newInstanceParcel);
+    newInstanceParcel.setStatus(service.getStatus(newInstanceParcel.getFechaSiembra(), newInstanceParcel.getFechaCosecha(), statusService.findAll()));
 
     /*
      * Modifica los estados de las instancias de las parcelas,
      * todas ellas pertenecientes a la misma parcela, en base
      * a sus fechas y a la fecha actual del sistema
      */
-    service.modifyStates(newInstanceParcel.getParcel().getName(), statusService.find(1), statusService.find(2), statusService.find(3));
+    service.modifyStates(newInstanceParcel.getParcel().getName(), statusService.findAll());
     return mapper.writeValueAsString(newInstanceParcel);
   }
 
@@ -262,17 +262,18 @@ public class InstanciaParcelaRestServlet {
     modifiedInstanceParcel = service.modify(id, modifiedInstanceParcel);
 
     /*
-     * Modifica el estado 'En desarrollo' (2) por el estado
-     * 'En espera' de aquellas instancias de parcela
-     * que tiene la fecha de siembra despues de la fecha
-     * actual del sistema, mientras que modifica el
-     * estado 'En espera' (3) por el estado 'En desarrollo'
-     * de aquella instancia de parcela (solo puede haber una
-     * en el estado en desarrollo) que tiene entre su fecha
-     * de siembra y su fecha de cosecha la fecha actual del
-     * sistema
+     * Coleccion que tiene todas las instancias de parcela
+     * que pertenecen a la misma parcela de la nueva instancia
+     * de parcela
      */
-    service.modifyStates(modifiedInstanceParcel.getParcel().getName(), statusService.find(1), statusService.find(2), statusService.find(3));
+    Collection<InstanciaParcela> instances = service.findInstancesParcelByParcelName(modifiedInstanceParcel.getParcel().getName());
+
+    /*
+     * Modifica los estados de las instancias de las parcelas,
+     * todas ellas pertenecientes a la misma parcela, en base
+     * a sus fechas y a la fecha actual del sistema
+     */
+    service.modifyStates(modifiedInstanceParcel.getParcel().getName(), statusService.findAll());
     return mapper.writeValueAsString(modifiedInstanceParcel);
 
     /*
@@ -405,38 +406,6 @@ public class InstanciaParcelaRestServlet {
 
     return mapper.writeValueAsString(newIrrigationLog);
   }
-
-  /**
-   * @param  harvestDate [fecha de cosecha]
-   * @return el estado "En desarrollo" si la fecha de cosecha esta
-   * despues de la fecha actual del sistema y el estado "Finalizado"
-   * si la fecha de cosecha esta antes de la fecha actual del sistema
-   * o si es igual a la misma
-   */
-  // private InstanceParcelStatus getStatus(Calendar harvestDate) {
-  //   /*
-  //    * Fecha actual del sistema
-  //    */
-  //   Calendar currentDate = Calendar.getInstance();
-  //
-  //   /*
-  //    * Si la fecha de cosecha de una instancia
-  //    * de parcela dada es menor o igual a la fecha
-  //    * actual del sistema, este metodo retorna el
-  //    * estado "Finalizado" (1)
-  //    */
-  //   if ((harvestDate.compareTo(currentDate)) <= 0) {
-  //     return statusService.find(1);
-  //   }
-  //
-  //   /*
-  //    * En cambio, si la fecha de cosecha de una
-  //    * instancia de parcela es mayor que la fecha
-  //    * actual del sistema, este metodo retorna el
-  //    * estado "En desarrollo" (2)
-  //    */
-  //   return statusService.find(2);
-  // }
 
   /**
    * @param  givenCrop

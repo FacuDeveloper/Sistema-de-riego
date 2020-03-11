@@ -17,9 +17,7 @@ Se proveerá al usuario un informe estadístico de las parcelas, el cual le indi
 
 El sistema contará con funcionalidad para un administrador que será el encargado de cargar los datos paramétricos de los tipos de cultivo y tipos de tierra.
 
-También tendrá un registro e ingreso de usuarios (login). Cada usuario podrá gestionar su información relacionada con sus parcelas y tipos de cultivo con sólo registrarse en el sistema de forma gratuita.
-
-Por último, se brindará una API para que interactué con un sistema automático de riego, el cual controla el riego de una parcela en función de los datos recibidos por el sistema. La API recuperará de un sistema de riego automatizado la cantidad de agua que utilizó previamente para compararla con la cantidad de agua que generó nuestro sistema y en base a esta comparación determinará la cantidad de agua para el próximo riego.
+Por último, tendrá un registro e ingreso de usuarios (login). Cada usuario podrá gestionar su información relacionada con sus parcelas con sólo registrarse en el sistema de forma gratuita.
 
 ### Características funcionales del sistema
 - Determinar la cantidad de agua para riego.
@@ -43,8 +41,6 @@ Por último, se brindará una API para que interactué con un sistema automátic
 - Ingreso y uso del sistema como administrador.
 
 - Registro e ingreso de usuarios.
-
-- Brindar una API que interactué con un sistema de riego automatizado.
 
 ### Requerimientos no funcionales
 El sistema:  
