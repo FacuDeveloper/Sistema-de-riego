@@ -53,6 +53,7 @@ public  class SolarRadiationServiceBean {
     Query query = entityManager.createQuery("SELECT s FROM SolarRadiation s WHERE s.month = :month AND s.decimalLatitude = :latitude");
     query.setParameter("month", month);
     query.setParameter("latitude", latitude);
+
     return (SolarRadiation) query.getSingleResult();
   }
 

@@ -27,7 +27,7 @@ public  class TypeGroundServiceBean {
   }
 
   public TypeGround create(TypeGround typeGround) {
-    getEntityManager().persist(typeGround);
+    entityManager.persist(typeGround);
     return typeGround;
   }
 
@@ -41,7 +41,7 @@ public  class TypeGroundServiceBean {
     TypeGround typeGround = find(id);
 
     if (typeGround != null) {
-      getEntityManager().remove(typeGround);
+      entityManager.remove(typeGround);
       return typeGround;
     }
 
@@ -69,11 +69,11 @@ public  class TypeGroundServiceBean {
   }
 
   public TypeGround find(int id) {
-    return getEntityManager().find(TypeGround.class, id);
+    return entityManager.find(TypeGround.class, id);
   }
 
   public Collection<TypeGround> findAll() {
-    Query query = getEntityManager().createQuery("SELECT t FROM TypeGround t ORDER BY t.id");
+    Query query = entityManager.createQuery("SELECT t FROM TypeGround t ORDER BY t.id");
     return (Collection<TypeGround>) query.getResultList();
   }
 

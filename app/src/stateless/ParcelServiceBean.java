@@ -31,7 +31,7 @@ public  class ParcelServiceBean {
   }
 
   public Parcel create(Parcel newParcel) {
-    getEntityManager().persist(newParcel);
+    entityManager.persist(newParcel);
     return newParcel;
   }
 
@@ -83,11 +83,11 @@ public  class ParcelServiceBean {
   }
 
   public Parcel find(int id) {
-    return getEntityManager().find(Parcel.class, id);
+    return entityManager.find(Parcel.class, id);
   }
 
   public Collection<Parcel> findAll() {
-    Query query = getEntityManager().createQuery("SELECT p FROM Parcel p ORDER BY p.id");
+    Query query = entityManager.createQuery("SELECT p FROM Parcel p ORDER BY p.id");
     return (Collection<Parcel>) query.getResultList();
   }
 
@@ -95,7 +95,7 @@ public  class ParcelServiceBean {
    * @return coleccion con todas las parcelas que estan activas
    */
   public Collection<Parcel> findAllActive() {
-    Query query = getEntityManager().createQuery("SELECT p FROM Parcel p WHERE p.active = TRUE ORDER BY p.id");
+    Query query = entityManager.createQuery("SELECT p FROM Parcel p WHERE p.active = TRUE ORDER BY p.id");
     return (Collection<Parcel>) query.getResultList();
   }
 
@@ -104,7 +104,7 @@ public  class ParcelServiceBean {
    * @return coleccion de todas las parcelas del usuario dado
    */
   public Collection<Parcel> findParcelasUsuario(String username){
-    Query query = getEntityManager().createQuery("SELECT p FROM Parcel p , Usuario u WHERE (u.usuario = :username AND p.user = u)");
+    Query query = entityManager.createQuery("SELECT p FROM Parcel p , Usuario u WHERE (u.usuario = :username AND p.user = u)");
     query.setParameter("username", username);
     return (Collection<Parcel>) query.getResultList();
   }
@@ -114,7 +114,7 @@ public  class ParcelServiceBean {
    * @return coleccion de todas las parcelas activas del usuario dado
    */
   public Collection<Parcel> findParcelasActivasUsuario(String username){
-    Query query = getEntityManager().createQuery("SELECT p FROM Parcel p , Usuario u WHERE (u.usuario = :username AND p.user = u AND p.active = true)");
+    Query query = entityManager.createQuery("SELECT p FROM Parcel p , Usuario u WHERE (u.usuario = :username AND p.user = u AND p.active = true)");
     query.setParameter("username", username);
     return (Collection<Parcel>) query.getResultList();
   }
@@ -181,7 +181,7 @@ public  class ParcelServiceBean {
         .createQuery("SELECT COUNT(e.id) FROM " + Parcel.class.getSimpleName() + " e" + where.toString());
 
     // Pagino
-    Query query = getEntityManager().createQuery("FROM " + Parcel.class.getSimpleName() + " e" + where.toString());
+    Query query = entityManager.createQuery("FROM " + Parcel.class.getSimpleName() + " e" + where.toString());
     query.setMaxResults(cantPerPage);
     query.setFirstResult((page - 1) * cantPerPage);
     Integer count = ((Long) countQuery.getSingleResult()).intValue();

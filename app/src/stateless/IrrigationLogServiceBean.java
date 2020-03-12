@@ -36,7 +36,7 @@ public  class IrrigationLogServiceBean {
   }
 
   public IrrigationLog create(IrrigationLog irrigationLog) {
-    getEntityManager().persist(irrigationLog);
+    entityManager.persist(irrigationLog);
     return irrigationLog;
   }
 
@@ -50,7 +50,7 @@ public  class IrrigationLogServiceBean {
   //   IrrigationLog irrigationLog = find(id);
   //
   //   if (irrigationLog != null) {
-  //     getEntityManager().remove(irrigationLog);
+  //     entityManager.emove(irrigationLog);
   //     return irrigationLog;
   //   }
   //
@@ -77,11 +77,11 @@ public  class IrrigationLogServiceBean {
   }
 
   public IrrigationLog find(int id) {
-    return getEntityManager().find(IrrigationLog.class, id);
+    return entityManager.find(IrrigationLog.class, id);
   }
 
   public Collection<IrrigationLog> findAll() {
-    Query query = getEntityManager().createQuery("SELECT i FROM IrrigationLog i ORDER BY i.id");
+    Query query = entityManager.createQuery("SELECT i FROM IrrigationLog i ORDER BY i.id");
     return (Collection<IrrigationLog>) query.getResultList();
   }
 
@@ -209,7 +209,7 @@ public  class IrrigationLogServiceBean {
         .createQuery("SELECT COUNT(e.id) FROM " + IrrigationLog.class.getSimpleName() + " e" + where.toString());
 
     // Pagino
-    Query query = getEntityManager().createQuery("FROM " + IrrigationLog.class.getSimpleName() + " e" + where.toString());
+    Query query = entityManager.createQuery("FROM " + IrrigationLog.class.getSimpleName() + " e" + where.toString());
     query.setMaxResults(cantPerPage);
     query.setFirstResult((page - 1) * cantPerPage);
     Integer count = ((Long) countQuery.getSingleResult()).intValue();

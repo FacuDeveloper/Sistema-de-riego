@@ -30,7 +30,7 @@ public class InstanceParcelStatusServiceBean {
    * el identificador provisto
    */
   public InstanceParcelStatus find(int id){
-    return getEntityManager().find(InstanceParcelStatus.class, id);
+    return entityManager.find(InstanceParcelStatus.class, id);
   }
 
   public List<InstanceParcelStatus> findAll() {

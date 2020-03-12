@@ -11,6 +11,7 @@
     <class>model.Month</class>
     <class>model.Parcel</class>
     <class>model.SolarRadiation</class>
+    <class>model.StatisticalReport</class>
     <class>model.TypeGround</class>
     <class>model.Usuario</class>
     <properties>

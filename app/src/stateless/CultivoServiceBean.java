@@ -21,14 +21,14 @@ import java.lang.Math;
 public class CultivoServiceBean implements CultivoService {
 
   @PersistenceContext(unitName="SisRiegoDB")
-  protected EntityManager em;
+  protected EntityManager entityManager;
 
   public void setEntityManager(EntityManager emLocal){
-    em = emLocal;
+    entityManager = emLocal;
   }
 
   public EntityManager getEntityManager() {
-    return em;
+    return entityManager;
   }
 
   /**
@@ -37,7 +37,7 @@ public class CultivoServiceBean implements CultivoService {
   * @return referencia a un objeto de tipo Cultivo
   */
   public Cultivo create(Cultivo crop) {
-    getEntityManager().persist(crop);
+    entityManager.persist(crop);
     return crop;
   }
 
@@ -87,14 +87,14 @@ public class CultivoServiceBean implements CultivoService {
   }
 
   public Cultivo find(int id) {
-    return getEntityManager().find(Cultivo.class, id);
+    return entityManager.find(Cultivo.class, id);
   }
 
   /**
    * @return coleccion con todas los cultivos que estan activos
    */
   public Collection<Cultivo> findAllActive() {
-    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c WHERE c.activo = TRUE ORDER BY c.id");
+    Query query = entityManager.createQuery("SELECT c FROM Cultivo c WHERE c.activo = TRUE ORDER BY c.id");
     return (Collection<Cultivo>) query.getResultList();
   }
 
@@ -453,12 +453,12 @@ public class CultivoServiceBean implements CultivoService {
    * @return Collection<Cultivo> se retorna la lista de Cultivos
    */
   public Collection<Cultivo> findAll() {
-    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c ORDER BY c.id");
+    Query query = entityManager.createQuery("SELECT c FROM Cultivo c ORDER BY c.id");
     return (Collection<Cultivo>) query.getResultList();
   }
 
   public Cultivo findByName(String cropName) {
-    Query query = getEntityManager().createQuery("SELECT c FROM Cultivo c WHERE c.nombre = :cropName");
+    Query query = entityManager.createQuery("SELECT c FROM Cultivo c WHERE c.nombre = :cropName");
     query.setParameter("cropName", cropName.toUpperCase());
     return (Cultivo) query.getSingleResult();
   }
@@ -499,7 +499,7 @@ public class CultivoServiceBean implements CultivoService {
     .createQuery("SELECT COUNT(e.id) FROM " + Cultivo.class.getSimpleName() + " e" + where.toString());
 
     // Pagino
-    Query query = getEntityManager().createQuery("FROM " + Cultivo.class.getSimpleName() + " e" + where.toString());
+    Query query = entityManager.createQuery("FROM " + Cultivo.class.getSimpleName() + " e" + where.toString());
     query.setMaxResults(cantPerPage);
     query.setFirstResult((page - 1) * cantPerPage);
     Integer count = ((Long) countQuery.getSingleResult()).intValue();

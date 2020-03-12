@@ -40,7 +40,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
    * @return InstanciaParcela se retorna la InstanciaParcela persistida en la base de datos
    */
   public InstanciaParcela create(InstanciaParcela ins){
-    getEntityManager().persist(ins);
+    entityManager.persist(ins);
     return ins;
   }
 
@@ -48,7 +48,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
     InstanciaParcela instanciaParcela = find(parcela, cultivo);
 
     if (instanciaParcela != null) {
-      getEntityManager().remove(instanciaParcela);
+      entityManager.remove(instanciaParcela);
       return instanciaParcela;
     }
 
@@ -64,7 +64,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
     InstanciaParcela instanciaParcela = find(id);
 
     if (instanciaParcela != null) {
-      getEntityManager().remove(instanciaParcela);
+      entityManager.remove(instanciaParcela);
       return instanciaParcela;
     }
 
@@ -117,11 +117,11 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
   * @return InstanciaParcela se retorna la instancia de parcela encontrada, o null si no existe ninguna instancia con el id recibido
   */
   public InstanciaParcela find(int id){
-    return getEntityManager().find(InstanciaParcela.class, id);
+    return entityManager.find(InstanciaParcela.class, id);
   }
 
   public InstanciaParcela find(Parcel givenParcel, int id) {
-    Query query = getEntityManager().createQuery("SELECT i FROM InstanciaParcela i WHERE i.parcel = :givenParcel AND i.id = :id");
+    Query query = entityManager.createQuery("SELECT i FROM InstanciaParcela i WHERE i.parcel = :givenParcel AND i.id = :id");
     query.setParameter("givenParcel", givenParcel);
     query.setParameter("id", id);
 
@@ -141,7 +141,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
    * la base de datos subyacente
    */
   public Collection<InstanciaParcela> findAll() {
-    Query query = getEntityManager().createQuery("SELECT e FROM InstanciaParcela e ORDER BY e.id");
+    Query query = entityManager.createQuery("SELECT e FROM InstanciaParcela e ORDER BY e.id");
     return (Collection<InstanciaParcela>) query.getResultList();
   }
 
@@ -151,7 +151,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
    * a la parcela que tiene el nombre provisto
    */
   public Collection<InstanciaParcela> findInstancesParcelByParcelName(String parcelName) {
-    Query query = getEntityManager().createQuery("SELECT e FROM InstanciaParcela e WHERE e.parcel.name = :parcelName ORDER BY e.fechaSiembra");
+    Query query = entityManager.createQuery("SELECT e FROM InstanciaParcela e WHERE e.parcel.name = :parcelName ORDER BY e.fechaSiembra");
     query.setParameter("parcelName", parcelName);
 
     return (Collection<InstanciaParcela>) query.getResultList();
@@ -172,7 +172,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
    * actual, en caso contrario retorna falso
    */
   public InstanciaParcela findInDevelopment(Parcel givenParcel) {
-    Query query = getEntityManager().createQuery("SELECT r FROM InstanciaParcela r JOIN r.parcel p JOIN r.status s WHERE (s.name = 'En desarrollo' AND p = :parcel)");
+    Query query = entityManager.createQuery("SELECT r FROM InstanciaParcela r JOIN r.parcel p JOIN r.status s WHERE (s.name = 'En desarrollo' AND p = :parcel)");
     query.setParameter("parcel", givenParcel);
 
     InstanciaParcela resultingParcelInstancce;
@@ -193,7 +193,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
    * retorna el valor nulo
    */
   public InstanciaParcela findRecentFinished(Parcel givenParcel) {
-    Query query = getEntityManager().createQuery("SELECT r FROM InstanciaParcela r WHERE r.id = (SELECT MAX(r.id) FROM InstanciaParcela r JOIN r.parcel p JOIN r.status s WHERE (s.name = 'Finalizado' AND p = :parcel))");
+    Query query = entityManager.createQuery("SELECT r FROM InstanciaParcela r WHERE r.id = (SELECT MAX(r.id) FROM InstanciaParcela r JOIN r.parcel p JOIN r.status s WHERE (s.name = 'Finalizado' AND p = :parcel))");
     query.setParameter("parcel", givenParcel);
 
     InstanciaParcela resultingParcelInstancce;

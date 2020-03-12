@@ -31,12 +31,12 @@ public  class ClimateLogServiceBean {
   }
 
   public ClimateLog create(ClimateLog newClimateLog) {
-    getEntityManager().persist(newClimateLog);
+    entityManager.persist(newClimateLog);
     return newClimateLog;
   }
 
   public ClimateLog find(int id) {
-    return getEntityManager().find(ClimateLog.class, id);
+    return entityManager.find(ClimateLog.class, id);
   }
 
   /**
