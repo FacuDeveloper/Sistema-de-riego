@@ -1,12 +1,35 @@
 @startuml
 
 Parcela "*"-->"1" Usuario
-Parcela "*"-->"1" TipoSuelo
 RegistroHistoricoClima "*"-->"1" Parcela
 RegistroHistoricoRiego "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Parcela
 InstanciaParcela "*"-->"1" Cultivo
 InstanciaParcela "*"-->"1" EstadoInstanciaParcela
+RadiacionSolar "*"-->"1" Mes
+RadiacionSolar "*"-->"1" Latitud
+InsolacionMaxima "*"-->"1" Mes
+InsolacionMaxima "*"-->"1" Latitud
+
+class Mes {
+-id
+-nombre
+}
+
+class Latitud {
+-id
+-latitudDecimal
+}
+
+class RadiacionSolar {
+-id
+-valorRadiacionSolar
+}
+
+class InsolacionMaxima {
+-id
+-valorInsolacionMaxima
+}
 
 class Parcela {
 -id
@@ -14,13 +37,12 @@ class Parcela {
 -hectarea
 -latitud
 -longitud
--profundidad
--pedregosidad
 -activa
 }
 
 class Cultivo {
 -id
+-nombre
 -etapaInicial
 -etapaDesarrollo
 -etapaMedia
@@ -32,19 +54,12 @@ class Cultivo {
 -activo
 }
 
-class TipoSuelo {
--id
--nombre
--descripcion
-}
-
 class RegistroHistoricoClima {
 -id
 -fecha
 -zonaHoraria
 -intesidadPrecipitacion
 -probabilidadPrecipitacion
--tipoPrecipitacion
 -puntoRocio
 -presionAtmosferica
 -velocidadViento
@@ -57,17 +72,19 @@ class RegistroHistoricoClima {
 -etc
 }
 
-class InstanciaParcela {
--id
--fechaSiembra
--fechaCosecha
-}
-
 class RegistroHistoricoRiego {
 -id
 -fecha
 -riegoSugerido
 -riegoRealizado
+-precipitacionMañana
+}
+
+
+class InstanciaParcela {
+-id
+-fechaSiembra
+-fechaCosecha
 }
 
 class Usuario {
