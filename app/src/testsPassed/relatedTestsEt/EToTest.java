@@ -3,21 +3,41 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.Ignore;
 
-import stateless.et.ETo;
-import stateless.ClimateLogService;
+import et.Eto;
+
+import stateless.ParcelServiceBean;
 
 import model.ClimateLog;
+import model.Parcel;
+
+import java.util.Calendar;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 public class EToTest {
+  private static EntityManager entityManager;
+  private static EntityManagerFactory entityMangerFactory;
+  private static ParcelServiceBean parcelService;
+
+  @BeforeClass
+  public static void preTest() {
+    entityMangerFactory = Persistence.createEntityManagerFactory("SisRiegoDB");
+    entityManager = entityMangerFactory.createEntityManager();
+
+    parcelService = new ParcelServiceBean();
+    parcelService.setEntityManager(entityManager);
+  }
 
   /*
-  * Bloque de codigo fuente de prueba unitaria
-  * del bloque de codigo para el calculo de la
-  * ETo para la localidad Uccle (Bruselas, Belgica)
-  * con los datos climaticos del dia 6/7/19, los
-  * cuales son provistos por el ejemplo de la pagina
-  * 72 del libro FAO numero 56
-  */
+   * Bloque de codigo fuente de prueba unitaria
+   * del bloque de codigo para el calculo de la
+   * ETo para la localidad Uccle (Bruselas, Belgica)
+   * con los datos climaticos del dia 6/7/19, los
+   * cuales son provistos por el ejemplo de la pagina
+   * 72 del libro FAO numero 56
+   */
   @Test
   public void testETo() {
     /*
@@ -27,10 +47,10 @@ public class EToTest {
     double temperatureMax = 21.5;
 
     /*
-     * Presion atmosferica
+     * Presion atmosferica [P]
      *
      * El valor de presion atmosferica tiene que
-     * estar en milibares porque el servicio climatico
+     * estar en hectopascales porque el servicio climatico
      * que utilizamos nos la provee en la unidad de
      * medida mencionada, con lo cual tuvimos
      * que implementar un bloque de codigo fuente
@@ -43,9 +63,9 @@ public class EToTest {
      * La presion atmosferica del ejemplo del libro
      * esta en kilopascales pero para que el metodo
      * getEto() devuelva el resultado correcto se le
-     * tiene que pasar la presion atmosferica en milibares
+     * tiene que pasar la presion atmosferica en hectopascales
      * para que el bloque de codigo encargado de la conversion
-     * la convierta de milibares a kilopascales
+     * la convierta de hectopascales a kilopascales
      */
     double pressure = 1001;
 
@@ -96,6 +116,26 @@ public class EToTest {
      */
     double dewPoint = 0.0;
 
+    Calendar currentDate = Calendar.getInstance();
+    Parcel givenParcel = parcelService.find(1);
+
+    ClimateLog givenClimateLog = new ClimateLog();
+    givenClimateLog.setDate(currentDate);
+    givenClimateLog.setTimezone("América/Argentina/Buenos Aires");
+    givenClimateLog.setPrecipIntensity(0.0);
+    givenClimateLog.setPrecipProbability(0.0);
+    givenClimateLog.setDewPoint(dewPoint);
+    givenClimateLog.setPressure(pressure);
+    givenClimateLog.setWindSpeed(windSpeed);
+    givenClimateLog.setCloudCover(cloudCover);
+    givenClimateLog.setTemperatureMin(temperatureMin);
+    givenClimateLog.setTemperatureMax(temperatureMax);
+    givenClimateLog.setRainWater(0.0);
+    givenClimateLog.setWaterAccumulated(0.0);
+    givenClimateLog.setEto(0.0);
+    givenClimateLog.setEtc(0.0);
+    givenClimateLog.setParcel(givenParcel);
+
     /*
      * Para que esta prueba arroje el mismo valor
      * de ETo que esta en el ejemplo de la pagina numero
@@ -104,8 +144,12 @@ public class EToTest {
      * variables es (presion media de vapor de saturacion)
      * y ea (presion real de vapor) respectivamente
      */
-    System.out.println("La ETo es: " +
-    ETo.getEto(temperatureMin, temperatureMax, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover) + " (mm/día)");
+    // double result = Eto.getEto(temperatureMin, temperatureMax, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover);
+
+    double result = Eto.getEto(givenClimateLog, extraterrestrialSolarRadiation, maximumInsolation);
+
+    System.out.println("La ETo es: " + result + " (mm/día)");
+    assertEquals(3.8, result, 0.1);
   }
 
   /**
@@ -126,11 +170,11 @@ public class EToTest {
     System.out.println("Prueba unitaria de pendiente de la curva de presión de saturacion de vapor");
     System.out.println();
 
-    System.out.println("Para una T media = 28.5 delta vale " + String.format("%.3f", ETo.slopeVaporSaturationPressureCurve(28.5)));
-    System.out.println("Para una T media = 30.5 delta vale " + String.format("%.3f", ETo.slopeVaporSaturationPressureCurve(30.5)));
-    System.out.println("Para una T media = 40.0 delta vale " + String.format("%.3f", ETo.slopeVaporSaturationPressureCurve(40.0)));
-    System.out.println("Para una T media = 44.5 delta vale " + String.format("%.3f", ETo.slopeVaporSaturationPressureCurve(44.5)));
-    System.out.println("Para una T media = 48.5 delta vale " + String.format("%.3f", ETo.slopeVaporSaturationPressureCurve(48.5)));
+    System.out.println("Para una T media = 28.5 delta vale " + String.format("%.3f", Eto.slopeVaporSaturationPressureCurve(28.5)));
+    System.out.println("Para una T media = 30.5 delta vale " + String.format("%.3f", Eto.slopeVaporSaturationPressureCurve(30.5)));
+    System.out.println("Para una T media = 40.0 delta vale " + String.format("%.3f", Eto.slopeVaporSaturationPressureCurve(40.0)));
+    System.out.println("Para una T media = 44.5 delta vale " + String.format("%.3f", Eto.slopeVaporSaturationPressureCurve(44.5)));
+    System.out.println("Para una T media = 48.5 delta vale " + String.format("%.3f", Eto.slopeVaporSaturationPressureCurve(48.5)));
     System.out.println();
   }
 
@@ -146,11 +190,11 @@ public class EToTest {
     System.out.println("Prueba unitaria de la constante psicrometrica");
     System.out.println();
 
-    System.out.println("Para una presión atmosférica de 1013 milibar (0 metros de altitud) gamma vale " + ETo.psychometricConstant(pressureMiliBarToKiloPascals(1013)));
-    System.out.println("Para una presión atmosférica de 899 milibar (1000 metros de altitud) gamma vale " + ETo.psychometricConstant(pressureMiliBarToKiloPascals(899)));
-    System.out.println("Para una presión atmosférica de 795 milibar (2000 metros de altitud) gamma vale " + ETo.psychometricConstant(pressureMiliBarToKiloPascals(795)));
-    System.out.println("Para una presión atmosférica de 701 milibar (3000 metros de altitud) gamma vale " + ETo.psychometricConstant(pressureMiliBarToKiloPascals(701)));
-    System.out.println("Para una presión atmosférica de 616 milibar (4000 metros de altitud) gamma vale " + ETo.psychometricConstant(pressureMiliBarToKiloPascals(616)));
+    System.out.println("Para una presión atmosférica de 1013 milibar (0 metros de altitud) gamma vale " + Eto.psychometricConstant(pressureMiliBarToKiloPascals(1013)));
+    System.out.println("Para una presión atmosférica de 899 milibar (1000 metros de altitud) gamma vale " + Eto.psychometricConstant(pressureMiliBarToKiloPascals(899)));
+    System.out.println("Para una presión atmosférica de 795 milibar (2000 metros de altitud) gamma vale " + Eto.psychometricConstant(pressureMiliBarToKiloPascals(795)));
+    System.out.println("Para una presión atmosférica de 701 milibar (3000 metros de altitud) gamma vale " + Eto.psychometricConstant(pressureMiliBarToKiloPascals(701)));
+    System.out.println("Para una presión atmosférica de 616 milibar (4000 metros de altitud) gamma vale " + Eto.psychometricConstant(pressureMiliBarToKiloPascals(616)));
     System.out.println();
   }
 
@@ -166,12 +210,12 @@ public class EToTest {
     System.out.println("Prueba unitaria del factor de conversion");
     System.out.println();
 
-    // System.out.println("Para una altura z = 1.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(1.0));
-    // System.out.println("Para una altura z = 2.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(2.0));
-    // System.out.println("Para una altura z = 3.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(3.0));
-    // System.out.println("Para una altura z = 4.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(4.0));
-    // System.out.println("Para una altura z = 6.0 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(6.0));
-    // System.out.println("Para una altura z = 10.5 metros sobre la superficie del suelo el factor de conversion vale " + ETo.conversionFactorToTwoMetersHigh(10.5));
+    // System.out.println("Para una altura z = 1.0 metros sobre la superficie del suelo el factor de conversion vale " + Eto.conversionFactorToTwoMetersHigh(1.0));
+    // System.out.println("Para una altura z = 2.0 metros sobre la superficie del suelo el factor de conversion vale " + Eto.conversionFactorToTwoMetersHigh(2.0));
+    // System.out.println("Para una altura z = 3.0 metros sobre la superficie del suelo el factor de conversion vale " + Eto.conversionFactorToTwoMetersHigh(3.0));
+    // System.out.println("Para una altura z = 4.0 metros sobre la superficie del suelo el factor de conversion vale " + Eto.conversionFactorToTwoMetersHigh(4.0));
+    // System.out.println("Para una altura z = 6.0 metros sobre la superficie del suelo el factor de conversion vale " + Eto.conversionFactorToTwoMetersHigh(6.0));
+    // System.out.println("Para una altura z = 10.5 metros sobre la superficie del suelo el factor de conversion vale " + Eto.conversionFactorToTwoMetersHigh(10.5));
     // System.out.println();
   }
 
@@ -187,12 +231,12 @@ public class EToTest {
     System.out.println("Prueba unitaria de la presion de saturacion de vapor");
     System.out.println();
 
-    System.out.println("Para una temperatura del aire T = 1.0 e°(T) vale " + ETo.steamSaturationPressure(1.0));
-    System.out.println("Para una temperatura del aire T = 10.5 e°(T) vale " + ETo.steamSaturationPressure(10.5));
-    System.out.println("Para una temperatura del aire T = 20.5 e°(T) vale " + ETo.steamSaturationPressure(20.5));
-    System.out.println("Para una temperatura del aire T = 30.5 e°(T) vale " + ETo.steamSaturationPressure(30.5));
-    System.out.println("Para una temperatura del aire T = 40.0 e°(T) vale " + ETo.steamSaturationPressure(40.0));
-    System.out.println("Para una temperatura del aire T = 48.5 e°(T) vale " + ETo.steamSaturationPressure(48.5));
+    System.out.println("Para una temperatura del aire T = 1.0 e°(T) vale " + Eto.steamSaturationPressure(1.0));
+    System.out.println("Para una temperatura del aire T = 10.5 e°(T) vale " + Eto.steamSaturationPressure(10.5));
+    System.out.println("Para una temperatura del aire T = 20.5 e°(T) vale " + Eto.steamSaturationPressure(20.5));
+    System.out.println("Para una temperatura del aire T = 30.5 e°(T) vale " + Eto.steamSaturationPressure(30.5));
+    System.out.println("Para una temperatura del aire T = 40.0 e°(T) vale " + Eto.steamSaturationPressure(40.0));
+    System.out.println("Para una temperatura del aire T = 48.5 e°(T) vale " + Eto.steamSaturationPressure(48.5));
     System.out.println();
   }
 
@@ -207,10 +251,10 @@ public class EToTest {
   // System.out.println();
 
   // Latitud de Bankok, Tailandia
-  // System.out.println("Para una latitud 13.73 (grados decimales) la misma en radianes es " + ETo.latitudeDecimalDegreesToRadians(13.73));
+  // System.out.println("Para una latitud 13.73 (grados decimales) la misma en radianes es " + Eto.latitudeDecimalDegreesToRadians(13.73));
 
   // Rio de Janeiro, Brasil
-  //   System.out.println("Para una latitud -22.90 (grados decimales) la misma en radianes es " + ETo.latitudeDecimalDegreesToRadians(-22.90));
+  //   System.out.println("Para una latitud -22.90 (grados decimales) la misma en radianes es " + Eto.latitudeDecimalDegreesToRadians(-22.90));
   //
   //   System.out.println();
   // }
@@ -251,7 +295,7 @@ public class EToTest {
   */
   // @Test
   // public void testGetSigmaResult() {
-  //   System.out.println("Resultado de la ecuacion de Stefan Boltzmann: " + ETo.getSigmaResult(19.1, 25.1));
+  //   System.out.println("Resultado de la ecuacion de Stefan Boltzmann: " + Eto.getSigmaResult(19.1, 25.1));
   // }
 
 }

@@ -4,6 +4,8 @@
 
 package et;
 
+import model.ClimateLog;
+
 public class Etc {
 
   /**
@@ -12,20 +14,28 @@ public class Etc {
    * un cultivo dado bajo condiciones estandar dado el coeficiente del
    * cultivo y unos factores climaticos
    *
-   * @param  cropCoefficient (kc)           [adimensional]
-   * @param  minTemperature                 [°C]
-   * @param  maxTemperature                 [°C]
-   * @param  pressure                       [kPa]
-   * @param  windSpeed                      [metros/segundo]
-   * @param  dewPoint (punto de rocío)      [°C]
-   * @param  extraterrestrialSolarRadiation (Ra) [MJ/metro cuadrado * dia]
-   * @param  maximumInsolation (N)          [horas]
-   * @param  cloudCover (n)                 [%]
+   * El registro climatico dado contiene los valores de los
+   * siguientes fenomenos climaticos:
+   * - Temperatura minima [°C]
+   * - Temperatura maxima [°C]
+   * - Presion atmosferica [kPa]
+   * - Velocidad del viento [metros/segundo]
+   * - Punto de rocio [°C]
+   * - Nubosidad (n) [%]
+   *
+   * @param  cropCoefficient                [(kc) adimensional)]
+   * @param  givenClimateLog
+   * @param  extraterrestrialSolarRadiation [(Ra) MJ/metro cuadrado * dia)]
+   * @param  maximumInsolation              [(n) horas]
    * @return cantidad de agua que va a evaporar un cultivo dado [mm/dia]
    */
-  public static double getEtc(double cropCoefficient, double minTemperature, double maxTemperature, double pressure, double windSpeed, double dewPoint,
-    double extraterrestrialSolarRadiation, double maximumInsolation, double cloudCover) {
-    return (cropCoefficient * Eto.getEto(minTemperature, maxTemperature, pressure, windSpeed, dewPoint, extraterrestrialSolarRadiation, maximumInsolation, cloudCover));
+  public static double getEtc(double cropCoefficient, ClimateLog givenClimateLog, double extraterrestrialSolarRadiation, double maximumInsolation) {
+    return (cropCoefficient * Eto.getEto(givenClimateLog, extraterrestrialSolarRadiation, maximumInsolation));
+  }
+
+  // Constructor method
+  private Etc() {
+
   }
 
 }

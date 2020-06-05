@@ -375,8 +375,7 @@ public class InstanciaParcelaRestServlet {
        * Evapotranspiracion del cultivo de referencia (ETo) con las
        * condiciones climaticas del registro climatico del dia de ayer
        */
-      yesterdayEto = Eto.getEto(yesterdayClimateLog.getTemperatureMin(), yesterdayClimateLog.getTemperatureMax(), yesterdayClimateLog.getPressure(), yesterdayClimateLog.getWindSpeed(),
-      yesterdayClimateLog.getDewPoint(), extraterrestrialSolarRadiation, maximumInsolation, yesterdayClimateLog.getCloudCover());
+      yesterdayEto = Eto.getEto(yesterdayClimateLog, extraterrestrialSolarRadiation, maximumInsolation);
 
       /*
        * Evapotranspiracion del cultivo bajo condiciones esntandar (ETc)

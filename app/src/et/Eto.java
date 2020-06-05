@@ -6,6 +6,8 @@ package et;
 
 import java.lang.Math;
 
+import model.ClimateLog;
+
 public class Eto {
 
   /**
@@ -15,24 +17,27 @@ public class Eto {
    *
    * La evapotranspiracion de referencia se presenta en un
    * cultivo hipotetico, cuyas caracteristicas son conocidas
-   * y que corresponde a un cultivo de pasto de altura uniforme,
+   * y corresponden a un cultivo de pasto de altura uniforme,
    * bien regado y en óptimas condiciones de crecimiento
    *
-   * @param  minTemperature                 [°C]
-   * @param  maxTemperature                 [°C]
-   * @param  pressure                       [kPa]
-   * @param  windSpeed                      [metros/segundo]
-   * @param  dewPoint                       [°C]
-   * @param  extraterrestrialSolarRadiation (Ra) [MJ/metro cuadrado * dia]
-   * @param  maximumInsolation (N)          [horas]
-   * @param  cloudCover (n)                 [%]
+   * El registro climatico dado contiene los valores de los
+   * siguientes fenomenos climaticos:
+   * - Temperatura minima [°C]
+   * - Temperatura maxima [°C]
+   * - Presion atmosferica [kPa]
+   * - Velocidad del viento [metros/segundo]
+   * - Punto de rocio [°C]
+   * - Nubosidad (n) [%]
+   *
+   * @param  givenClimateLog
+   * @param  extraterrestrialSolarRadiation [(Ra) MJ/metro cuadrado * dia]
+   * @param  maximumInsolation              [(N) horas]
    * @return cantidad de agua que va a evaporar el cultivo de referencia [mm/dia]
    */
-  public static double getEto(double minTemperature, double maxTemperature, double pressure, double windSpeed, double dewPoint, double extraterrestrialSolarRadiation,
-    double maximumInsolation, double cloudCover) {
+  public static double getEto(ClimateLog givenClimateLog, double extraterrestrialSolarRadiation, double maximumInsolation) {
 
     // Temperatura media del aire (T) [°C]
-    double averageAirTemperature = averageAirTemperature(minTemperature, maxTemperature);
+    double averageAirTemperature = averageAirTemperature(givenClimateLog.getTemperatureMin(), givenClimateLog.getTemperatureMax());
 
     // System.out.println("Temperatura media: " + averageAirTemperature);
 
@@ -42,7 +47,7 @@ public class Eto {
     // System.out.println("El delta es: " + delta);
 
     // Constante psicrometrica (letra griega gamma) [kPa/°C]
-    double gamma = psychometricConstant(pressureHectoPascalsToKiloPascals(pressure));
+    double gamma = psychometricConstant(pressureHectoPascalsToKiloPascals(givenClimateLog.getPressure()));
 
     // System.out.println("El gamma es: " + gamma);
 
@@ -52,18 +57,30 @@ public class Eto {
      * Asumimos que la altura de medicion sobre la superficie es
      * de 10 metros
      */
-    double u2 = windSpeedTwoMetersHigh(windSpeed);
+    double u2 = windSpeedTwoMetersHigh(givenClimateLog.getWindSpeed());
 
     // System.out.println("El u2 es: " + u2);
 
     // Presion media de vapor de saturacion (es) [kPa]
-    double es = averageSaturationVaporPressure(minTemperature, maxTemperature);
+    double es = averageSaturationVaporPressure(givenClimateLog.getTemperatureMin(), givenClimateLog.getTemperatureMax());
+
+    /*
+     * Este valor fue sacado del ejemplo de la pagina numero
+     * 72 del libro de FAO numero 56, y es necesario para que la
+     * prueba EToTest.java de el mismo valor que da el ejemplo
+     */
     // double es =  1.997;
 
     // System.out.println("La presion media de vapor de saturacion es: " + es);
 
     // Presion real de vapor (ea) [kPa]
-    double ea = actualVaporPressure(dewPoint);
+    double ea = actualVaporPressure(givenClimateLog.getDewPoint());
+
+    /*
+     * Este valor fue sacado del ejemplo de la pagina numero
+     * 72 del libro de FAO numero 56, y es necesario para que la
+     * prueba EToTest.java de el mismo valor que da el ejemplo
+     */
     // double ea = 1.409;
 
     // System.out.println("La presion real de vapor es: " + ea);
@@ -74,7 +91,8 @@ public class Eto {
     // System.out.println("El deficit de presion de vapor es: " + vaporPressureDeficit);
 
     // Radiacion neta (Rn) [MJ/metro cuadrado * dia]
-    double rn = netRadiation(extraterrestrialSolarRadiation, ea, minTemperature, maxTemperature, maximumInsolation, cloudCover);
+    double rn = netRadiation(extraterrestrialSolarRadiation, ea, givenClimateLog.getTemperatureMin(), givenClimateLog.getTemperatureMax(),
+      maximumInsolation, givenClimateLog.getCloudCover());
 
     // System.out.println("La radiacion neta es: " + rn);
 
@@ -174,7 +192,7 @@ public class Eto {
    * Este bloque de codigo fuente hace uso del factor de
    * conversion (calculado por el bloque de codigo fuente
    * llamado conversionFactorToTwoMetersHigh) para convertir
-   * la velocidad del viento mediada a una altura dada a
+   * la velocidad del viento medida a una altura dada a
    * velocidad del viento a la elevacion de dos metros
    * sobre la superficie del suelo
    *
@@ -182,8 +200,8 @@ public class Eto {
    * a dos metros de altura es la ecuacion numero 47
    * de la pagina numero 56 del libro FAO 56
    *
-   * @param  uz velocidad del viento medida a 10 metros sobre la superficie [metros/segundo]
-   * @return velocidad del viento a dos metros sobre la superficie [metros/segundo]
+   * @param  uz velocidad del viento medida a 10 metros sobre la superficie del suelo [metros/segundo]
+   * @return velocidad del viento a dos metros sobre la superficie del suelo [metros/segundo]
    */
   public static double windSpeedTwoMetersHigh(double uz) {
     // System.out.println("u2: " + (uz * (4.87 / conversionFactorToTwoMetersHigh(z))));
@@ -200,13 +218,14 @@ public class Eto {
    * La ecuacion del factor de conversion es la ecuacion
    * numero 47 de la pagina numero 56 del libro FAO 56
    *
-   * La altura a la que se mide el viento es 10 y es por
-   * esto que en la invocacion al metodo log estatico
-   * de la clase log hay un 10
-
+   * La altura a la que se mide el viento es 10 metros sobre
+   * la superficie del suelo y es por esto que en la invocacion
+   * al metodo log estatico de la clase Math hay un 10
+   *
    * @return factor de conversion para convertir la velocidad
-   * del viento medida a una altura dada a velocidad del viento
-   * a la elevacion estandar de dos metros sobre la superficie del suelo
+   * del viento medida a una altura dada sobre la superficie del suelo
+   * a velocidad del viento a la elevacion estandar de dos metros sobre
+   * la superficie del suelo
    */
   public static double conversionFactorToTwoMetersHigh() {
     // System.out.println("Ln: " + Math.log(67.8 * z - 5.42));
