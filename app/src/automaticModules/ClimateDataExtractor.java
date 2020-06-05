@@ -150,8 +150,11 @@ public class ClimateDataExtractor {
          * Con los datos climaticos recuperados se calcula la
          * evapotranspiracion del cultivo de referencia (ETo)
          */
-        eto = Eto.getEto(climateLog.getTemperatureMin(), climateLog.getTemperatureMax(), climateLog.getPressure(), climateLog.getWindSpeed(),
-        climateLog.getDewPoint(), extraterrestrialSolarRadiation, maximumInsolation, climateLog.getCloudCover());
+        // eto = Eto.getEto(climateLog.getTemperatureMin(), climateLog.getTemperatureMax(), climateLog.getPressure(), climateLog.getWindSpeed(),
+        // climateLog.getDewPoint(), extraterrestrialSolarRadiation, maximumInsolation, climateLog.getCloudCover());
+
+        eto = Eto.getEto(climateLog, extraterrestrialSolarRadiation, maximumInsolation);
+
         climateLog.setEto(eto);
 
         /*
