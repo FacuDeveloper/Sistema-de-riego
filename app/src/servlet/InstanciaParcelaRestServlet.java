@@ -88,14 +88,6 @@ public class InstanciaParcelaRestServlet {
   }
 
   @GET
-  @Path("/findInstancesParcelByParcelName/{name}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String findInstancesParcelByParcelName(@PathParam("name") String name) throws IOException {
-    Collection<InstanciaParcela> instancias = service.findInstancesParcelByParcelName(name);
-    return mapper.writeValueAsString(instancias);
-  }
-
-  @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String find(@PathParam("id") int id) throws IOException {
@@ -119,6 +111,14 @@ public class InstanciaParcelaRestServlet {
     Parcel choosenParcel = serviceParcel.find(idParcel);
     InstanciaParcela instancia = service.findRecentFinished(choosenParcel);
     return mapper.writeValueAsString(instancia);
+  }
+
+  @GET
+  @Path("/findInstancesParcelByParcelName/{name}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String findInstancesParcelByParcelName(@PathParam("name") String name) throws IOException {
+    Collection<InstanciaParcela> instancias = service.findInstancesParcelByParcelName(name);
+    return mapper.writeValueAsString(instancias);
   }
 
   // @GET
@@ -157,18 +157,191 @@ public class InstanciaParcelaRestServlet {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   public String create(String json) throws IOException  {
-    InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
-    newInstanceParcel = service.create(newInstanceParcel);
-    newInstanceParcel.setStatus(service.getStatus(newInstanceParcel.getFechaSiembra(), newInstanceParcel.getFechaCosecha(), statusService.findAll()));
+    InstanciaParcela instancia = mapper.readValue(json, InstanciaParcela.class);
 
     /*
-     * Modifica los estados de las instancias de las parcelas,
-     * todas ellas pertenecientes a la misma parcela, en base
-     * a sus fechas y a la fecha actual del sistema
+     * Instancia de parcela (registro historico de parcela) mas
+     * reciente que esta en el estado "Finalizado"
      */
-    service.modifyStates(newInstanceParcel.getParcel().getName(), statusService.findAll());
-    return mapper.writeValueAsString(newInstanceParcel);
+    InstanciaParcela newestInstanceParcel = service.findRecentFinished(instancia.getParcel());
+
+    /*
+     * Si la fecha de cosecha de la instancia de parcela mas reciente
+     * que esta en el estado "Finalizado" es mayor o igual que la fecha de
+     * siembra de la nueva instancia de parcela, entonces no se tiene
+     * que persistir la nueva instancia de parcela
+     */
+    if ((newestInstanceParcel != null) && ((newestInstanceParcel.getFechaCosecha().compareTo(instancia.getFechaSiembra())) >= 0)) {
+      return null;
+    }
+
+    /*
+     * La instancia de parcela (registro historico de parcela)
+     * actual es aquella instancia de parcela que a la fecha
+     * actual del sistema esta en el estado "En desarrollo"
+     */
+    InstanciaParcela currentParcelInstance = service.findInDevelopment(instancia.getParcel());
+
+    /*
+     * Si no hay un registro historico actual de parcela
+     * entonces se procede a crear el nuevo registro historico
+     * de parcela, el cual es el actual porque su cultivo al
+     * estar en este nuevo registro historico actual de parcela
+     * aun no ha llegado a su fecha de cosecha
+     */
+    if (currentParcelInstance == null) {
+      /*
+       * En funcion de la fecha de siembra del cultivo dado y
+       * de la suma de sus dias de vida (suma de la cantidad de
+       * dias que dura cada una de sus etapas), se calcula
+       * la fecha de cosecha del cultivo dado
+       */
+      Calendar harvestDate = cultivoService.calculateHarvestDate(instancia.getFechaSiembra(), instancia.getCultivo());
+      instancia.setFechaCosecha(harvestDate);
+      instancia.setStatus(service.getStatus(newestInstanceParcel.getFechaSiembra(), newestInstanceParcel.getFechaCosecha(), statusService.findAll()));
+
+      return mapper.writeValueAsString(instancia);
+    }
+
+    return null;
   }
+
+  /*
+   * NOTE: No entiendo porque se tienen que modificar los estados de
+   * las demas instancias de parcela al crear una instancia de parcela
+   * de la misma parcela
+   */
+  // @POST
+  // @Consumes(MediaType.APPLICATION_JSON)
+  // public String create(String json) throws IOException  {
+  //   InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
+  //   newInstanceParcel = service.create(newInstanceParcel);
+  //   newInstanceParcel.setStatus(service.getStatus(newInstanceParcel.getFechaSiembra(), newInstanceParcel.getFechaCosecha(), statusService.findAll()));
+  //
+  //   /*
+  //    * Modifica los estados de las instancias de las parcelas,
+  //    * todas ellas pertenecientes a la misma parcela, en base
+  //    * a sus fechas y a la fecha actual del sistema
+  //    */
+  //   service.modifyStates(newInstanceParcel.getParcel().getName(), statusService.findAll());
+  //   return mapper.writeValueAsString(newInstanceParcel);
+  // }
+
+  @DELETE
+  @Path("/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String remove(@PathParam("id") int id) throws IOException {
+    InstanciaParcela instancia = service.remove(id);
+    return mapper.writeValueAsString(instancia);
+  }
+
+  @PUT
+  @Path("/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String modify(@PathParam("id") int id, String json) throws IOException  {
+    InstanciaParcela instancia = mapper.readValue(json,InstanciaParcela.class);
+
+    InstanciaParcela previuosParcelInstance = service.find(instancia.getParcel(), instancia.getId() - 1);
+    InstanciaParcela nextParcelInstance = service.find(instancia.getParcel(), instancia.getId() + 1);
+
+    /*
+     * Si la fecha de cosecha de la instancia de parcela anterior a la
+     * que se va a modificar es mayor a la fecha de siembra de la instancia
+     * de parcela que se va a modificar, no se tiene que realizar la modificacion
+     */
+    if ((previuosParcelInstance != null) && ((previuosParcelInstance.getFechaCosecha().compareTo(instancia.getFechaSiembra()) == 0)
+    || (previuosParcelInstance.getFechaCosecha().compareTo(instancia.getFechaSiembra()) > 0))) {
+      return null;
+    }
+
+    /*
+     * Si la fecha de cosecha de la instancia de parcela que se va a modificar
+     * es mayor que la fecha de siembra de la siguiente instancia de parcela
+     * a la que se va a modificar, no se tiene que realizar la modificacion
+     */
+    if ((nextParcelInstance != null) && ((instancia.getFechaCosecha().compareTo(nextParcelInstance.getFechaSiembra()) == 0)
+    || (instancia.getFechaCosecha().compareTo(nextParcelInstance.getFechaSiembra()) > 0))) {
+      return null;
+    }
+
+    /*
+     * Si la fecha de siembra y la fecha de cosecha de la instancia
+     * de parcela que se va a modificar coinciden, no se tiene que
+     * realizar la modificacion
+     */
+    if ((instancia.getFechaSiembra() != null) && (instancia.getFechaCosecha() != null) && (instancia.getFechaSiembra().compareTo(instancia.getFechaCosecha()) == 0)) {
+      return null;
+    }
+
+    // if (instancia.getStatus().getName().equals("Finalizado")) {
+    //   instancia = service.change(id, instancia);
+    //   return mapper.writeValueAsString(instancia);
+    // }
+
+    /*
+     * NOTE: Falta hacerlo funcionar
+     *
+     * Si la diferencia en dias entre la fecha de siembra y la fecha
+     * de cosecha ingresadas no es mayor que la cantidad de dias que
+     * dura la etapa de vida del cultivo dado se realiza la modificacion
+     * del registro historico de parcela dado
+     */
+    // if (!(excessStageLife(instancia.getCultivo(), instancia.getFechaSiembra(), instancia.getFechaCosecha()))) {
+    //   instancia.setStatus(getStatus(instancia.getFechaCosecha()));
+    //   instancia = service.change(id, instancia);
+    //   return mapper.writeValueAsString(instancia);
+    // }
+
+    instancia.setStatus(service.getStatus(instancia.getFechaSiembra(), instancia.getFechaCosecha(), statusService.findAll()));
+    instancia = service.modify(id, instancia);
+    return mapper.writeValueAsString(instancia);
+  }
+
+  /*
+   * NOTE: No entiendo porque se tienen que modificar los estados de
+   * las demas instancias de parcela al modificar una instancia de parcela
+   * de la misma parcela
+   */
+  // @PUT
+  // @Path("/{id}")
+  // @Produces(MediaType.APPLICATION_JSON)
+  // public String modify(@PathParam("id") int id, String json) throws IOException  {
+  //   InstanciaParcela modifiedInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
+  //   modifiedInstanceParcel = service.modify(id, modifiedInstanceParcel);
+  //
+  //   /*
+  //    * Coleccion que tiene todas las instancias de parcela
+  //    * que pertenecen a la misma parcela de la nueva instancia
+  //    * de parcela
+  //    */
+  //   Collection<InstanciaParcela> instances = service.findInstancesParcelByParcelName(modifiedInstanceParcel.getParcel().getName());
+  //
+  //   /*
+  //    * Modifica los estados de las instancias de las parcelas,
+  //    * todas ellas pertenecientes a la misma parcela, en base
+  //    * a sus fechas y a la fecha actual del sistema
+  //    */
+  //   service.modifyStates(modifiedInstanceParcel.getParcel().getName(), statusService.findAll());
+  //   return mapper.writeValueAsString(modifiedInstanceParcel);
+  //
+  //   /*
+  //    * NOTE: Falta hacerlo funcionar
+  //    *
+  //    * Si la diferencia en dias entre la fecha de siembra y la fecha
+  //    * de cosecha ingresadas no es mayor que la cantidad de dias que
+  //    * dura la etapa de vida del cultivo dado se realiza la modificacion
+  //    * del registro historico de parcela dado
+  //    */
+  //   // if (!(excessStageLife(instancia.getCultivo(), instancia.getFechaSiembra(), instancia.getFechaCosecha()))) {
+  //   //   instancia.setStatus(getStatus(instancia.getFechaCosecha()));
+  //   //   instancia = service.modify(id, instancia);
+  //   //   return mapper.writeValueAsString(instancia);
+  //   // }
+  //
+  //   // instancia.setStatus(getStatus(instancia.getFechaCosecha()));
+  //   // instancia = service.modify(id, instancia);
+  //   // return mapper.writeValueAsString(instancia);
+  // }
 
   /**
    * Comprueba si hay superposicion entre la fecha
@@ -244,55 +417,6 @@ public class InstanciaParcelaRestServlet {
     }
 
     return mapper.writeValueAsString(newInstanceParcel);
-  }
-
-  @DELETE
-  @Path("/{id}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String remove(@PathParam("id") int id) throws IOException {
-    InstanciaParcela instancia = service.remove(id);
-    return mapper.writeValueAsString(instancia);
-  }
-
-  @PUT
-  @Path("/{id}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String modify(@PathParam("id") int id, String json) throws IOException  {
-    InstanciaParcela modifiedInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
-    modifiedInstanceParcel = service.modify(id, modifiedInstanceParcel);
-
-    /*
-     * Coleccion que tiene todas las instancias de parcela
-     * que pertenecen a la misma parcela de la nueva instancia
-     * de parcela
-     */
-    Collection<InstanciaParcela> instances = service.findInstancesParcelByParcelName(modifiedInstanceParcel.getParcel().getName());
-
-    /*
-     * Modifica los estados de las instancias de las parcelas,
-     * todas ellas pertenecientes a la misma parcela, en base
-     * a sus fechas y a la fecha actual del sistema
-     */
-    service.modifyStates(modifiedInstanceParcel.getParcel().getName(), statusService.findAll());
-    return mapper.writeValueAsString(modifiedInstanceParcel);
-
-    /*
-     * NOTE: Falta hacerlo funcionar
-     *
-     * Si la diferencia en dias entre la fecha de siembra y la fecha
-     * de cosecha ingresadas no es mayor que la cantidad de dias que
-     * dura la etapa de vida del cultivo dado se realiza la modificacion
-     * del registro historico de parcela dado
-     */
-    // if (!(excessStageLife(instancia.getCultivo(), instancia.getFechaSiembra(), instancia.getFechaCosecha()))) {
-    //   instancia.setStatus(getStatus(instancia.getFechaCosecha()));
-    //   instancia = service.modify(id, instancia);
-    //   return mapper.writeValueAsString(instancia);
-    // }
-
-    // instancia.setStatus(getStatus(instancia.getFechaCosecha()));
-    // instancia = service.modify(id, instancia);
-    // return mapper.writeValueAsString(instancia);
   }
 
   @PUT
