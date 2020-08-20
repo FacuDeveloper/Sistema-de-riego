@@ -53,12 +53,12 @@ app.service(
     			});
 	    }
 
-      this.update = function(id, name, area, latitude, longitude, active, callback){
+      this.update = function(id, name, hectare, latitude, longitude, active, callback){
         console.log("Actualizando: " + id + " - " + name);
         $http({
           method:"PUT",
           url:"rest/parcel/"+id,
-          params:{"name": name, "area": area, "latitude": latitude, "longitude": longitude, "active": active} })
+          params:{"name": name, "hectare": hectare, "latitude": latitude, "longitude": longitude, "active": active} })
         .then(
 			    function(result){
 				    callback(false,result.data);

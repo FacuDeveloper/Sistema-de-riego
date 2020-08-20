@@ -95,7 +95,7 @@ public class ParcelRestServlet {
   @PUT
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public String modify(@PathParam("id") int id, @QueryParam("name") String name, @QueryParam("hectare") int hectare, @QueryParam("latitude") double latitude,
+  public String modify(@PathParam("id") int id, @QueryParam("name") String name, @QueryParam("hectare") double hectare, @QueryParam("latitude") double latitude,
   @QueryParam("longitude") double longitude, @QueryParam("active") boolean active) throws IOException {
 
     Parcel modifiedParcel = new Parcel();
