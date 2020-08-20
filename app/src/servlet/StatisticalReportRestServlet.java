@@ -53,4 +53,22 @@ public class StatisticalReportRestServlet {
     return mapper.writeValueAsString(statisticalReport);
   }
 
+  @GET
+  @Path("/findStatisticalReportByParcelName/{name}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String findStatisticalReportByParcelName(@PathParam("name") String name) throws IOException {
+    Collection<StatisticalReport> reports = service.findStatisticalReportByParcelName(name);
+    return mapper.writeValueAsString(reports);
+  }
+
+  @GET
+  @Path("/generateStatisticalReport/{name}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String generateStatisticalReport(@PathParam("name") String name) throws IOException {
+    StatisticalReport report = service.generateStatisticalReport(name);
+    report = service.create(report);
+
+    return mapper.writeValueAsString(report);
+  }
+
 }

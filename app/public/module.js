@@ -50,6 +50,20 @@ app.config(['$routeProvider', function(routeprovider) {
 		controller: 'InstanciaParcelaCtrl'
 	})
 
+	/* Informes estadisticos */
+	.when('/statisticalReport',{
+		templateUrl:'partials/statisticalReports-list.html',
+		controller: 'StatisticalReportsCtrl'
+	})
+	.when('/statisticalReport/:action',{
+		templateUrl:'partials/statisticalReport-form.html',
+		controller: 'StatisticalReportCtrl'
+	})
+	.when('/statisticalReport/:action/:id',{
+		templateUrl:'partials/statisticalReport-form.html',
+		controller: 'StatisticalReportCtrl'
+	})
+
 	/* De otra manera */
 	.otherwise({
 		templateUrl: 'partials/404.html'
