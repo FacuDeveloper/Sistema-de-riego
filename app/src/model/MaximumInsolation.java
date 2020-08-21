@@ -17,7 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@Table(name="MAXIMUM_INSOLATION")
+@Table(name="INSOLACION_MAXIMA")
 public class MaximumInsolation {
 
   /*

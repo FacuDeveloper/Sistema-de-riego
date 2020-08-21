@@ -23,7 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@Table(name="SOLAR_RADIATION")
+@Table(name="RADIACION_SOLAR")
 public class SolarRadiation {
 
   /*

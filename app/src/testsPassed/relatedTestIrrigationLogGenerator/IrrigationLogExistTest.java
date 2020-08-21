@@ -75,6 +75,8 @@ public class IrrigationLogExistTest {
 
     System.out.println("*** Fin de prueba positiva de existencia ***");
     System.out.println();
+
+    assertTrue(irrigationLogService.exist(currentDate, choosenparcel));
   }
 
   @Test

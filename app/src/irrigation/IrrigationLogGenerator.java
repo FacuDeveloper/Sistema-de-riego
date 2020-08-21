@@ -30,8 +30,6 @@ import model.ClimateLog;
 
 import climate.ClimateLogService;
 
-import irrigation.WaterMath;
-
 import util.UtilDate;
 
 @Stateless

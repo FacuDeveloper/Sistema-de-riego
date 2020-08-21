@@ -68,6 +68,7 @@ public class MaximumInsolationServiceBeanTest {
     try {
       maximumInsolation = insolationService.find(month, latitude);
     } catch(NoResultException ex) {
+
     }
 
     assertNotNull(maximumInsolation);
@@ -116,6 +117,7 @@ public class MaximumInsolationServiceBeanTest {
       System.out.println("No existe un valor de máxima insolación para número del mes y la latitud solicitados");
     }
 
+    assertNull(maximumInsolation);
     System.out.println("*********************************************");
     System.out.println();
   }

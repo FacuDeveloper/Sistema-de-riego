@@ -9,8 +9,6 @@ package irrigation;
 
 import java.lang.Math;
 
-import model.IrrigationLog;
-
 public class WaterMath {
 
   // Constructor method

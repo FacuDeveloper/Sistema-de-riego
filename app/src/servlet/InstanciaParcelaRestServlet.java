@@ -239,7 +239,7 @@ public class InstanciaParcelaRestServlet {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String modify(@PathParam("id") int id, String json) throws IOException  {
-    InstanciaParcela instancia = mapper.readValue(json,InstanciaParcela.class);
+    InstanciaParcela instancia = mapper.readValue(json, InstanciaParcela.class);
 
     InstanciaParcela previuosParcelInstance = service.find(instancia.getParcel(), instancia.getId() - 1);
     InstanciaParcela nextParcelInstance = service.find(instancia.getParcel(), instancia.getId() + 1);

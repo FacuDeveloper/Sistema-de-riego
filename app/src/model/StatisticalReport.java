@@ -16,7 +16,7 @@ import java.util.Calendar;
 import util.UtilDate;
 
 @Entity
-@Table(name="STATISTICAL_REPORT")
+@Table(name="INFORME_ESTADISTICO")
 public class StatisticalReport {
 
   @Id

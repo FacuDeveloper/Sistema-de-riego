@@ -103,7 +103,6 @@ public class ClimateLogFindTest {
     System.out.println();
 
     ClimateLog yesterdayClimateLog = climateLogServiceBean.find(yesterdayDate, choosenparcel);
-
     assertNotNull(yesterdayClimateLog);
 
     System.out.println("Registro climático del día de ayer");

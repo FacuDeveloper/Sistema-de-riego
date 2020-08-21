@@ -69,6 +69,7 @@ public class FindCurrentParcelInstanceTest {
       System.out.println(parcelInstance);
     }
 
+    assertNotNull(parcelInstance);
     System.out.println();
   }
 
@@ -89,6 +90,7 @@ public class FindCurrentParcelInstanceTest {
       System.out.println(parcelInstance);
     }
 
+    assertNull(parcelInstance);
     System.out.println();
   }
 

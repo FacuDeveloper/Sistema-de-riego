@@ -117,6 +117,7 @@ public class SolarRadiationServiceBeanTest {
       System.out.println("No existe un valor de radiación solar extraterrestre para el mes y la latitud solicitados");
     }
 
+    assertNull(solarRadiation);
     System.out.println("******************************************");
   }
 

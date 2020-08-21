@@ -104,11 +104,17 @@ public class ClimateLogCreateTest {
       climateLog = climateLogServiceBean.create(climateLog);
       entityManager.getTransaction().commit();
 
-      assertNotNull(climateLog);
-
       System.out.println(climateLog);
     }
 
+    /*
+     * Si los registros climaticos fueron creados en la base
+     * de datos, el metodo isEmpty() de la interfaz Collection
+     * tiene que retornar falso al ser invocado en una variable
+     * de tipo por referencia Collection que contenga un objeto
+     * de tipo Collection
+     */
+    assertFalse(climateLogServiceBean.findAll().isEmpty());
   }
 
   @Test

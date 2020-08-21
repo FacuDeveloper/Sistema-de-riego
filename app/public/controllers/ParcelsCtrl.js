@@ -4,8 +4,8 @@ app.controller(
   function($scope, $location, $route, service) {
     console.log("ParcelsCtrl loaded...")
 
-    function findAll(){
-  		service.findAll( function(error, data){
+    function findAll() {
+  		service.findAll( function(error, data) {
   			if(error){
   				alert("Ocurrió un error: " + error);
   				return;
@@ -22,10 +22,10 @@ app.controller(
     $scope.cantPerPage = 20
     /* Esto ess necesario para la paginacion */
 
-    $scope.delete = function(id){
+    $scope.delete = function(id) {
       console.log("Deleting: " + id)
 
-  		service.delete(id, function(error, data){
+  		service.delete(id, function(error, data) {
   			if(error){
           console.log(error);
   				return;

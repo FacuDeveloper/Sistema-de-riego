@@ -10,8 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="LATITUD")
 public class Latitude {
 
   /*

@@ -45,6 +45,8 @@ public class FindRecentFinishedTest {
     Parcel givenParcel = parcelService.find(1);
     System.out.println("Resultado");
     System.out.println(service.findRecentFinished(givenParcel));
+
+    assertNotNull(givenParcel);
   }
 
   @Test

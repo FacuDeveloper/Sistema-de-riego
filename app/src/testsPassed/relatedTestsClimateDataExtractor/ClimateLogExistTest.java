@@ -68,6 +68,7 @@ public class ClimateLogExistTest {
       + " y a la parcela con ID = " + parcel.getId() + ", no encontrado");
     }
 
+    assertTrue(climateLogServiceBean.exist(date, parcel));
     System.out.println("*** Fin de prueba de existencia positiva ***");
     System.out.println();
   }
@@ -92,6 +93,7 @@ public class ClimateLogExistTest {
       + " y a la parcela con ID = " + parcel.getId() + ", no encontrado");
     }
 
+    assertFalse(climateLogServiceBean.exist(date, parcel));
     System.out.println("*** Fin de prueba de existencia negativa ***");
     System.out.println();
   }

@@ -22,7 +22,7 @@ import java.util.Calendar;
 import util.UtilDate;
 
 @Entity
-@Table(name="IRRIGATION_LOG")
+@Table(name="REGISTRO_RIEGO")
 public class IrrigationLog {
 
   /*

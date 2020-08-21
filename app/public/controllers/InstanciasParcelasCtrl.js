@@ -79,7 +79,7 @@ app.controller(
 		}
 
 		/*
-		 * Trae el listado de instancias de parcelas
+		 * Trae el listado de todas las instancias de parcelas
 		 * cuando se presiona el boton "Reiniciar listado"
 		 */
 		$scope.reset = function(){

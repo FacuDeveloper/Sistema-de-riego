@@ -41,14 +41,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
 import javax.persistence.UniqueConstraint;
 
-import weatherApiClasses.ForecastResponse;
-
 import java.util.Calendar;
+
+import weatherApiClasses.ForecastResponse;
 
 import util.UtilDate;
 
 @Entity
-@Table(name="CLIMATE_LOG", uniqueConstraints={@UniqueConstraint(columnNames={"DATE", "FK_PARCEL"})})
+@Table(name="REGISTRO_CLIMATICO", uniqueConstraints={@UniqueConstraint(columnNames={"DATE", "FK_PARCEL"})})
 public class ClimateLog {
 
   @Id

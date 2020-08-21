@@ -44,6 +44,8 @@ public class FindInDevelopmentTest {
   public void testFindInDevelopment() {
     Parcel givenParcel = parcelService.find(1);
     System.out.println("Resultado: " + service.findInDevelopment(givenParcel));
+
+    assertNotNull(givenParcel);
   }
 
   @Test
