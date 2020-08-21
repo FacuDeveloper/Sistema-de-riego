@@ -81,14 +81,15 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
     InstanciaParcela instanciaParcela = find(id);
 
     if (instanciaParcela != null) {
-      if (instanciaParcela.getId() != ins.getId()){
+      if (instanciaParcela.getId() != ins.getId()) {
         return null;
       }
 
-      instanciaParcela.setParcel(ins.getParcel());
-      instanciaParcela.setCultivo(ins.getCultivo());
       instanciaParcela.setFechaSiembra(ins.getFechaSiembra());
       instanciaParcela.setFechaCosecha(ins.getFechaCosecha());
+      instanciaParcela.setParcel(ins.getParcel());
+      instanciaParcela.setCultivo(ins.getCultivo());
+      instanciaParcela.setStatus(ins.getStatus());
       return instanciaParcela;
     }
 

@@ -163,17 +163,26 @@ app.controller(
             return;
           }
 
+          /*
+          Esto permite la recarga de la pagina cuando no hay superposicion
+          de fechas en la modificacion
+           */
+          $location.path("/instanciasparcelas")
+          $route.reload();
+
           $scope.instanciaParcela.id = instanciaParcela.id;
           $scope.instanciaParcela.fechaSiembra = instanciaParcela.fechaSiembra;
           $scope.instanciaParcela.fechaCosecha = instanciaParcela.fechaCosecha;
-          $scope.instanciaParcela.cultivo = instanciaParcela.cultivo;
           $scope.instanciaParcela.parcel = instanciaParcela.parcel;
+          $scope.instanciaParcela.cultivo = instanciaParcela.cultivo;
         });
 
-        $location.path("/instanciasparcelas")
-        $route.reload();
       });
 
+      /*
+      Esto permite la recarga de la pagina cuando hay superposicion
+      de fechas en la modificacion
+       */
       $location.path("/instanciasparcelas")
       $route.reload();
     }
