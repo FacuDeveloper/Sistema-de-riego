@@ -156,7 +156,7 @@ public class InstanciaParcelaRestServlet {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  public String create(String json) throws IOException  {
+  public String create(String json) throws IOException {
     InstanciaParcela instancia = mapper.readValue(json, InstanciaParcela.class);
 
     /*
@@ -171,6 +171,10 @@ public class InstanciaParcelaRestServlet {
      * siembra de la nueva instancia de parcela, entonces no se tiene
      * que persistir la nueva instancia de parcela
      */
+
+    // FIXME: Esto impide que se puedan cargar las instancias de parcelas pasadas
+    // Hay que pensar si quiere permitir al usuario cargar las instancias de parcela
+    // del futuro aunque haya o no una instancia de parcela en el estado en "En desarrollo"
     if ((newestInstanceParcel != null) && ((newestInstanceParcel.getFechaCosecha().compareTo(instancia.getFechaSiembra())) >= 0)) {
       return null;
     }
@@ -198,7 +202,8 @@ public class InstanciaParcelaRestServlet {
        */
       Calendar harvestDate = cultivoService.calculateHarvestDate(instancia.getFechaSiembra(), instancia.getCultivo());
       instancia.setFechaCosecha(harvestDate);
-      instancia.setStatus(service.getStatus(newestInstanceParcel.getFechaSiembra(), newestInstanceParcel.getFechaCosecha(), statusService.findAll()));
+      instancia.setStatus(statusService.getStatus(instancia.getFechaSiembra(), instancia.getFechaCosecha()));
+      instancia = service.create(instancia);
 
       return mapper.writeValueAsString(instancia);
     }
@@ -292,7 +297,7 @@ public class InstanciaParcelaRestServlet {
     //   return mapper.writeValueAsString(instancia);
     // }
 
-    instancia.setStatus(service.getStatus(instancia.getFechaSiembra(), instancia.getFechaCosecha(), statusService.findAll()));
+    instancia.setStatus(statusService.getStatus(instancia.getFechaSiembra(), instancia.getFechaCosecha()));
     instancia = service.modify(id, instancia);
     return mapper.writeValueAsString(instancia);
   }
@@ -387,6 +392,10 @@ public class InstanciaParcelaRestServlet {
      * Instancia de parcela (registro historico de parcela) mas
      * reciente (o ultima) que esta en el estado "Finalizado"
      */
+
+    // FIXME: Esto es codigo muerto porque dentro de este metodo no se
+    // usa nunca el valor que contiene esta variable de tipo por
+    // referencia
     InstanciaParcela recentFinishedInstanceParcel = service.findRecentFinished(newInstanceParcel.getParcel());
 
     /*
@@ -394,6 +403,10 @@ public class InstanciaParcelaRestServlet {
      * hay que recordar que solo una instancia de parcela puede
      * estar en el estado mencionado
      */
+
+    // FIXME: Esto es codigo muerto porque dentro de este metodo no se
+    // usa nunca el valor que contiene esta variable de tipo por
+    // referencia
     InstanciaParcela instanceParcelInDevelopment = service.findInDevelopment(newInstanceParcel.getParcel());
 
     /*

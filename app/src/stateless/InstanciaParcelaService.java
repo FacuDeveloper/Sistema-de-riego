@@ -25,6 +25,4 @@ public interface InstanciaParcelaService {
   public InstanciaParcela findRecentFinished(Parcel givenParcel);
   public boolean dateOverlayInCreation(InstanciaParcela givenInstanceParcel);
   public boolean dateOverlayInModification(InstanciaParcela modifiedInstanceParcel);
-  public InstanceParcelStatus getStatus(Calendar seedDate, Calendar harvestDate, List<InstanceParcelStatus> states);
-  public void modifyStates(String parcelName, List<InstanceParcelStatus> states);
 }
