@@ -232,7 +232,6 @@ public class CultivoServiceBean implements CultivoService {
       return calculateKc(crop, daysLife);
     }
 
-
     /*
      * NOTE: Este calculo esta mal pero no tan mal, y esto se lo puede
      * ver en la clase de prueba unitaria llamada KcTest cuando al
