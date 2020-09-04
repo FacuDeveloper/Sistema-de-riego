@@ -4,6 +4,15 @@ app.controller(
   function($scope,$location, $route, $params, $filter, servicio, servicioCultivo, parcelService) {
     console.log("InstanciaParcelaCtrl Cargando accion]: "+$params.action)
 
+    /*
+    Constantes utilizadas para comprobar si lo que
+    viene de la aplicacion del lado del servidor, a la
+    hora de crear o modificar una instante de parcela, es
+    un error de fechas
+     */
+    const dateCrossoverError = 'DateCrossoverError';
+    const dateOverlayError = 'DateOverlayError';
+
     if(['new','edit','view'].indexOf($params.action) == -1) {
       alert("Acción inválida: " + $params.action);
       $location.path("/instanciasparcelas");
@@ -23,7 +32,6 @@ app.controller(
 
         if ($scope.instanciaParcela.fechaCosecha != null) {
           $scope.instanciaParcela.fechaCosecha = new Date($scope.instanciaParcela.fechaCosecha);
-          // $scope.instanciaParcela.fechaCosecha = new Date($filter('date')($scope.instanciaParcela.fechaCosecha, "yyyy-MM-dd HH:mm:ss Z"));
         }
 
       });
@@ -49,55 +57,26 @@ app.controller(
         return;
       }
 
-      /*
-      Comprueba si hay superposicion entre la fecha de
-      siembra y la fecha de cosecha de la nueva instancia
-      de parcela
-       */
-      servicio.overlapSeedDateHarvest($scope.instanciaParcela, function(error, instanciaParcela) {
+      servicio.create($scope.instanciaParcela, function(error, data) {
         if(error) {
           alert(error.statusText);
           return;
         }
 
-        $scope.instanciaParcela = instanciaParcela;
-
-        if ($scope.instanciaParcela == null) {
-          alert("Las fechas no deben estar superpuestas");
+        /*
+        Si la respuesta de parte del servidor al momento de crear
+        una instancia de parcela es un error de fechas entonces
+        se muestra un mensaje con el error que sucedio y no se
+        persiste la nueva instancia de parcela
+         */
+        if (dateCrossoverError === data.name || dateOverlayError === data.name) {
+          alert(data.description);
           return;
         }
 
-        /*
-        Comprueba si hay superposicion de fechas entre la
-        nueva instancia de parcela y las demas instancias
-        de parcela, todas estas y la primera de la misma
-        parcela
-         */
-        servicio.dateOverlayInCreation($scope.instanciaParcela, function(error, instanciaParcela) {
-          if(error) {
-            alert(error.statusText);
-            return;
-          }
-
-          $scope.instanciaParcela = instanciaParcela;
-
-          if ($scope.instanciaParcela == null) {
-            alert("No debe haber superposición de fechas entre esta instancia de parcela y las demás pertenecientes a la misma parcela");
-            return;
-          }
-
-          servicio.create($scope.instanciaParcela, function(error, instanciaParcela) {
-            if(error) {
-              alert(error.statusText);
-              return;
-            }
-
-            $scope.instanciaParcela = instanciaParcela;
-            $location.path("/instanciasparcelas");
-          });
-
-        });
-
+        $scope.instanciaParcela = data;
+        $location.path("/instanciasparcelas");
+        $route.reload();
       });
 
       $location.path("/instanciasparcelas");

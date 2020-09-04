@@ -38,6 +38,15 @@ ALTER TABLE USUARIO ALTER COLUMN USUARIO_ID RESTART WITH 1;
 DELETE FROM ESTADO_USUARIO;
 ALTER TABLE ESTADO_USUARIO ALTER COLUMN USER_STATUS_ID RESTART WITH 1;
 
+DELETE FROM ERROR_FECHA;
+ALTER TABLE ERROR_FECHA ALTER COLUMN DATE_ERROR_ID RESTART WITH 1;
+
+-- INSERTS ERROR_FECHA
+INSERT INTO ERROR_FECHA (NAME, DESCRIPTION) VALUES
+  ('DateCrossoverError', 'Las fechas de siembra y de cosecha no deben estar superpuestas');
+INSERT INTO ERROR_FECHA (NAME, DESCRIPTION) VALUES
+  ('DateOverlayError', 'No debe haber superposición entre las fechas de esta instancia de parcela y las demás pertenecientes a la misma parcela');
+
 -- INSERTS ESTADO_USUARIO
 INSERT INTO ESTADO_USUARIO (NAME, DESCRIPTION) VALUES ('Alta', 'Estado que representa que la cuenta de un usuario está activo');
 INSERT INTO ESTADO_USUARIO (NAME, DESCRIPTION) VALUES ('Baja', 'Estado que representa que la cuenta de un usuario está inactiva');

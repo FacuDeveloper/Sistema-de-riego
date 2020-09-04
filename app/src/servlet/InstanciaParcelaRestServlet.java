@@ -25,6 +25,7 @@ import model.Cultivo;
 import model.Parcel;
 import model.ClimateLog;
 import model.IrrigationLog;
+import model.DateError;
 
 import stateless.InstanciaParcelaService;
 import stateless.ParcelServiceBean;
@@ -34,6 +35,7 @@ import stateless.InstanceParcelStatusServiceBean;
 import stateless.CultivoService;
 import stateless.SolarRadiationServiceBean;
 import stateless.MaximumInsolationServiceBean;
+import stateless.DateErrorServiceBean;
 
 import irrigation.WaterMath;
 
@@ -77,8 +79,35 @@ public class InstanciaParcelaRestServlet {
   // inject a reference to the MaximumInsolationServiceBean
   @EJB MaximumInsolationServiceBean insolationService;
 
+  // inject a reference to the DateErrorServiceBean
+  @EJB DateErrorServiceBean dateErrorService;
+
   // mapea lista de pojo a JSON
   ObjectMapper mapper = new ObjectMapper();
+
+  /*
+   * Variable de tipo por referencia para almacenar la
+   * referencia de un objeto de tipo DateError, el cual
+   * representa un error de fechas
+   *
+   * Hay dos errores de fechas: uno para cuando la
+   * fecha de siembra y la fecha de cosecha de una
+   * instancia de parcela estan cruzadas (superpuestas)
+   * y otro para cuando las fechas de una instancia de
+   * parcela estan superpuestas con las fechas de las
+   * instancias de parcelas pertenecientes a la misma
+   * parcela
+   */
+  private DateError dateError;
+
+  /*
+   * Constantes numericas utilizadas para recuperar
+   * de la base de datos subyacente cada uno de los
+   * errores de fecha que puede haber en la creacion
+   * y en la modificacion de una instancia de parcela
+   */
+  private static final int ID_CROSSOVER_DATE_ERROR = 1;
+  private static final int ID_OVERLAY_DATE_ERROR = 2;
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -95,21 +124,15 @@ public class InstanciaParcelaRestServlet {
     return mapper.writeValueAsString(instancia);
   }
 
+  /*
+   * NOTE: No se para que se usa este metodo
+   */
   @GET
   @Path("/findCurrentParcelInstance/{idParcel}")
   @Produces(MediaType.APPLICATION_JSON)
   public String findCurrentParcelInstance(@PathParam("idParcel") int idParcel) throws IOException {
     Parcel choosenParcel = serviceParcel.find(idParcel);
     InstanciaParcela instancia = service.findInDevelopment(choosenParcel);
-    return mapper.writeValueAsString(instancia);
-  }
-
-  @GET
-  @Path("/findNewestParcelInstance/{idParcel}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String findNewestParcelInstance(@PathParam("idParcel") int idParcel) throws IOException {
-    Parcel choosenParcel = serviceParcel.find(idParcel);
-    InstanciaParcela instancia = service.findRecentFinished(choosenParcel);
     return mapper.writeValueAsString(instancia);
   }
 
@@ -157,24 +180,6 @@ public class InstanciaParcelaRestServlet {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   public String create(String json) throws IOException {
-    /*
-     * 1. Comprobar si hay superposicion entre las fechas de la nueva
-     * instancia de parcela y las fechas de las demas instancias
-     * de parcelas pertenecientes a la parcela de la nueva instancia
-     * de parcela
-     * 1.1. Si hay superposicion retornar nulo e indicarle al usuario lo sucedido
-     * 1.2. Si no hay superposicion de fechas entonces persistir la nueva instancia de parcela
-     *
-     * La comprobacion de la superposicion de fechas entre las distintas instancias
-     * de parcelas es realizada en el backend con un metodo llamado
-     * dateOverlayInCreation(), el cual esta en la clase InstanciaParcelaServiceBean
-     *
-     * NOTE: No hay que olvidar que se tiene que escribir que la comprobacion de la superposicion
-     * entre las fechas de siembra y de cosecha es realizada en el backend mediante
-     * un metodo, el cual en esta version de la aplicacion existe pero en la capa
-     * presenter, y deberia ser movido a la capa que contiene las validaciones de
-     * las reglas del negocio
-     */
     InstanciaParcela newInstance = mapper.readValue(json, InstanciaParcela.class);
 
     /*
@@ -183,9 +188,35 @@ public class InstanciaParcelaRestServlet {
      */
     if (newInstance.getFechaCosecha() == null) {
       Calendar harvestDate = cropService.calculateHarvestDate(newInstance.getFechaSiembra(), newInstance.getCultivo());
+      newInstance.setFechaCosecha(harvestDate);
       newInstance.setStatus(statusService.getStatus(newInstance.getFechaSiembra(), harvestDate));
     } else {
       newInstance.setStatus(statusService.getStatus(newInstance.getFechaSiembra(), newInstance.getFechaCosecha()));
+    }
+
+    /*
+     * Si la fecha de siembra y la fecha de cosecha estan
+     * cruzadas, es decir, superpuestas, entonces se envia
+     * de parte de la aplicacion del lado servidor un aviso
+     * de error de fechas, el cual contiene una descripcion
+     * para evitar el error
+     */
+    if (service.crossoverDate(newInstance.getFechaSiembra(), newInstance.getFechaCosecha())) {
+      dateError = dateErrorService.find(ID_CROSSOVER_DATE_ERROR);
+      return mapper.writeValueAsString(dateError);
+    }
+
+    /*
+     * Si hay superposicion de fechas entre la nueva instancia
+     * de parcela y las instancias de parcela pertenecientes
+     * a la misma parcela (de la nueva instancia de parcela)
+     * entonces se envia de parte de la aplicacion del lado
+     * servidor un aviso de error de fechas, el cual
+     * contiene una descripcion para evitar el error
+     */
+    if (service.overlapDates(service.findInstancesParcelByParcelName(newInstance.getParcel().getName()), newInstance)) {
+      dateError = dateErrorService.find(ID_OVERLAY_DATE_ERROR);
+      return mapper.writeValueAsString(dateError);
     }
 
     newInstance = service.create(newInstance);
@@ -262,52 +293,6 @@ public class InstanciaParcelaRestServlet {
     return mapper.writeValueAsString(instancia);
   }
 
-  /*
-   * NOTE: No entiendo porque se tienen que modificar los estados de
-   * las demas instancias de parcela al modificar una instancia de parcela
-   * de la misma parcela
-   */
-  // @PUT
-  // @Path("/{id}")
-  // @Produces(MediaType.APPLICATION_JSON)
-  // public String modify(@PathParam("id") int id, String json) throws IOException  {
-  //   InstanciaParcela modifiedInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
-  //   modifiedInstanceParcel = service.modify(id, modifiedInstanceParcel);
-  //
-  //   /*
-  //    * Coleccion que tiene todas las instancias de parcela
-  //    * que pertenecen a la misma parcela de la nueva instancia
-  //    * de parcela
-  //    */
-  //   Collection<InstanciaParcela> instances = service.findInstancesParcelByParcelName(modifiedInstanceParcel.getParcel().getName());
-  //
-  //   /*
-  //    * Modifica los estados de las instancias de las parcelas,
-  //    * todas ellas pertenecientes a la misma parcela, en base
-  //    * a sus fechas y a la fecha actual del sistema
-  //    */
-  //   service.modifyStates(modifiedInstanceParcel.getParcel().getName(), statusService.findAll());
-  //   return mapper.writeValueAsString(modifiedInstanceParcel);
-  //
-  //   /*
-  //    * NOTE: Falta hacerlo funcionar
-  //    *
-  //    * Si la diferencia en dias entre la fecha de siembra y la fecha
-  //    * de cosecha ingresadas no es mayor que la cantidad de dias que
-  //    * dura la etapa de vida del cultivo dado se realiza la modificacion
-  //    * del registro historico de parcela dado
-  //    */
-  //   // if (!(excessStageLife(instancia.getCultivo(), instancia.getFechaSiembra(), instancia.getFechaCosecha()))) {
-  //   //   instancia.setStatus(getStatus(instancia.getFechaCosecha()));
-  //   //   instancia = service.modify(id, instancia);
-  //   //   return mapper.writeValueAsString(instancia);
-  //   // }
-  //
-  //   // instancia.setStatus(getStatus(instancia.getFechaCosecha()));
-  //   // instancia = service.modify(id, instancia);
-  //   // return mapper.writeValueAsString(instancia);
-  // }
-
   /**
    * Comprueba si hay superposicion entre la fecha
    * de siembra y la fecha de cosecha de la instancia
@@ -327,65 +312,6 @@ public class InstanciaParcelaRestServlet {
      * se tiene que crear
      */
     if ((newInstanceParcel.getFechaCosecha() != null) && ((newInstanceParcel.getFechaSiembra().compareTo(newInstanceParcel.getFechaCosecha())) >= 0)) {
-      return mapper.writeValueAsString(null);
-    }
-
-    return mapper.writeValueAsString(newInstanceParcel);
-  }
-
-  /**
-   * Comprueba si hay superposicion de fechas entre la
-   * nueva instancia de parcela y las demas instancias
-   * de parcela, todas estas y la primera de la misma
-   * parcela
-   * @param "/dateOverlay"
-   */
-  @POST
-  @Path("/dateOverlayInCreation")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String dateOverlayInCreation(String json) throws IOException {
-    InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
-    Calendar currentDate = Calendar.getInstance();
-    Calendar harvestDate = null;
-
-    /*
-     * Instancia de parcela (registro historico de parcela) mas
-     * reciente (o ultima) que esta en el estado "Finalizado"
-     */
-
-    // FIXME: Esto es codigo muerto porque dentro de este metodo no se
-    // usa nunca el valor que contiene esta variable de tipo por
-    // referencia
-    InstanciaParcela recentFinishedInstanceParcel = service.findRecentFinished(newInstanceParcel.getParcel());
-
-    /*
-     * Instancia de parcela que esta en el estado 'En desarrollo',
-     * hay que recordar que solo una instancia de parcela puede
-     * estar en el estado mencionado
-     */
-
-    // FIXME: Esto es codigo muerto porque dentro de este metodo no se
-    // usa nunca el valor que contiene esta variable de tipo por
-    // referencia
-    InstanciaParcela instanceParcelInDevelopment = service.findInDevelopment(newInstanceParcel.getParcel());
-
-    /*
-     * Si la fecha de cosecha no fue establecida por
-     * el usuario al momento de crear una instancia
-     * de parcela, el sistema la calcula de forma
-     * automatica
-     */
-    if (newInstanceParcel.getFechaCosecha() == null) {
-      harvestDate = cropService.calculateHarvestDate(newInstanceParcel.getFechaSiembra(), newInstanceParcel.getCultivo());
-      newInstanceParcel.setFechaCosecha(harvestDate);
-    }
-
-    /*
-     * Evita la superposicion de fechas entre las
-     * instancias de parcelas y la nueva instancia
-     * de parcela
-     */
-    if (service.dateOverlayInCreation(newInstanceParcel)) {
       return mapper.writeValueAsString(null);
     }
 

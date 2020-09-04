@@ -6,7 +6,6 @@ import java.util.Map;
 
 import java.lang.reflect.Method;
 
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 
 import javax.persistence.EntityManager;
@@ -449,7 +448,7 @@ public class CultivoServiceBean implements CultivoService {
 
   /**
    * Busca en la base de datos la lista completa de Cultivos
-   * @return Collection<Cultivo> se retorna la lista de Cultivos
+   * @return Collection<Cultivo>
    */
   public Collection<Cultivo> findAll() {
     Query query = entityManager.createQuery("SELECT c FROM Cultivo c ORDER BY c.id");
