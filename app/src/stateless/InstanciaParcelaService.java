@@ -21,8 +21,8 @@ public interface InstanciaParcelaService {
   public InstanciaParcela find(Parcel givenParcel, int id);
   public Collection<InstanciaParcela> findAll();
   public Collection<InstanciaParcela> findInstancesParcelByParcelName(String parcelName);
+  public Collection<InstanciaParcela> findInstancesExceptOne(int idInstance, String parcelName);
   public InstanciaParcela findInDevelopment(Parcel givenParcel);
-  public boolean crossoverDate(Calendar seedTime, Calendar harvestDate);
+  public boolean crossoverDates(Calendar seedTime, Calendar harvestDate);
   public boolean overlapDates(Collection<InstanciaParcela> instances, InstanciaParcela givenInstance);
-  public boolean dateOverlayInModification(InstanciaParcela modifiedInstanceParcel);
 }

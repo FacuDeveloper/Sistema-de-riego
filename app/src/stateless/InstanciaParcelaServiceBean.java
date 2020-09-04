@@ -160,6 +160,42 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
   }
 
   /**
+   * Busca en la base de datos subyacente cada una de las
+   * instancias de parcelas pertenecientes a la parcela
+   * que tiene el nombre dado excepto aquella instancia
+   * de parcela que tiene el identificador dado
+   *
+   * En otras palabras, busca en la base de datos subyacente
+   * todas las instancias de parcela pertenecientes a una
+   * parcela dada, excepto una de esas instancias de parcelas
+   *
+   * Esta busqueda es para cuando se hace la modificacion de
+   * una instancia de parcela, accion en la cual se tiene que
+   * hacer la comprobacion de superposicion de fechas de la
+   * instancia de parcela modificada con las demas instancias
+   * de parcelas pertenecientes a la misma parcela, excepto
+   * con aquella instancia de parcela a modificar, ya que
+   * si dicha comprobacion se hace tambien comparando con
+   * la instancia de parcela a modificar entonces siempre
+   * habra superposicion de fechas en la modificacion de
+   * una instancia de parcela
+   *
+   * @param  idInstance
+   * @param  parcelName
+   * @return coleccion que no contiene la instancia de parcela con el
+   * identificador dado y que si las instancias de parcelas pertenecientes a la
+   * parcela que tiene el nombre dado, siendo la instancia de parcela
+   * con el identificador dado tambien perteneciente a la misma parcela
+   */
+  public Collection<InstanciaParcela> findInstancesExceptOne(int idInstance, String parcelName) {
+    Query query = entityManager.createQuery("SELECT e FROM InstanciaParcela e WHERE (e.id <> :idInstance AND e.parcel.name = :parcelName) ORDER BY e.fechaSiembra");
+    query.setParameter("idInstance", idInstance);
+    query.setParameter("parcelName", parcelName);
+
+    return (Collection<InstanciaParcela>) query.getResultList();
+  }
+
+  /**
    * Se considera registro historico actual de parcela a
    * aquel que esta tiene su cultivo en el estado "En desarrollo"
    *
@@ -198,7 +234,7 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
    * la fecha de cosecha de una instancia de parcela, falso en
    * caso contrario
    */
-  public boolean crossoverDate(Calendar seedTime, Calendar harvestDate) {
+  public boolean crossoverDates(Calendar seedTime, Calendar harvestDate) {
     /*
      * Si la fecha de siembra es mayor o igual a la
      * fecha de cosecha de una instancia de parcela
@@ -225,7 +261,6 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
    */
   public boolean overlapDates(Collection<InstanciaParcela> instances, InstanciaParcela givenInstance) {
     for (InstanciaParcela currentInstance : instances) {
-
       /*
        * Si la fecha de siembra de la instancia de parcela dada
        * es mayor o igual que la fecha de siembra de la instancia
@@ -263,128 +298,6 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
         return true;
       }
 
-    }
-
-    return false;
-  }
-
-  /**
-   * Comprueba si hay superposicion de fechas entre la instancia
-   * de parcela modificada y las demas instancias de parcelas, todas
-   * estas y la anterior de la misma parcela
-   *
-   * @param  modifiedInstanceParcel
-   * @return verdadero si hay superposicion de fechas entre
-   * la instancia de parcela modificada y las demas instancias
-   * de parcelas
-   */
-  public boolean dateOverlayInModification(InstanciaParcela modifiedInstanceParcel) {
-    List<InstanciaParcela> instancesParcel = (List<InstanciaParcela>) findInstancesParcelByParcelName(modifiedInstanceParcel.getParcel().getName());
-    InstanciaParcela previuosParcelInstance = null;
-    InstanciaParcela nextParcelInstance = null;
-
-    int index = instancesParcel.indexOf(modifiedInstanceParcel);
-
-    if (index > 0) {
-      previuosParcelInstance = instancesParcel.get(index - 1);
-    }
-
-    if ((index + 1) < instancesParcel.size()) {
-      nextParcelInstance = instancesParcel.get(index + 1);
-    }
-
-    /*
-     * Si existe una instancia de parcela previa a la
-     * instancia de parcela modificada y la fecha de
-     * siembra de esta ultima esta entre la fecha de siembra
-     * y la fecha de cosecha de la instancia de parcela
-     * previa, entonces hay superposicion
-     */
-    if ((previuosParcelInstance != null) && (modifiedInstanceParcel.getFechaCosecha() != null) &&
-    (dateBetweenOtherDates(modifiedInstanceParcel.getFechaSiembra(), previuosParcelInstance.getFechaSiembra(), previuosParcelInstance.getFechaCosecha()))) {
-      return true;
-    }
-
-    /*
-     * Si existe una instancia de parcela siguiente a la
-     * instancia de parcela modificada y la fecha de
-     * cosecha de esta ultima esta entre la fecha de
-     * siembra y la fecha de cosecha de la instancia
-     * de parcela siguiente, entonces hay superposicion
-     */
-    if ((nextParcelInstance != null) && (modifiedInstanceParcel.getFechaCosecha() != null) &&
-    (dateBetweenOtherDates(modifiedInstanceParcel.getFechaCosecha(), nextParcelInstance.getFechaSiembra(), nextParcelInstance.getFechaCosecha()))) {
-      return true;
-    }
-
-    /*
-     * Si la fecha de siembra de la instancia de parcela
-     * modificada es menor o igual que la fecha de siembra
-     * de la instancia de parcela previa a la anteriormente
-     * mencionada y la fecha de cosecha de la instancia
-     * de parcela modificada es mayor o igual a la fecha
-     * de cosecha de la instancia de parcela previa a la
-     * anteriormente mencionada, entonces hay superposicion
-     */
-    if ((previuosParcelInstance != null) && (modifiedInstanceParcel.getFechaCosecha() != null) &&
-    (totalOverlap(modifiedInstanceParcel.getFechaSiembra(), modifiedInstanceParcel.getFechaCosecha(), previuosParcelInstance.getFechaSiembra(), previuosParcelInstance.getFechaCosecha()))) {
-      return true;
-    }
-
-    /*
-     * Si la fecha de siembra de la instancia de parcela
-     * modificada es menor o igual que la fecha de siembra
-     * de la instancia de parcela siguiente a la anteriormente
-     * mencionada y la fecha de cosecha de la instancia
-     * de parcela modificada es mayor o igual a la fecha
-     * de cosecha de la instancia de parcela siguiente a
-     * a anteriormente mencionada, entonces hay superposicion
-     */
-    if ((nextParcelInstance != null) && (modifiedInstanceParcel.getFechaCosecha() != null) &&
-    (totalOverlap(modifiedInstanceParcel.getFechaSiembra(), modifiedInstanceParcel.getFechaCosecha(), nextParcelInstance.getFechaSiembra(), nextParcelInstance.getFechaCosecha()))) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * La fecha en medio de otras dos fechas se da cuando
-   * una fecha dada es mayor o igual que la fecha inferior
-   * y a su vez es menor o igual que la fecha superior
-   *
-   * @param  givenDate
-   * @param  lowerDate
-   * @param  topDate
-   * @return verdadero si la fecha dada esta entre la fecha
-   * inferior y la fecha superior, falso en caso contrario
-   */
-  private boolean dateBetweenOtherDates(Calendar givenDate, Calendar lowerDate, Calendar topDate) {
-
-    if ((givenDate.compareTo(lowerDate) >= 0) && (givenDate.compareTo(topDate) <= 0)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * La superposicion total se da cuando la fecha de siembra
-   * es menor o igual que la fecha inferior y la fecha de cosecha
-   * es mayor o igual que la fecha superior
-   *
-   * @param  seedDate
-   * @param  harvestDate
-   * @param  lowerDate
-   * @param  topDate
-   * @return verdadero si la fecha de siembra es menor o igual que
-   * la fecha inferior y si la fecha de cosecha es mayor o igual que
-   * la fecha superior, falso en caso contrario
-   */
-  private boolean totalOverlap(Calendar seedDate, Calendar harvestDate, Calendar lowerDate, Calendar topDate) {
-
-    if ((seedDate.compareTo(lowerDate) <= 0) && (harvestDate.compareTo(topDate) >= 0)) {
-      return true;
     }
 
     return false;

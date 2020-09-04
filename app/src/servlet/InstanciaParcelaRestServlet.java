@@ -108,6 +108,7 @@ public class InstanciaParcelaRestServlet {
    */
   private static final int ID_CROSSOVER_DATE_ERROR = 1;
   private static final int ID_OVERLAY_DATE_ERROR = 2;
+  private Calendar harvestDate;
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
@@ -144,39 +145,6 @@ public class InstanciaParcelaRestServlet {
     return mapper.writeValueAsString(instancias);
   }
 
-  // @GET
-  // @Path("/checkStageCropLife/{idCrop}")
-  // @Produces(MediaType.APPLICATION_JSON)
-  // public String checkStageCropLife(@PathParam("idCrop") int idCrop, @QueryParam("fechaSiembra") String fechaSiembra,
-  // @QueryParam("fechaCosecha") String fechaCosecha) throws IOException, ParseException {
-  //   Cultivo choosenCrop = cropService.find(idCrop);
-  //
-  //   SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-  //   Calendar seedDate = Calendar.getInstance();
-  //   Calendar harvestDate = Calendar.getInstance();
-  //
-  //   /*
-  //    * Fechas convertidas de String a Date
-  //    */
-  //   Date dateSeedDate = new Date(dateFormatter.parse(fechaSiembra).getTime());
-  //   Date dateHarvestDate = new Date(dateFormatter.parse(fechaCosecha).getTime());
-  //
-  //   seedDate.set(dateSeedDate.getYear(), dateSeedDate.getMonth(), dateSeedDate.getDate());
-  //   harvestDate.set(dateHarvestDate.getYear(), dateHarvestDate.getMonth(), dateHarvestDate.getDate());
-  //
-  //   /*
-  //    * Si la diferencia en dias entre la fecha de siembra
-  //    * y la fecha de cosecha ingresadas es mayor a la cantidad
-  //    * total de dias de vida que vive el cultivo dado, retorna
-  //    * el cultivo dado como "error"
-  //    */
-  //   if (excessStageLife(choosenCrop, seedDate, harvestDate)) {
-  //     return mapper.writeValueAsString(choosenCrop);
-  //   }
-  //
-  //   return mapper.writeValueAsString(null);
-  // }
-
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   public String create(String json) throws IOException {
@@ -187,7 +155,7 @@ public class InstanciaParcelaRestServlet {
      * no ha sido definida por el usuario se la crea
      */
     if (newInstance.getFechaCosecha() == null) {
-      Calendar harvestDate = cropService.calculateHarvestDate(newInstance.getFechaSiembra(), newInstance.getCultivo());
+      harvestDate = cropService.calculateHarvestDate(newInstance.getFechaSiembra(), newInstance.getCultivo());
       newInstance.setFechaCosecha(harvestDate);
       newInstance.setStatus(statusService.getStatus(newInstance.getFechaSiembra(), harvestDate));
     } else {
@@ -201,7 +169,7 @@ public class InstanciaParcelaRestServlet {
      * de error de fechas, el cual contiene una descripcion
      * para evitar el error
      */
-    if (service.crossoverDate(newInstance.getFechaSiembra(), newInstance.getFechaCosecha())) {
+    if (service.crossoverDates(newInstance.getFechaSiembra(), newInstance.getFechaCosecha())) {
       dateError = dateErrorService.find(ID_CROSSOVER_DATE_ERROR);
       return mapper.writeValueAsString(dateError);
     }
@@ -235,105 +203,43 @@ public class InstanciaParcelaRestServlet {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String modify(@PathParam("id") int id, String json) throws IOException  {
-    InstanciaParcela instancia = mapper.readValue(json, InstanciaParcela.class);
-
-    InstanciaParcela previuosParcelInstance = service.find(instancia.getParcel(), instancia.getId() - 1);
-    InstanciaParcela nextParcelInstance = service.find(instancia.getParcel(), instancia.getId() + 1);
+    InstanciaParcela modifiedInstance = mapper.readValue(json, InstanciaParcela.class);
+    modifiedInstance.setStatus(statusService.getStatus(modifiedInstance.getFechaSiembra(), modifiedInstance.getFechaCosecha()));
 
     /*
-     * Si la fecha de cosecha de la instancia de parcela anterior a la
-     * que se va a modificar es mayor a la fecha de siembra de la instancia
-     * de parcela que se va a modificar, no se tiene que realizar la modificacion
+     * Si la fecha de siembra y la fecha de cosecha estan
+     * cruzadas, es decir, superpuestas, entonces se envia
+     * de parte de la aplicacion del lado servidor un aviso
+     * de error de fechas, el cual contiene una descripcion
+     * para evitar el error
      */
-    if ((previuosParcelInstance != null) && ((previuosParcelInstance.getFechaCosecha().compareTo(instancia.getFechaSiembra()) == 0)
-    || (previuosParcelInstance.getFechaCosecha().compareTo(instancia.getFechaSiembra()) > 0))) {
-      return null;
+    if (service.crossoverDates(modifiedInstance.getFechaSiembra(), modifiedInstance.getFechaCosecha())) {
+      dateError = dateErrorService.find(ID_CROSSOVER_DATE_ERROR);
+      return mapper.writeValueAsString(dateError);
     }
 
     /*
-     * Si la fecha de cosecha de la instancia de parcela que se va a modificar
-     * es mayor que la fecha de siembra de la siguiente instancia de parcela
-     * a la que se va a modificar, no se tiene que realizar la modificacion
-     */
-    if ((nextParcelInstance != null) && ((instancia.getFechaCosecha().compareTo(nextParcelInstance.getFechaSiembra()) == 0)
-    || (instancia.getFechaCosecha().compareTo(nextParcelInstance.getFechaSiembra()) > 0))) {
-      return null;
-    }
-
-    /*
-     * Si la fecha de siembra y la fecha de cosecha de la instancia
-     * de parcela que se va a modificar coinciden, no se tiene que
-     * realizar la modificacion
-     */
-    if ((instancia.getFechaSiembra() != null) && (instancia.getFechaCosecha() != null) && (instancia.getFechaSiembra().compareTo(instancia.getFechaCosecha()) == 0)) {
-      return null;
-    }
-
-    // if (instancia.getStatus().getName().equals("Finalizado")) {
-    //   instancia = service.change(id, instancia);
-    //   return mapper.writeValueAsString(instancia);
-    // }
-
-    /*
-     * NOTE: Falta hacerlo funcionar
+     * Si hay superposicion de fechas entre la nueva instancia
+     * de parcela y las instancias de parcela pertenecientes
+     * a la misma parcela (de la nueva instancia de parcela)
+     * entonces se envia de parte de la aplicacion del lado
+     * servidor un aviso de error de fechas, el cual
+     * contiene una descripcion para evitar el error
      *
-     * Si la diferencia en dias entre la fecha de siembra y la fecha
-     * de cosecha ingresadas no es mayor que la cantidad de dias que
-     * dura la etapa de vida del cultivo dado se realiza la modificacion
-     * del registro historico de parcela dado
+     * Para comprobar la superposicion de fechas en la modificacion
+     * de una instancia de parcela se deben usar las instancias
+     * de parcela pertenecientes a la misma parcela excepto la
+     * instancia de parcela a modificar como un valor contra
+     * el cual comparar para determinar si hay o no superposicion
+     * de fechas cuando se modifica una instancia de parcela
      */
-    // if (!(excessStageLife(instancia.getCultivo(), instancia.getFechaSiembra(), instancia.getFechaCosecha()))) {
-    //   instancia.setStatus(getStatus(instancia.getFechaCosecha()));
-    //   instancia = service.change(id, instancia);
-    //   return mapper.writeValueAsString(instancia);
-    // }
-
-    instancia.setStatus(statusService.getStatus(instancia.getFechaSiembra(), instancia.getFechaCosecha()));
-    instancia = service.modify(id, instancia);
-    return mapper.writeValueAsString(instancia);
-  }
-
-  /**
-   * Comprueba si hay superposicion entre la fecha
-   * de siembra y la fecha de cosecha de la instancia
-   * de parcela a crear
-   * @param "/overlapSeedDateHarvest"
-   */
-  @POST
-  @Path("/overlapSeedDateHarvest")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String overlapSeedDateHarvest(String json) throws IOException {
-    InstanciaParcela newInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
-
-    /*
-     * Si la fecha de siembra de la nueva instancia
-     * de parcela es mayor o igual que su fecha de
-     * cosecha, esta nueva instancia de parcela no
-     * se tiene que crear
-     */
-    if ((newInstanceParcel.getFechaCosecha() != null) && ((newInstanceParcel.getFechaSiembra().compareTo(newInstanceParcel.getFechaCosecha())) >= 0)) {
-      return mapper.writeValueAsString(null);
+    if (service.overlapDates(service.findInstancesExceptOne(modifiedInstance.getId(), modifiedInstance.getParcel().getName()), modifiedInstance)) {
+      dateError = dateErrorService.find(ID_OVERLAY_DATE_ERROR);
+      return mapper.writeValueAsString(dateError);
     }
 
-    return mapper.writeValueAsString(newInstanceParcel);
-  }
-
-  @PUT
-  @Path("/dateOverlayInModification")
-  @Produces(MediaType.APPLICATION_JSON)
-  public String dateOverlayInModification(String json) throws IOException  {
-    InstanciaParcela modifiedInstanceParcel = mapper.readValue(json, InstanciaParcela.class);
-
-    /*
-     * Evita la superposicion de fechas entre las
-     * instancias de parcelas y la instancia de
-     * parcela modificada
-     */
-    if (service.dateOverlayInModification(modifiedInstanceParcel)) {
-      return mapper.writeValueAsString(null);
-    }
-
-    return mapper.writeValueAsString(modifiedInstanceParcel);
+    modifiedInstance = service.modify(id, modifiedInstance);
+    return mapper.writeValueAsString(modifiedInstance);
   }
 
   @GET
@@ -427,68 +333,6 @@ public class InstanciaParcelaRestServlet {
     newIrrigationLog.setParcel(parcel);
 
     return mapper.writeValueAsString(newIrrigationLog);
-  }
-
-  /**
-   * @param  givenCrop
-   * @param  seedDate    [fecha de siembra]
-   * @param  harvestDate [fecha de cosecha]
-   * @return verdadero si la diferencia en dias entre la fecha de
-   * siembra y la fecha de cosecha es mayor que la cantidad de dias
-   * que dura la etapa de vida del cultivo dado, en caso contrario
-   * retorna falso
-   */
-  private boolean excessStageLife(Cultivo givenCrop, Calendar seedDate, Calendar harvestDate) {
-    int differenceBetweenDates = 0;
-    int totalDaysLife = givenCrop.getEtInicial() + givenCrop.getEtDesarrollo() + givenCrop.getEtMedia() + givenCrop.getEtFinal();
-
-    /*
-     * Si los años de la fecha de siembra y de la fecha de cosecha
-     * son iguales, entonces la diferencia en dias entre ambas fechas
-     * se calcula de forma directa
-     */
-    if ((seedDate.get(Calendar.YEAR)) == (harvestDate.get(Calendar.YEAR))) {
-      differenceBetweenDates = harvestDate.get(Calendar.DAY_OF_YEAR) - seedDate.get(Calendar.DAY_OF_YEAR);
-    }
-
-    /*
-     * Si la diferencia entre los años de la fecha de siembra y la fecha
-     * de cosecha ingresadas es igual a uno, la diferencia en dias entre
-     * ambas fechas se calcula de la siguiente forma:
-     *
-     * Diferencia en dias entre ambas fechas = (365 - numero del dia en el
-     * año de la fecha de siembra + 1) - numero del dia en el año de la
-     * fecha de cosecha
-     */
-    if ((harvestDate.get(Calendar.YEAR) - seedDate.get(Calendar.YEAR)) == 1) {
-      differenceBetweenDates = (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1) + harvestDate.get(Calendar.DAY_OF_YEAR);
-    }
-
-    /*
-     * Si la diferencia entre los años de la fecha de siembra y la fecha
-     * de cosecha ingresadas es mayor a uno, la diferencia en dias entre
-     * ambas fechas se calcula de la siguiente forma:
-     *
-     * Diferencia en dias entre ambas fechas = (año de la fecha de cosecha -
-     * año de la fecha de siembra) * 365 - (365 - numero del dia en el año
-     * de la fecha de siembra + 1) - numero del dia en el año de la fecha
-     * de cosecha
-     */
-    if ((harvestDate.get(Calendar.YEAR) - seedDate.get(Calendar.YEAR)) > 1) {
-      differenceBetweenDates = ((harvestDate.get(Calendar.YEAR) - seedDate.get(Calendar.YEAR)) * 365) - (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1) - harvestDate.get(Calendar.DAY_OF_YEAR);
-    }
-
-    /*
-     * Si la diferencia en dias entre la fecha de siembra
-     * y la fecha de cosecha ingresadas es mayor a la cantidad
-     * total de dias de vida que vive el cultivo dado, retorna
-     * verdadero
-     */
-    if (differenceBetweenDates > totalDaysLife) {
-      return true;
-    }
-
-    return false;
   }
 
 }
