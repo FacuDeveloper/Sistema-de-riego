@@ -142,7 +142,7 @@ public class IrrigationLogGenerator {
         // currentSuggestedIrrigation = WaterMath.getSuggestedIrrigation(currentParcel.getArea(), yesterdayEtc, yesterdayEto, yesterdayRainWater, waterAccumulatedYesterday, 0.0);
         // currentIrrigationLog.setSuggestedIrrigation(currentSuggestedIrrigation);
 
-        currentSuggestedIrrigation = WaterMath.getSuggestedIrrigation(yesterdayEtc, yesterdayEto, yesterdayRainWater, waterAccumulatedYesterday, 0.0);
+        currentSuggestedIrrigation = WaterMath.getSuggestedIrrigation(yesterdayClimateLog, 0.0);
         currentIrrigationLog.setSuggestedIrrigation(currentSuggestedIrrigation);
 
         /*

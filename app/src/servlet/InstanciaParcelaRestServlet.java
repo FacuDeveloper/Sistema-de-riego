@@ -21,7 +21,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import model.InstanciaParcela;
-import model.Cultivo;
 import model.Parcel;
 import model.ClimateLog;
 import model.IrrigationLog;
@@ -39,16 +38,7 @@ import stateless.DateErrorServiceBean;
 
 import irrigation.WaterMath;
 
-import java.lang.Math;
-
-import java.util.Date;
-
 import climate.ClimateLogService;
-
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-
-import et.Eto;
 
 import util.UtilDate;
 
@@ -248,15 +238,7 @@ public class InstanciaParcelaRestServlet {
   public String getSuggestedIrrigation(@PathParam("id") int id) throws IOException {
     InstanciaParcela choosenParcelInstance = service.find(id);
     Parcel parcel = choosenParcelInstance.getParcel();
-    double suggestedIrrigationToday = 0.0;
-    double tomorrowPrecipitation = 0.0;
-
     ClimateLogService climateLogService = ClimateLogService.getInstance();
-    ClimateLog yesterdayClimateLog = null;
-    double yesterdayEto = 0.0;
-    double yesterdayEtc = 0.0;
-    double extraterrestrialSolarRadiation = 0.0;
-    double maximumInsolation = 0.0;
 
     /*
      * Fecha actual del sistema
@@ -264,16 +246,29 @@ public class InstanciaParcelaRestServlet {
     Calendar currentDate = Calendar.getInstance();
 
     /*
-     * Fecha del dia de mañana para solicitar la precipitacion
-     * del dia de mañana
+     * Se solicita el registro climatico del dia de mañana
+     * para obtener la precipitacion del dia de mañana, lo
+     * cual se lo hace para añadir dicho valor al registro
+     * de riego que sera mostrado al usuario luego de que
+     * este presione el boton para calcular el agua de riego
      */
     Calendar tomorrowDate = UtilDate.getTomorrowDate();
 
     /*
-     * Solicita el registro del clima del dia de mañana
+     * Se divide el tiempo en milisegundos entre 1000 para
+     * pasarlo a segundos, unidad de medida en la cual esta
+     * el formato UNIX TIMESTAMP
      */
     ClimateLog tomorrowClimateLog = climateLogService.getClimateLog(parcel.getLatitude(), parcel.getLongitude(), (tomorrowDate.getTimeInMillis() / 1000));
-    tomorrowPrecipitation = tomorrowClimateLog.getRainWater();
+    double tomorrowPrecipitation = tomorrowClimateLog.getRainWater();
+
+    /*
+     * Cantidad total de agua utilizada en los riegos
+     * realizados en el dia de hoy, la cual es
+     * necesaria para determinar el riego sugerido
+     * para el dia de hoy
+     */
+    double totalIrrigationWaterToday = irrigationLogService.getTotalWaterIrrigationToday(parcel);
 
     /*
      * Fecha del dia inmediatamente anterior a la fecha
@@ -281,50 +276,29 @@ public class InstanciaParcelaRestServlet {
      */
     Calendar yesterdayDate = UtilDate.getYesterdayDate();
 
-    /*
-     * Cantidad total de agua utilizada en los riegos
-     * realizados en el dia de hoy, la cual es necesaria
-     * para determinar el riego sugerido para el dia de
-     * hoy
-     */
-    double totalIrrigationWaterToday = irrigationLogService.getTotalWaterIrrigationToday(parcel);
-
-    /*
-     * Si el registro climatico del dia de ayer no existe en
-     * la base de datos, se lo tiene que pedir y se lo tiene
-     * que persistir en la base de datos subyacente
-     */
-    if (!(climateLogServiceBean.exist(yesterdayDate, parcel))) {
-      yesterdayClimateLog = climateLogService.getClimateLog(parcel.getLatitude(), parcel.getLongitude(), (yesterdayDate.getTimeInMillis() / 1000));
-
-      extraterrestrialSolarRadiation = solarService.getRadiation(yesterdayDate.get(Calendar.MONTH), parcel.getLatitude());
-      maximumInsolation = insolationService.getInsolation(yesterdayDate.get(Calendar.MONTH), parcel.getLatitude());
-
-      /*
-       * Evapotranspiracion del cultivo de referencia (ETo) con las
-       * condiciones climaticas del registro climatico del dia de ayer
-       */
-      yesterdayEto = Eto.getEto(yesterdayClimateLog, extraterrestrialSolarRadiation, maximumInsolation);
-
-      /*
-       * Evapotranspiracion del cultivo bajo condiciones esntandar (ETc)
-       * del cultivo dado con la ETo del dia de ayer
-       */
-      yesterdayEtc = cropService.getKc(choosenParcelInstance.getCultivo(), choosenParcelInstance.getFechaSiembra()) * yesterdayEto;
-
-      yesterdayClimateLog.setEto(yesterdayEto);
-      yesterdayClimateLog.setEtc(yesterdayEtc);
-      yesterdayClimateLog.setParcel(parcel);
-      climateLogServiceBean.create(yesterdayClimateLog);
-    }
+    double solarRadiation = solarService.getRadiation(yesterdayDate.get(Calendar.MONTH), parcel.getLatitude());
+    double insolation = insolationService.getInsolation(yesterdayDate.get(Calendar.MONTH), parcel.getLatitude());
+    double cropCoefficient = cropService.getKc(choosenParcelInstance.getCultivo(), choosenParcelInstance.getFechaSiembra());
 
     /*
      * Recupera el registro climatico de la parcela
      * de la fecha anterior a la fecha actual
      */
-    yesterdayClimateLog = climateLogServiceBean.find(yesterdayDate, parcel);
-    suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(yesterdayClimateLog.getEtc(), yesterdayClimateLog.getEto(), yesterdayClimateLog.getRainWater(), yesterdayClimateLog.getWaterAccumulated(), totalIrrigationWaterToday);
-    // suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(parcel.getArea(), yesterdayClimateLog.getEtc(), yesterdayClimateLog.getEto(), yesterdayClimateLog.getRainWater(), yesterdayClimateLog.getWaterAccumulated(), totalIrrigationWaterToday);
+    ClimateLog yesterdayClimateLog = climateLogServiceBean.retrieveYesterdayClimateLog(parcel, solarRadiation, insolation, cropCoefficient);
+
+    /*
+     * El agua de riego para el dia de hoy se calcula en funcion
+     * de:
+     * - La Etc del dia de ayer
+     * - La Eto del dia de ayer, en caso de que la Etc del dia de ayer sea 0
+     * - La cantidad de agua de lluvia del dia de ayer
+     * - La cantidad de agua acumulada del dia de ayer
+     * - La cantidad total de agua de riego utilizada en el dia de hoy
+     *
+     * Los primeros cuatro datos son extraidos del registro climatico del
+     * dia de ayer
+     */
+    double suggestedIrrigationToday = WaterMath.getSuggestedIrrigation(yesterdayClimateLog, totalIrrigationWaterToday);
 
     IrrigationLog newIrrigationLog = new IrrigationLog();
     newIrrigationLog.setDate(currentDate);

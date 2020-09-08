@@ -2,12 +2,14 @@
  * Esta clase tiene implementada las formulas matematicas
  * necesarias para calcular el riego sugerido del dia de
  * hoy y la cantidad de agua acumulada del dia de hoy,
- * ambos valores en milimetros
+ * ambos valores en milimetros/dia
  */
 
 package irrigation;
 
 import java.lang.Math;
+
+import model.ClimateLog;
 
 public class WaterMath {
 
@@ -18,22 +20,22 @@ public class WaterMath {
 
   /**
    * Calcula el riego sugerido [milimetros] para el dia de hoy en funcion
-   * de la ETc, la ETo, la cantidad de agua de lluvia y la cantidad
-   * de agua acumulada, siendo todos estos valores del dia de ayer
+   * de la ETc, la ETo, la cantidad de agua de lluvia, la cantidad
+   * de agua acumulada (siendo todos estos valores del dia de ayer) y
+   * la cantidad de agua de riego que se utilizo en el dia de hoy
    *
    * En pocas palabras, calcula el riego sugerido en milimetros para el
-   * dia de hoy en funcion de lo que ha sucedido en el dia de ayer
+   * dia de hoy en funcion de lo que ha sucedido en el dia de ayer y
+   * de la cantidad de agua de riego utilizada en el dia de hoy
    *
-   * @param  hectare                   [hectarea de la parcela sobre la cual estan plantados los cultivos del usuario cliente]
-   * @param  yesterdayEtc              [ETc del dia de ayer] [milimetros]
-   * @param  yesterdayEto              [ETo del dia de ayer] [milimetros]
-   * @param  yesterdayRainWater        [cantidad de agua de lluvia del dia de ayer] [milimetros]
-   * @param  waterAccumulatedYesterday [cantidad de agua acumulada del dia de ayer] [milimetros]
-   * @return el riego sugerido [milimetros] para el dia de hoy
+   * @param  yesterdayClimateLog
+   * @param  totalIrrigationWaterToday [cantida de agua de riego utilizada en el dia de hoy]
+   * @return el riego sugerido [milimetros/dia] para el dia de hoy
    */
-  public static double getSuggestedIrrigation(double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday, double totalIrrigationWaterToday) {
-  // public static double getSuggestedIrrigation(double hectare, double yesterdayEtc, double yesterdayEto, double yesterdayRainWater, double waterAccumulatedYesterday,
-  // double totalIrrigationWaterToday) {
+  public static double getSuggestedIrrigation(ClimateLog yesterdayClimateLog, double totalIrrigationWaterToday) {
+    double yesterdayEtc = yesterdayClimateLog.getEtc();
+    double yesterdayRainWater = yesterdayClimateLog.getRainWater();
+    double waterAccumulatedYesterday = yesterdayClimateLog.getWaterAccumulated();
 
     /*
      * Evapotranspiracion del dia de ayer
@@ -62,7 +64,7 @@ public class WaterMath {
      * sugerido para el dia de hoy
      */
     if (yesterdayEtc == 0.0) {
-      yesterdayEvapotranspiration = yesterdayEto;
+      yesterdayEvapotranspiration = yesterdayClimateLog.getEto();
     } else {
       yesterdayEvapotranspiration = yesterdayEtc;
     }
@@ -88,25 +90,6 @@ public class WaterMath {
       suggestedIrrigationToday = yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
     }
 
-    // suggestedIrrigationToday = hectare * suggestedIrrigationToday;
-
-    /*
-     * Necesidad total de riego del cultivo dado
-     *
-     * Este valor es igual a la multiplicacion
-     * entre la cantidad de hectareas de la parcela
-     * dada y la necesidad de riego del cultivo dado, la
-     * cual es igual a la evapotranspiracion del dia
-     * de ayer menos la suma entre la cantidad de agua
-     * de lluvia del dia de ayer y la cantidad de agua
-     * acumulada del dia de ayer
-     */
-    // double totalNeedIrrigation = hectare * (yesterdayEvapotranspiration - (yesterdayRainWater + waterAccumulatedYesterday));
-    //
-    // if (totalNeedIrrigation > (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday)) {
-    //   suggestedIrrigationToday = totalNeedIrrigation - (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday);
-    // }
-
     return truncateToThreeDecimals(suggestedIrrigationToday);
   }
 
@@ -123,7 +106,7 @@ public class WaterMath {
    * @param  yesterdayRainWater        [cantidad de agua de lluvia del dia de ayer] [milimetros]
    * @param  waterAccumulatedYesterday [cantidad de agua acumulada del dia de ayer] [milimetros]
    * @param  totalIrrigationWaterToday [cantidad total de agua utilizada en los riegos del dia de hoy] [milimetros]
-   * @return la cantidad de agua [milimetros] acumulada en el dia
+   * @return la cantidad de agua [milimetros/dia] acumulada en el dia
    * de hoy, la cual es la cantidad de agua a favor del dia de hoy
    * para el dia de mañana
    */

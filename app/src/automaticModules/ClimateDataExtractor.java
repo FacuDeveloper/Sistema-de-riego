@@ -131,7 +131,7 @@ public class ClimateDataExtractor {
        * en la fecha actual para la parcela dada, entonces
        * se tiene que crear uno
        */
-      if (!climateLogServiceBean.exist(currentDate, currentParcel)) {
+      if (!climateLogServiceBean.checkExistenceClimateLog(currentDate, currentParcel)) {
         latitude = currentParcel.getLatitude();
         longitude = currentParcel.getLongitude();
 
