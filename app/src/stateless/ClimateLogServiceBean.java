@@ -91,14 +91,19 @@ public  class ClimateLogServiceBean {
    * Establece el agua acumulada del registro climatico
    * del dia de hoy de una parcela dada
    *
-   * @param givenDate
-   * @param givenParcel
+   * @param parcel
    * @param waterAccumulated [milimetros]
    */
-  public void updateWaterAccumulatedToday(Calendar givenDate, Parcel givenParcel, double waterAccumulated) {
-    Query query = entityManager.createQuery("UPDATE ClimateLog c SET c.waterAccumulated = :waterAccumulated WHERE (c.date = :givenDate AND c.parcel = :givenParcel)");
-    query.setParameter("givenDate", givenDate);
-    query.setParameter("givenParcel", givenParcel);
+  public void updateWaterAccumulatedToday(Parcel parcel, double waterAccumulated) {
+    Query query = entityManager.createQuery("UPDATE ClimateLog c SET c.waterAccumulated = :waterAccumulated WHERE (c.date = :currentDate AND c.parcel = :parcel)");
+
+    /*
+     * Calendar.getInstance() retorna la referencia de un
+     * objeto de tipo Calendar que tiene la fecha actual
+     * del sistema
+     */
+    query.setParameter("currentDate", Calendar.getInstance());
+    query.setParameter("parcel", parcel);
     query.setParameter("waterAccumulated", waterAccumulated);
     query.executeUpdate();
   }

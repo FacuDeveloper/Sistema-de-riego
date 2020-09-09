@@ -196,22 +196,18 @@ public class InstanciaParcelaServiceBean implements InstanciaParcelaService {
   }
 
   /**
-   * Se considera registro historico actual de parcela a
-   * aquel que esta tiene su cultivo en el estado "En desarrollo"
+   * Busca la instancia de parcela que esta en el estado
+   * 'En desarrollo', y solo puede haber una instancia
+   * de parcela en dicho estado
    *
-   * Solo puede haber un unico registro historico de parcela
-   * en el estado mencionado y esto es para cada parcela
-   * existente en el sistema, con lo cual siempre deberia
-   * haber un unico registro historico actual de parcela
-   * para cada parcela existente en el sistema
-   *
-   * @param  givenParcel
-   * @return registro historico de parcela actual, si hay uno
-   * actual, en caso contrario retorna falso
+   * @param  parcel
+   * @return instancia de parcela que esta en el estado
+   * 'En desarrollo', si existe dicha instancia en ese
+   * estado, en caso contrario retorna nulo
    */
-  public InstanciaParcela findInDevelopment(Parcel givenParcel) {
+  public InstanciaParcela findInDevelopment(Parcel parcel) {
     Query query = entityManager.createQuery("SELECT r FROM InstanciaParcela r JOIN r.parcel p JOIN r.status s WHERE (s.name = 'En desarrollo' AND p = :parcel)");
-    query.setParameter("parcel", givenParcel);
+    query.setParameter("parcel", parcel);
 
     InstanciaParcela resultingParcelInstancce;
 

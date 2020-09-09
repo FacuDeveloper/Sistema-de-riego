@@ -60,26 +60,33 @@ public class CultivoServiceBean implements CultivoService {
   }
 
   /**
-  * Modificar los valores de una Cultivo a partir de los cambios de otra Cultivo instanciada
-  * @param int id Id de el cultivo a modificar
-  * @param Cultivo Cultivo Instancia de el cultivo con los valores actualizados
-  * @return Cultivo se retorna el cultivo de la base de datos con las modificaciones, o null si no se encontro Cultivosio correspondiente al id
-  */
-  public Cultivo change(int id, Cultivo cultivo) {
-    Cultivo crop = find(id);
+   * Modifica los valores de un cultivo elegido, a partir de los cambios realizados
+   * en una instancia, de tipo Cultivo, que tiene el identificador del cultivo
+   * elegido
+   *
+   * @param int id [identificador del cultivo elegido para modificacion]
+   * @param  modifiedCrop [instancia, de tipo Cultivo, del cultivo elegido con sus valores modificados]
+   * @return referencia a un objeto de tipo Cultivo que contiene sus datos
+   * modificados, en caso hallarse en la base de datos subyacente el cultivo
+   * que tiene el identificador (id) dado, o nulo si no se encontro en la
+   * base de datos subyacente el cultivo, con el id dado, que fue elegido
+   * para modificacion
+   */
+  public Cultivo modify(int id, Cultivo modifiedCrop) {
+    Cultivo choosenCrop = find(id);
 
-    if (crop != null) {
-      crop.setKcInicial(cultivo.getKcInicial());
-      crop.setKcMedio(cultivo.getKcMedio());
-      crop.setKcFinal(cultivo.getKcFinal());
-      crop.setNombre(cultivo.getNombre());
-      crop.setEtInicial(cultivo.getEtInicial());
-      crop.setEtDesarrollo(cultivo.getEtDesarrollo());
-      crop.setEtMedia(cultivo.getEtMedia());
-      crop.setEtFinal(cultivo.getEtFinal());
-      crop.setAgotamientoCritico(cultivo.getAgotamientoCritico());
-      crop.setActivo(cultivo.getActivo());
-      return crop;
+    if (choosenCrop != null) {
+      choosenCrop.setKcInicial(modifiedCrop.getKcInicial());
+      choosenCrop.setKcMedio(modifiedCrop.getKcMedio());
+      choosenCrop.setKcFinal(modifiedCrop.getKcFinal());
+      choosenCrop.setNombre(modifiedCrop.getNombre());
+      choosenCrop.setEtInicial(modifiedCrop.getEtInicial());
+      choosenCrop.setEtDesarrollo(modifiedCrop.getEtDesarrollo());
+      choosenCrop.setEtMedia(modifiedCrop.getEtMedia());
+      choosenCrop.setEtFinal(modifiedCrop.getEtFinal());
+      choosenCrop.setAgotamientoCritico(modifiedCrop.getAgotamientoCritico());
+      choosenCrop.setActivo(modifiedCrop.getActivo());
+      return choosenCrop;
     }
 
     return null;

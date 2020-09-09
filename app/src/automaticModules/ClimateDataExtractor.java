@@ -190,8 +190,18 @@ public class ClimateDataExtractor {
          * de hoy
          */
         ClimateLog yesterdayClimateLog = climateLogServiceBean.find(yesterdayDate, currentParcel);
-        waterAccumulatedToday = WaterMath.getWaterAccumulatedToday(yesterdayClimateLog.getEtc(), yesterdayClimateLog.getEto(), yesterdayClimateLog.getRainWater(),
-        yesterdayClimateLog.getWaterAccumulated(), irrigationLogService.getTotalWaterIrrigation(yesterdayDate, currentParcel));
+
+        /*
+         * NOTE: Revisar esta linea de codigo
+         * Hay que revisar si en el caso en el cual se pide por primera
+         * vez es el registro climatico de una parcela para el dia de hoy
+         * se tiene que calcular el agua acumulada para el dia de hoy en
+         * funcion de la cantidad total de agua del dia de ayer, esto
+         * tiene sentido porque cuando se pide el registro climatico
+         * para el dia de hoy por primera vez a primera hora del dia
+         * acutal no se tiene agua de riego acumulada en el dia actual
+         */
+        waterAccumulatedToday = WaterMath.calculateWaterAccumulatedToday(yesterdayClimateLog, irrigationLogService.getTotalWaterIrrigation(yesterdayDate, currentParcel));
 
         climateLog.setWaterAccumulated(waterAccumulatedToday);
 

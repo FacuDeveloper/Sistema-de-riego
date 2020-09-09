@@ -13,7 +13,7 @@ public interface CultivoService {
   public void setEntityManager(EntityManager em);
   public Cultivo create(Cultivo cultivo);
   public Cultivo remove(int id);
-  public Cultivo change(int id, Cultivo cultivo);
+  public Cultivo modify(int id, Cultivo cultivo);
   public Cultivo find(int id);
   public Collection<Cultivo> findAll();
   public Collection<Cultivo> findAllActive();

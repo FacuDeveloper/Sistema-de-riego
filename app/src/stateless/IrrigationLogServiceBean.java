@@ -41,23 +41,6 @@ public  class IrrigationLogServiceBean {
   }
 
   /**
-   * Elimina un suelo mediante su id
-   *
-   * @param  id
-   * @return No nulo en caso de haber eliminado el suelo, en caso contrario nulo
-   */
-  // public IrrigationLog remove(int id) {
-  //   IrrigationLog irrigationLog = find(id);
-  //
-  //   if (irrigationLog != null) {
-  //     entityManager.emove(irrigationLog);
-  //     return irrigationLog;
-  //   }
-  //
-  //   return null;
-  // }
-
-  /**
    * Actualiza o modifica la entidad asociada al id dado
    *
    * @param  id
@@ -134,12 +117,12 @@ public  class IrrigationLogServiceBean {
     query.setParameter("givenDate", givenDate);
     query.setParameter("givenParcel", givenParcel);
 
-    double result = 0.0;
+    double result;
 
     try {
       result = (double) query.getSingleResult();
     } catch(NullPointerException e) {
-
+      result = 0.0;
     }
 
     return result;
@@ -161,13 +144,13 @@ public  class IrrigationLogServiceBean {
     query.setParameter("givenDate", givenDate);
     query.setParameter("givenParcel", givenParcel);
 
-    boolean result = false;
+    boolean result;
 
     try {
       query.getSingleResult();
       result = true;
     } catch(NoResultException ex) {
-
+      result = false;
     }
 
     return result;

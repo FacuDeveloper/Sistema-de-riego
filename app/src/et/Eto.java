@@ -10,6 +10,11 @@ import model.ClimateLog;
 
 public class Eto {
 
+  // Constructor method
+  private Eto() {
+
+  }
+
   /**
    * Calcula la evapotranspiracion del cultivo de referencia,
    * la cual nos indica la cantidad de agua que va a evaporar

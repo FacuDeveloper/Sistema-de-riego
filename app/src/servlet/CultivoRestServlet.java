@@ -89,9 +89,9 @@ public class CultivoRestServlet {
   @PUT
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public String change(@PathParam("id") int id, String json) throws IOException  {
+  public String modify(@PathParam("id") int id, String json) throws IOException  {
     Cultivo cultivo = mapper.readValue(json,Cultivo.class);
-    cultivo = service.change(id, cultivo);
+    cultivo = service.modify(id, cultivo);
     return mapper.writeValueAsString(cultivo);
   }
 

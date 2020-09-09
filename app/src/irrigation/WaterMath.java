@@ -94,7 +94,7 @@ public class WaterMath {
   }
 
   /**
-   * Calcula la cantidad de agua acumulada [milimetros] del dia hoy
+   * Calcula la cantidad de agua acumulada [milimetros] del dia de hoy
    * en funcion de la ETc, la ETo (en caso de que la ETc sea cero, lo cual
    * se debe a que no hubo un cultivo sembrado en el dia de ayer en la
    * parcela dada), la cantidad de agua de lluvia, la cantidad de agua
@@ -110,8 +110,10 @@ public class WaterMath {
    * de hoy, la cual es la cantidad de agua a favor del dia de hoy
    * para el dia de mañana
    */
-  public static double getWaterAccumulatedToday(double yesterdayEtc, double yesterdayEto, double yesterdayRainWater,
-  double waterAccumulatedYesterday, double totalIrrigationWaterToday) {
+  public static double calculateWaterAccumulatedToday(ClimateLog yesterdayClimateLog, double totalIrrigationWaterToday) {
+    double yesterdayEtc = yesterdayClimateLog.getEtc();
+    double yesterdayRainWater = yesterdayClimateLog.getRainWater();
+    double waterAccumulatedYesterday = yesterdayClimateLog.getWaterAccumulated();
 
     double yesterdayEvapotranspiration = 0.0;
     double waterAccumulatedToday = 0.0;
@@ -135,7 +137,7 @@ public class WaterMath {
      * del dia de hoy para el dia de mañana
      */
     if (yesterdayEtc == 0.0) {
-      yesterdayEvapotranspiration = yesterdayEto;
+      yesterdayEvapotranspiration = yesterdayClimateLog.getEto();
     } else {
       yesterdayEvapotranspiration = yesterdayEtc;
     }
@@ -156,7 +158,7 @@ public class WaterMath {
       waterAccumulatedToday = (yesterdayRainWater + waterAccumulatedYesterday + totalIrrigationWaterToday) - yesterdayEvapotranspiration;
     }
 
-    return 0.0;
+    return waterAccumulatedToday;
   }
 
   /**
