@@ -1,8 +1,8 @@
 app.controller(
-	"StatisticalReportsCtrl",
-	["$scope","$location","$route","StatisticalReportSrv", "ParcelSrv",
+	"ReportsCtrl",
+	["$scope","$location","$route","ReportSrv", "ParcelSrv",
 	function($scope, $location, $route, servicio, parcelSrv) {
-		console.log("Cargando StatisticalReportsCtrl...")
+		console.log("Cargando ReportsCtrl...")
 
 		function findAll(){
 			servicio.findAll( function(error, data){
@@ -26,8 +26,8 @@ app.controller(
 			});;
 		}
 
-		$scope.generateStatisticalReport = function(){
-			servicio.generateStatisticalReport($scope.parcel.name, function(error, data){
+		$scope.generateReport = function(){
+			servicio.generateReport($scope.parcel.name, function(error, data){
 				if(error){
 					alert("Ocurrió un error: " + error);
 					return;
@@ -40,8 +40,8 @@ app.controller(
 		 * Trae el listado de todos los informes estadisticos que
 		 * conocen a la parcela que tiene el nombre dado
 		 */
-		$scope.findStatisticalReportByParcelName = function(){
-			servicio.findStatisticalReportByParcelName($scope.parcel.name, function(error, data){
+		$scope.findReportsByParcelName = function(){
+			servicio.findReportsByParcelName($scope.parcel.name, function(error, data){
 				if(error){
 					alert("Ocurrió un error: " + error);
 					return;

@@ -16,19 +16,19 @@ import java.util.Calendar;
 import util.UtilDate;
 
 @Entity
-@Table(name="STATISTICAL_REPORT")
-public class StatisticalReport {
+@Table(name="INFORME_ESTADISTICO")
+public class Report {
 
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
-  @Column(name="STATISTICAL_REPORT_ID")
+  @Column(name="INFORME_ESTADISTICO_ID")
   private int id;
 
   /*
    * Fecha en la cual se creo el informe
    * estadistico
    */
-  @Column(name="DATE", nullable=false)
+  @Column(name="FECHA", nullable=false)
   @Temporal(TemporalType.DATE)
   private Calendar date;
 
@@ -57,7 +57,7 @@ public class StatisticalReport {
   private Parcel parcel;
 
   // Constructor method
-  public StatisticalReport() {
+  public Report() {
 
   }
 

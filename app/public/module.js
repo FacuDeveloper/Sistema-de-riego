@@ -51,17 +51,17 @@ app.config(['$routeProvider', function(routeprovider) {
 	})
 
 	/* Informes estadisticos */
-	.when('/statisticalReport',{
-		templateUrl:'partials/statisticalReports-list.html',
-		controller: 'StatisticalReportsCtrl'
+	.when('/report',{
+		templateUrl:'partials/reports-list.html',
+		controller: 'ReportsCtrl'
 	})
-	.when('/statisticalReport/:action',{
-		templateUrl:'partials/statisticalReport-form.html',
-		controller: 'StatisticalReportCtrl'
+	.when('/report/:action',{
+		templateUrl:'partials/report-form.html',
+		controller: 'ReportCtrl'
 	})
-	.when('/statisticalReport/:action/:id',{
-		templateUrl:'partials/statisticalReport-form.html',
-		controller: 'StatisticalReportCtrl'
+	.when('/report/:action/:id',{
+		templateUrl:'partials/report-form.html',
+		controller: 'ReportCtrl'
 	})
 
 	/* De otra manera */

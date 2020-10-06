@@ -13,27 +13,27 @@ import javax.ws.rs.Produces;
 // import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import model.StatisticalReport;
+import model.Report;
 
-import stateless.StatisticalReportServiceBean;
+import stateless.ReportServiceBean;
 
 import java.util.Collection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
-@Path("/statisticalReport")
-public class StatisticalReportRestServlet {
+@Path("/report")
+public class ReportRestServlet {
 
-  // inject a reference to the StatisticalReportServiceBean slsb
-  @EJB StatisticalReportServiceBean service;
+  // inject a reference to the ReportServiceBean slsb
+  @EJB ReportServiceBean service;
 
-  //mapea lista de pojo a JSON
+  // Mapea lista de pojo a JSON
   ObjectMapper mapper = new ObjectMapper();
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public String findAll() throws IOException {
-    Collection<StatisticalReport> reports = service.findAll();
+    Collection<Report> reports = service.findAll();
     return mapper.writeValueAsString(reports);
   }
 
@@ -41,31 +41,31 @@ public class StatisticalReportRestServlet {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String find(@PathParam("id") int id) throws IOException {
-    StatisticalReport statisticalReport = service.find(id);
-    return mapper.writeValueAsString(statisticalReport);
+    Report report = service.find(id);
+    return mapper.writeValueAsString(report);
   }
 
   @DELETE
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public String remove(@PathParam("id") int id) throws IOException {
-    StatisticalReport statisticalReport = service.remove(id);
-    return mapper.writeValueAsString(statisticalReport);
+    Report report = service.remove(id);
+    return mapper.writeValueAsString(report);
   }
 
   @GET
-  @Path("/findStatisticalReportByParcelName/{name}")
+  @Path("/findReportsByParcelName/{name}")
   @Produces(MediaType.APPLICATION_JSON)
-  public String findStatisticalReportByParcelName(@PathParam("name") String name) throws IOException {
-    Collection<StatisticalReport> reports = service.findStatisticalReportByParcelName(name);
+  public String findReportsByParcelName(@PathParam("name") String parcelName) throws IOException {
+    Collection<Report> reports = service.findReportsByParcelName(parcelName);
     return mapper.writeValueAsString(reports);
   }
 
   @GET
-  @Path("/generateStatisticalReport/{name}")
+  @Path("/generateReport/{name}")
   @Produces(MediaType.APPLICATION_JSON)
-  public String generateStatisticalReport(@PathParam("name") String name) throws IOException {
-    StatisticalReport report = service.generateStatisticalReport(name);
+  public String generateReport(@PathParam("name") String parcelName) throws IOException {
+    Report report = service.generateReport(parcelName);
     report = service.create(report);
 
     return mapper.writeValueAsString(report);

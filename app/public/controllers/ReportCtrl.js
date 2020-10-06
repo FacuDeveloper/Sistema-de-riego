@@ -1,11 +1,11 @@
 app.controller(
-  "StatisticalReportCtrl",
-  ["$scope", "$location", "$route", "$routeParams", "$filter", "StatisticalReportSrv",
+  "ReportCtrl",
+  ["$scope", "$location", "$route", "$routeParams", "$filter", "ReportSrv",
   function($scope, $location, $route, $params, $filter, servicio) {
 
     if(['view'].indexOf($params.action) == -1){
       alert("Acción inválida: " + $params.action);
-      $location.path("/statisticalReport");
+      $location.path("/report");
     }
 
     function find(id){
@@ -21,7 +21,7 @@ app.controller(
     }
 
     $scope.cancel = function(){
-      $location.path("/statisticalReport");
+      $location.path("/report");
     }
 
     $scope.action = $params.action;

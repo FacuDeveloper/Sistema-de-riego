@@ -1,10 +1,10 @@
 app.service(
-  "StatisticalReportSrv",
+  "ReportSrv",
   [ "$http",
     function($http){
 
 	    this.findAll = function(callback){
-		    $http.get("rest/statisticalReport").then(
+		    $http.get("rest/report").then(
 			    function(result){
 				    callback(false, result.data);
 			    },
@@ -14,7 +14,7 @@ app.service(
 	    }
 
       this.find = function(id, callback){
-		    $http.get("rest/statisticalReport/" + id).then(
+		    $http.get("rest/report/" + id).then(
 			    function(result){
 				    callback(false, result.data);
 			    },
@@ -24,7 +24,7 @@ app.service(
 	    }
 
       this.delete = function(id, callback){
-        $http.delete("rest/statisticalReport/" + id)
+        $http.delete("rest/report/" + id)
         .then(
 			    function(result){
 				    callback(false, result.data);
@@ -34,8 +34,8 @@ app.service(
     			});
 	    }
 
-      this.findStatisticalReportByParcelName = function(name, callback) {
-        $http.get("rest/statisticalReport/findStatisticalReportByParcelName/" + name).then(
+      this.findReportsByParcelName = function(name, callback) {
+        $http.get("rest/report/findReportsByParcelName/" + name).then(
           function(result) {
             callback(false, result.data);
           },
@@ -44,8 +44,8 @@ app.service(
           });
         };
 
-        this.generateStatisticalReport = function(name, callback) {
-          $http.get("rest/statisticalReport/generateStatisticalReport/" + name).then(
+        this.generateReport = function(name, callback) {
+          $http.get("rest/report/generateReport/" + name).then(
             function(result) {
               callback(false, result.data);
             },
