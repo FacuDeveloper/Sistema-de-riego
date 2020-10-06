@@ -6,7 +6,7 @@
 
   <form class="form-inline">
     <div class="form-group">
-      <!-- Campo de parcela -->
+      <!-- Campo para ingresar el nombre de la parcela -->
       <input name="parcel" type="text" ng-model="parcel" placeholder="Parcela"
       uib-typeahead="parcel as parcel.name for parcel in findParcel($viewValue)" typeahead-loading="loadingLocations"
       class="form-control" typeahead-editable="false" typeahead-min-lenght="3">
@@ -25,8 +25,6 @@
         <th>Fecha</th>
         <th>C. más plantado</th>
         <th>C. menos plantado</th>
-        <th>C. que mas tiempo estuvo plantado</th>
-        <th>C. que menos tiempo estuvo plantado</th>
         <th>Tiempo sin cultivo (días)</th>
         <th class="text-right"></th>
       </tr>
@@ -38,8 +36,6 @@
         <td>{{report.date | date:'dd/MM/yyyy'}}</td>
         <td>{{report.cropMostPlanted}}</td>
         <td>{{report.leastPlanted}}</td>
-        <td>{{report.cropLongest}}</td>
-        <td>{{report.cropLess}}</td>
         <td>{{report.timeWithoutCrop}}</td>
         <td class="text-right">
           <div class="btn-group" role="group" aria-label="...">
