@@ -1,0 +1,65 @@
+<div class="panel panel-info">
+	<div class="panel-heading">
+		<strong>Informe estadístico</strong>
+	</div>
+	<div class="panel-body">
+		<form class="form-horizontal">
+
+			<div class="form-group">
+				<label for="report_parcelName" class="col-md-2 control-label">Nombre de parcela</label>
+				<div class="col-md-3">
+					<input type="text" class="form-control" id="report_parcelName" ng-model="data.parcel.name" ng-disabled="action == 'view'">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="report_date" class="col-md-2 control-label">Fecha</label>
+				<div class="col-md-3">
+					<input type="date" class="form-control" id="report_date" ng-model="data.date" value={{data.date}} ng-disabled="action == 'view'"/>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="report_cropMostPlanted" class="col-md-2 control-label">Cultivo más plantado</label>
+				<div class="col-md-3">
+					<input type="text" class="form-control" id="report_cropMostPlanted" ng-model="data.cropMostPlanted" ng-disabled="action == 'view'">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="report_cropLeastPlanted" class="col-md-2 control-label">Cultivo menos plantado</label>
+				<div class="col-md-3">
+					<input type="text" class="form-control" id="report_cropLeastPlanted" ng-model="data.leastPlanted" ng-disabled="action == 'view'">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="report_cropLongest" class="col-md-2 control-label">Cultivo que más tiempo estuvo plantado</label>
+				<div class="col-md-3">
+					<input type="text" class="form-control" id="report_cropLongest" ng-model="data.cropLongest" ng-disabled="action == 'view'">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="report_cropLess" class="col-md-2 control-label">Cultivo que menos tiempo estuvo plantado</label>
+				<div class="col-md-3">
+					<input type="text" class="form-control" id="report_cropLess" ng-model="data.cropLess" ng-disabled="action == 'view'">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="report_timeWithoutCrop" class="col-md-2 control-label">Tiempo sin cultivo (días)</label>
+				<div class="col-md-3">
+					<input type="number" class="form-control" id="report_timeWithoutCrop" ng-model="data.timeWithoutCrop" ng-disabled="action == 'view'">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-3">
+					<button type="submit" class="btn btn-success" ng-click="cancel()">Cancelar</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+</div>

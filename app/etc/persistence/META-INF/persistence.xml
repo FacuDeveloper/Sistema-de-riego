@@ -11,8 +11,8 @@
     <class>model.MaximumInsolation</class>
     <class>model.Month</class>
     <class>model.Parcel</class>
+    <class>model.Report</class>
     <class>model.SolarRadiation</class>
-    <class>model.StatisticalReport</class>
     <class>model.TypeGround</class>
     <class>model.UserStatus</class>
     <class>model.Usuario</class>
