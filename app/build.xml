@@ -77,6 +77,10 @@
     <!-- Comando para borrar el contenido de la tabla de registros climaticos de la base de datos -->
     <target name="deleteclimate" depends="init, run_deleteClimateLogs_sql" />
 
+    <!-- Comando para cargar los datos que se necesitan para ejecutar la prueba unitaria de la
+    tarea 82 del Product Backlog -->
+    <target name="stage-t82" depends="init, run_stage-t82_sql" />
+
     <target name="delete-domain" depends="init,stop,delete_domain" />
     <target name="create-domain" depends="init,create_domain,start,createdb" />
 

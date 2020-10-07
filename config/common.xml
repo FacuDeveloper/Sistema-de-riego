@@ -398,6 +398,22 @@ instancia de parcela (registro historico de parcela) -->
   </sql>
 </target>
 
+<!-- Bloque de codigo fuente para cargar los datos del archivo SQL stage-t82,
+los cuales son necesarios para ejecutar la prueba unitaria de la tarea 82 del
+Product Backlog -->
+<target name="run_stage-t82_sql">
+  <sql driver="org.apache.derby.jdbc.ClientDriver"
+    url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
+    userid="${DERBY_USER}"
+    password="${DERBY_PWD}"
+    src="etc/sql/stage-t82.sql"
+    onerror="continue">
+    <classpath>
+      <pathelement path="${DERBY_CLASSPATH}"/>
+    </classpath>
+  </sql>
+</target>
+
 <target name="run_all_sql">
   <sql driver="org.apache.derby.jdbc.ClientDriver"
     url="jdbc:derby://${DERBY_HOST}:${DERBY_PORT}/${DB_NAME};create=true"
