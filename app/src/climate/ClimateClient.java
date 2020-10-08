@@ -1,15 +1,15 @@
 /*
-* Esta clase es una clase cliente que tiene como simple responsabilidad
-* brindar el código fuente necesario para realizar llamadas a
-* la API REST (servicios web) del clima llamada Dark Sky y estas
-* llamadas son necesarias para obtener el pronostico de una ubicacion
-* geografica en una fecha dada, y es necesario obtener el
-* pronostico porque contiene los datos necesarios para
-* el calculo de la evapotranspiracion, la cual nos indica
-* la cantidad de agua que va a evaporar un cultivo dado y
-* al saber este dato sabremos la cantidad de agua
-* que tendremos que reponer al cultivo mediante el riego
-*/
+ * Esta clase es una clase cliente que tiene como simple responsabilidad
+ * brindar el código fuente necesario para realizar llamadas a
+ * la API del clima, utilizada en este proyecto, llamada Dark Sky y estas
+ * llamadas son necesarias para obtener el pronostico de una ubicacion
+ * geografica en una fecha dada, y es necesario obtener el
+ * pronostico porque contiene los datos necesarios para
+ * el calculo de la evapotranspiracion, la cual nos indica
+ * la cantidad de agua que va a evaporar un cultivo dado y
+ * al saber este dato sabremos la cantidad de agua
+ * que tendremos que reponer al cultivo mediante el riego
+ */
 
 package climate;
 

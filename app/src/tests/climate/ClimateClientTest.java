@@ -17,16 +17,35 @@
 
 import static org.junit.Assert.*;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 
 import java.util.Calendar;
 
 import climate.ClimateLogService;
+import stateless.ParcelServiceBean;
 
 import model.ClimateLog;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 public class ClimateClientTest {
+  private static EntityManager entityManager;
+  private static EntityManagerFactory entityMangerFactory;
+  private static ParcelServiceBean parcelServiceBean;
+
+  @BeforeClass
+  public static void preTest(){
+    entityMangerFactory = Persistence.createEntityManagerFactory("SisRiegoDB");
+    entityManager = entityMangerFactory.createEntityManager();
+
+    parcelServiceBean = new ParcelServiceBean();
+    parcelServiceBean.setEntityManager(entityManager);
+  }
 
   /*
    * *** NOTA ***
@@ -86,6 +105,7 @@ public class ClimateClientTest {
     System.out.println();
 
     ClimateLog climateLog = climateLogService.getClimateLog(latitude, longitude, dateUnixTimeStamp);
+    climateLog.setParcel(parcelServiceBean.find(1));
 
     assertNotNull(climateLog);
 
@@ -94,12 +114,12 @@ public class ClimateClientTest {
   }
 
   /*
-  * Bloque de codigo fuente para la
-  * prueba untaria del modulo de obtencion
-  * de datos climaticos utlizando las
-  * coordenadas geograficas de Buenos
-  * Aires CABA en la fecha 31/10/19
-  */
+   * Bloque de codigo fuente para la
+   * prueba untaria del modulo de obtencion
+   * de datos climaticos utlizando las
+   * coordenadas geograficas de Buenos
+   * Aires CABA en la fecha 31/10/19
+   */
   @Test
   public void testForecastBuenosAireCaba() {
     double latitude = -34.6156625;
@@ -139,6 +159,8 @@ public class ClimateClientTest {
     System.out.println();
 
     ClimateLog climateLog = climateLogService.getClimateLog(latitude, longitude, dateUnixTimeStamp);
+    climateLog.setParcel(parcelServiceBean.find(2));
+
     assertNotNull(climateLog);
 
     System.out.println(climateLog);
@@ -146,12 +168,12 @@ public class ClimateClientTest {
   }
 
   /*
-  * Bloque de codigo fuente para la
-  * prueba untaria del modulo de obtencion
-  * de datos climaticos utlizando las
-  * coordenadas geograficas de Viedma
-  * en la fecha 30/10/19
-  */
+   * Bloque de codigo fuente para la
+   * prueba untaria del modulo de obtencion
+   * de datos climaticos utlizando las
+   * coordenadas geograficas de Viedma
+   * en la fecha 30/10/19
+   */
   @Test
   public void testForecastViedma() {
     double latitude = -40.8249902;
@@ -191,10 +213,19 @@ public class ClimateClientTest {
     System.out.println();
 
     ClimateLog climateLog = climateLogService.getClimateLog(latitude, longitude, dateUnixTimeStamp);
+    climateLog.setParcel(parcelServiceBean.find(3));
+
     assertNotNull(climateLog);
 
     System.out.println(climateLog);
     System.out.println();
+  }
+
+  @AfterClass
+  public static void postTest() {
+    // Cierra las conexiones
+    entityManager.close();
+    entityMangerFactory.close();
   }
 
 }

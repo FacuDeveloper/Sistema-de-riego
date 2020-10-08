@@ -3,7 +3,8 @@
  * los datos climaticos de los pronosticos obtenidos
  * en una fecha dada y en unas coordenadas geograficas
  * dadas, para crear y proveer o servir (a clases clientes)
- * objetos de tipo registro del clima
+ * referencias a objetos de tipo ClimateLog, y si esta clase
+ * hace esto es porque crea objetos de tipo ClimateLog
  */
 
 package climate;
