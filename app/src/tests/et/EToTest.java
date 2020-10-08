@@ -153,18 +153,18 @@ public class EToTest {
   }
 
   /**
-  * Prueba unitaria del bloque de codigo fuente que calcula
-  * la pendiente de la curva de presion de saturacion
-  * de vapor (letra griega delta mayuscula)
-  *
-  * Dicho bloque de codigo fuente se prueba tambien haciendo
-  * uso del bloque de codigo fuente que calcula la temperatura
-  * media haciendo uso de la temperatura minima y la
-  * temperatura maxima
-  *
-  * El bloque de codigo fuente a ser probado tiene como
-  * parametro la temperatura media del aire en °C
-  */
+   * Prueba unitaria del bloque de codigo fuente que calcula
+   * la pendiente de la curva de presion de saturacion
+   * de vapor (letra griega delta mayuscula)
+   *
+   * Dicho bloque de codigo fuente se prueba tambien haciendo
+   * uso del bloque de codigo fuente que calcula la temperatura
+   * media haciendo uso de la temperatura minima y la
+   * temperatura maxima
+   *
+   * El bloque de codigo fuente a ser probado tiene como
+   * parametro la temperatura media del aire en °C
+   */
   @Ignore
   public void testSlopeVaporSaturationPressureCurve() {
     System.out.println("Prueba unitaria de pendiente de la curva de presión de saturacion de vapor");
@@ -179,12 +179,12 @@ public class EToTest {
   }
 
   /**
-  * Prueba unitaria del bloque de codigo fuente que calcula
-  * la constante psicrometrica (letra griega gamma)
-  *
-  * El bloque de codigo fuente a ser probado tiene como
-  * parametro la presion atmosferica en milibares
-  */
+   * Prueba unitaria del bloque de codigo fuente que calcula
+   * la constante psicrometrica (letra griega gamma)
+   *
+   * El bloque de codigo fuente a ser probado tiene como
+   * parametro la presion atmosferica en milibares
+   */
   @Ignore
   public void testPsychometricConstant() {
     System.out.println("Prueba unitaria de la constante psicrometrica");
@@ -199,12 +199,12 @@ public class EToTest {
   }
 
   /**
-  * Prueba unitaria del bloque de codigo fuente que corrige la
-  * velocidad del viento a dos metros de altura
-  *
-  * El bloque de codigo fuente a ser probado tiene
-  * como parametro la altura en metros
-  */
+   * Prueba unitaria del bloque de codigo fuente que corrige la
+   * velocidad del viento a dos metros de altura
+   *
+   * El bloque de codigo fuente a ser probado tiene
+   * como parametro la altura en metros
+   */
   @Ignore
   public void testConversionFactorToTwoMetersHigh() {
     System.out.println("Prueba unitaria del factor de conversion");
@@ -220,12 +220,12 @@ public class EToTest {
   }
 
   /**
-  * Prueba unitaria del bloque de codigo fuente que calcula
-  * la presion de saturacion de vapor e°(T)
-  *
-  * El bloque de codigo fuente a ser probado tiene como parametro la
-  * temperatura del aire en °C
-  */
+   * Prueba unitaria del bloque de codigo fuente que calcula
+   * la presion de saturacion de vapor e°(T)
+   *
+   * El bloque de codigo fuente a ser probado tiene como parametro la
+   * temperatura del aire en °C
+   */
   @Ignore
   public void testSteamSaturationPressure() {
     System.out.println("Prueba unitaria de la presion de saturacion de vapor");
@@ -241,10 +241,10 @@ public class EToTest {
   }
 
   /**
-  * Prueba unitaria del bloque de codigo fuente
-  * que convierte las coordenadas geograficas en grados
-  * decimales a radianes
-  */
+   * Prueba unitaria del bloque de codigo fuente
+   * que convierte las coordenadas geograficas en grados
+   * decimales a radianes
+   */
   // @Ignore
   // public void testDecimalDegreesToRadians() {
   // System.out.println("Prueba unitaria de conversion de grados decimales a radianes");
@@ -265,21 +265,21 @@ public class EToTest {
   }
 
   /**
-  * Convierte la presión atmosferica dada en milibares a kilopascales
-  *
-  * @param  miliBarPressure
-  * @return presion atmosferica [kPa]
-  */
+   * Convierte la presión atmosferica dada en milibares a kilopascales
+   *
+   * @param  miliBarPressure
+   * @return presion atmosferica [kPa]
+   */
   private double pressureMiliBarToKiloPascals(double miliBarPressure) {
     return (miliBarPressure * 0.1);
   }
 
   /**
-  * Convierte la velocidad del viento dada en km / h a m / h
-  *
-  * @param  windSpeed [km / h]
-  * @return velocidad del viento [m / s]
-  */
+   * Convierte la velocidad del viento dada en km/h a m/h
+   *
+   * @param  windSpeed [km/h]
+   * @return velocidad del viento [m/s]
+   */
   private double windSpeedToMetersPerSecond(double windSpeed) {
     double meters = 1000;
     double seconds = 3600;
@@ -287,12 +287,12 @@ public class EToTest {
   }
 
   /**
-  * Prueba unitaria para el bloque de codigo fuente
-  * que calcula el producto entre la constante de
-  * Stefan Boltzmann y el promedio de las temperaturas
-  * maximas y minimas elevadas a la cuarta potencia
-  * en grados Kelvin
-  */
+   * Prueba unitaria para el bloque de codigo fuente
+   * que calcula el producto entre la constante de
+   * Stefan Boltzmann y el promedio de las temperaturas
+   * maximas y minimas elevadas a la cuarta potencia
+   * en grados Kelvin
+   */
   // @Test
   // public void testGetSigmaResult() {
   //   System.out.println("Resultado de la ecuacion de Stefan Boltzmann: " + Eto.getSigmaResult(19.1, 25.1));

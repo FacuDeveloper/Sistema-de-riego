@@ -31,10 +31,10 @@ public class CultivoServiceBean implements CultivoService {
   }
 
   /**
-  * Persiste en la base da datos la instancia de Cultivo recibida
-  * @param crop
-  * @return referencia a un objeto de tipo Cultivo
-  */
+   * Persiste en la base da datos la instancia de Cultivo recibida
+   * @param crop
+   * @return referencia a un objeto de tipo Cultivo
+   */
   public Cultivo create(Cultivo crop) {
     entityManager.persist(crop);
     return crop;
@@ -180,6 +180,8 @@ public class CultivoServiceBean implements CultivoService {
      * si la diferencia entre ambas fechas es de mas de un año no tiene sentido
      * calcular la cantidad de dias de vida del cultivo dado porque hasta donde
      * se sabe ninguno cultivo mas de un año
+     *
+     * NOTE: Revisar este calculo y lo que dice todo este comentario
      */
     if (Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR)) > 1) {
       daysLife = ((Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR))) * 365) - (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1) - (365 - currentDate.get(Calendar.DAY_OF_YEAR));
@@ -261,7 +263,9 @@ public class CultivoServiceBean implements CultivoService {
      * Se multiplica daysLife por 365 para evitar posibles errores, y ademas
      * si la diferencia entre ambas fechas es de mas de un año no tiene sentido
      * calcular la cantidad de dias de vida del cultivo dado porque hasta donde
-     * se sabe ninguno cultivo mas de un año
+     * se sabe ninguno cultivo dura o vive mas de un año
+     *
+     * NOTE: Revisar este calculo y lo que dice todo este comentario
      */
     if (Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR)) > 1) {
       daysLife = ((Math.abs(seedDate.get(Calendar.YEAR) - currentDate.get(Calendar.YEAR))) * 365) - (365 - seedDate.get(Calendar.DAY_OF_YEAR) + 1) - (365 - currentDate.get(Calendar.DAY_OF_YEAR));

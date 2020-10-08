@@ -15,6 +15,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+/*
+ * NOTE: Revisar si esta prueba unitaria tiene que seguir existiendo
+ */
 public class ClimateLogExistTest {
   private static ClimateLogServiceBean climateLogServiceBean;
   private static ParcelServiceBean parcelService;

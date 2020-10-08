@@ -9,6 +9,12 @@ import javax.persistence.GenerationType;
 
 import java.util.Collection;
 
+/*
+ * NOTE: Revisar si va a existir o no el tipo de suelo
+ *
+ * En base a esta decision se va a crear o no el modelo
+ * de datos suelo
+ */
 @Entity
 @Table(name="TYPE_GROUND")
 public class TypeGround {
@@ -29,7 +35,7 @@ public class TypeGround {
 
   // Constructor method
   public TypeGround() {
-    
+
   }
 
   /*

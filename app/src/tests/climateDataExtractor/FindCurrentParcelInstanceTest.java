@@ -14,6 +14,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+/*
+ * NOTE: Revisar si esta prueba unitaria tiene que seguir existiendo
+ */
 public class FindCurrentParcelInstanceTest {
   private static ParcelInstanceServiceBean parcelInstanceService;
   private static ParcelServiceBean parcelService;

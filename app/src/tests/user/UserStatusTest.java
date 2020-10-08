@@ -8,9 +8,6 @@ import stateless.UsuarioService;
 import stateless.UsuarioServiceBean;
 import stateless.UserStatusServiceBean;
 
-import java.util.Calendar;
-import java.util.Collection;
-
 import model.UserStatus;
 
 import javax.persistence.EntityManager;
@@ -20,7 +17,7 @@ import javax.persistence.Persistence;
 public class UserStatusTest {
   private static EntityManager entityManager;
   private static EntityManagerFactory entityMangerFactory;
-  private static UsuarioServiceBean serviceUser;
+  private static UsuarioService serviceUser;
   private static UserStatusServiceBean serviceUserStatus;
 
   @BeforeClass
@@ -36,7 +33,7 @@ public class UserStatusTest {
   }
 
   /*
-   * Se prueba que el metodo remove de la clase UsuarioServiceBean
+   * Se prueba que el metodo remove() de la clase UsuarioServiceBean
    * y que la relacion existente entre las tablas USUARIO y
    * ESTADO_USUARIO funcionen correctamente
    *

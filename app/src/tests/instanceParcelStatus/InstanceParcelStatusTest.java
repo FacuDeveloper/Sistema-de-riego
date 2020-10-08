@@ -61,7 +61,8 @@ public class InstanceParcelStatusTest {
 
     System.out.println("Estado: " + finishedStatus.getName());
 
-    assertEquals("Finalizado", finishedStatus.getName());
+    String expectedResult = "Finalizado";
+    assertEquals(expectedResult, finishedStatus.getName());
     System.out.println();
   }
 
@@ -91,7 +92,8 @@ public class InstanceParcelStatusTest {
 
     System.out.println("Estado: " + inDevelopmentStatus.getName());
 
-    assertEquals("En desarrollo", inDevelopmentStatus.getName());
+    String expectedResult = "En desarrollo";
+    assertEquals(expectedResult, inDevelopmentStatus.getName());
   }
 
   @Test
@@ -119,7 +121,8 @@ public class InstanceParcelStatusTest {
 
     System.out.println("Estado: " + onHoldStatus.getName());
 
-    assertEquals("En espera", onHoldStatus.getName());
+    String expectedResult = "En espera";
+    assertEquals(expectedResult, onHoldStatus.getName());
     System.out.println();
   }
 

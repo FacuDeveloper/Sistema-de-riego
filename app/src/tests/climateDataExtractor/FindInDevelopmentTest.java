@@ -15,6 +15,9 @@ import stateless.ParcelServiceBean;
 
 import model.Parcel;
 
+/*
+ * NOTE: Revisar si esta prueba unitaria tiene que seguir existiendo
+ */
 public class FindInDevelopmentTest {
   private static EntityManager entityManager;
   private static EntityManagerFactory entityMangerFactory;
@@ -39,6 +42,12 @@ public class FindInDevelopmentTest {
    * la instancia de parcela que esta en el estado
    * "En desarrollo" y solo una instancia de parcela
    * puede estar en el estado "En desarrollo"
+   *
+   * *** NOTA ***
+   * El metodo findInDevelopment() de la clase
+   * InstanciaParcelaService es necesario
+   * para el modulo de obtencion y almacenamiento
+   * auotmatico de datos climaticos
    */
   @Test
   public void testFindInDevelopment() {

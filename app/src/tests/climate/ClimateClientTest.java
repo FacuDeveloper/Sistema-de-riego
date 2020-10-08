@@ -86,6 +86,7 @@ public class ClimateClientTest {
     System.out.println();
 
     ClimateLog climateLog = climateLogService.getClimateLog(latitude, longitude, dateUnixTimeStamp);
+
     assertNotNull(climateLog);
 
     System.out.println(climateLog);
