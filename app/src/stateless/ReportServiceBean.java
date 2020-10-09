@@ -83,7 +83,7 @@ public  class ReportServiceBean {
      * de instancias de parcela que estan en el estado "Finalizado", hecho por ID
      * del cultivo de una parcela dada
      */
-    String subQueryOne = "(SELECT COUNT(FK_CULTIVO) AS COUNT_CULTIVO FROM INSTANCIA_PARCELA INNER JOIN INSTANCIA_PARCELA_ESTADO ON INSTANCIA_PARCELA.FK_ESTADO = INSTANCIA_PARCELA_ESTADO.INSTANCIA_PARCELA_ESTADO_ID WHERE INSTANCIA_PARCELA.FK_PARCELA = "
+    String subQueryOne = "(SELECT COUNT(FK_CULTIVO) AS CANT_VECES_SEMBRADO FROM INSTANCIA_PARCELA INNER JOIN INSTANCIA_PARCELA_ESTADO ON INSTANCIA_PARCELA.FK_ESTADO = INSTANCIA_PARCELA_ESTADO.INSTANCIA_PARCELA_ESTADO_ID WHERE INSTANCIA_PARCELA.FK_PARCELA = "
     + idParcel + " AND NOMBRE = 'Finalizado' GROUP BY FK_CULTIVO) AS REST)";
 
     /*
@@ -91,7 +91,7 @@ public  class ReportServiceBean {
      * en el estado "Finalizado", hecho en base al ID del cultivo de una parcela dada
      * (esto quiere decir que primero se filtra por el ID de una parcela)
      */
-    String subQueryTwo = "(SELECT MAX(COUNT_CULTIVO) AS MAX_CULTIVO FROM " + subQueryOne;
+    String subQueryTwo = "(SELECT MAX(CANT_VECES_SEMBRADO) AS MAX_CANT_VECES_SEMBRADO FROM " + subQueryOne;
 
     /*
      * Obtiene el ID de los cultivos que tienen mas ocurrencias de su ID en los grupos,
@@ -99,7 +99,7 @@ public  class ReportServiceBean {
      * ID del cultivo de una parcela dada (esto quiere decir que primero se filtra por
      * el ID de una parcela)
      */
-    String subQueryThree = "(SELECT FK_CULTIVO, COUNT(FK_CULTIVO) AS COUNT_CULTIVO FROM INSTANCIA_PARCELA INNER JOIN INSTANCIA_PARCELA_ESTADO ON INSTANCIA_PARCELA.FK_ESTADO = INSTANCIA_PARCELA_ESTADO.INSTANCIA_PARCELA_ESTADO_ID WHERE INSTANCIA_PARCELA.FK_PARCELA = "
+    String subQueryThree = "(SELECT FK_CULTIVO, COUNT(FK_CULTIVO) AS CANT_VECES_SEMBRADO FROM INSTANCIA_PARCELA INNER JOIN INSTANCIA_PARCELA_ESTADO ON INSTANCIA_PARCELA.FK_ESTADO = INSTANCIA_PARCELA_ESTADO.INSTANCIA_PARCELA_ESTADO_ID WHERE INSTANCIA_PARCELA.FK_PARCELA = "
     + idParcel + " AND NOMBRE = 'Finalizado' GROUP BY FK_CULTIVO HAVING COUNT(FK_CULTIVO) = " + subQueryTwo + ")";
 
     /*
