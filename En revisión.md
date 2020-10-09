@@ -6,4 +6,3 @@ Se tiene que revisar lo siguiente:
 - Si se tiene que tener en cuenta la inclinación de la parcela a la hora de calcular el agua de riego.
 - Si la profundidad y la pedregosidad de la parcela se las tiene que tener en cuenta para calcular el agua de riego. En caso afirmativo, se tiene que ver como afectan al resultado que da la formula para calcular el agua de riego.
 - Si se puede hacer funcionar la paginación.
-- Si la clase MaxCrop de la carpeta model tiene que seguir existiendo.
